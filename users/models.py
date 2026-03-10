@@ -53,6 +53,11 @@ class User(AbstractUser):
         
         super().save(*args, **kwargs)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["first_name", "last_name", "role"], name="unique_full_name_per_role")
+        ]
+
     def __str__(self):
         return f"{self.username} - {self.get_full_name()}"
 

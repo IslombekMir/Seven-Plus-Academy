@@ -102,6 +102,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.User'
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
