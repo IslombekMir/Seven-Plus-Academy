@@ -56,7 +56,6 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} - {self.get_full_name()}"
 
-
 class UserSettings(models.Model):
     user = models.OneToOneField(User, related_name="settings", on_delete=models.CASCADE)
     
@@ -64,4 +63,9 @@ class UserSettings(models.Model):
         LIGHT = 'LIGHT', 'Light'
         DARK = 'DARK', 'Dark'
     
+    class Language(models.TextChoices):
+        UZBEK = 'UZBEK', 'Uzbek'
+        ENGLISH = 'ENGLISH', 'English'
+    
     theme = models.CharField(max_length=20, choices=Theme.choices, default=Theme.LIGHT)
+    language = models.CharField(max_length=30, choices=Language.choices, default=Language.UZBEK)

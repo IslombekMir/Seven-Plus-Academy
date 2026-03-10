@@ -1,0 +1,15 @@
+{%extends 'core/base.html'%}
+
+{%block title%} Home {% endblock %}
+
+{% block style %}
+    {% load static %}
+    {{block.super}}
+    <link rel="stylesheet" href="{% static 'core/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class='page-blocks'>
+    <a href="#"><div class='page-block'>Users</div></a>
+<div>
+{% endblock %}

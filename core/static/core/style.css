@@ -1,0 +1,40 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+:root {
+    font-size: 12;
+    --theme-color: skyblue;
+    --secondary-color: limegreen;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background: var(--theme-color);
+    padding: 20px;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    background-color: var(--secondary-color);
+    padding: 20px;
+}
+
+a {
+    transition: 0.3s;
+}
+
+a:hover {
+    opacity: 0.7;
+}

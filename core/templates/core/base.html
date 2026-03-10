@@ -4,21 +4,25 @@
     <title>{% block title %}My Website{% endblock title %}</title>
     <!-- CSS and other head elements -->
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'core/style.css' %}">
+    {% block style %}{% endblock %}    
 </head>
 <body>
     <header>
-        <!-- Navigation bar content goes here -->
+        <nav>
+            <ul>
+                <li><a href="#">Users</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
-        <!-- This block will be replaced by content in child templates -->
         {% block content %}
         {% endblock content %}
     </main>
 
     <footer>
-        <!-- Footer content -->
+        <p>Footer</p>
     </footer>
 </body>
 </html>
