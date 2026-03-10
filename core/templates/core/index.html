@@ -10,6 +10,10 @@
 
 {% block content %}
 <div class='page-blocks'>
-    <a href="{% url 'users:users_list' %}"><div class='page-block'>Users</div></a>
+    <ul>
+        {% if user.is_authenticated and user.role != 'STUDENT' %}
+            <li><a href="{% url 'users:list' %}">Manage Users</a></li>
+        {% endif %}
+    </ul>
 <div>
 {% endblock %}
