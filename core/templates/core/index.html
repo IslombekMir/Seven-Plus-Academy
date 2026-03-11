@@ -12,7 +12,7 @@
 <div class='page-blocks'>
     <ul>
         {% if user.is_authenticated and user.role != 'STUDENT' %}
-            <li><a href="{% url 'users:list' %}">Manage Users</a></li>
+            <li><a href="{% url 'users:users_list' %}">Users</a></li>
         {% endif %}
     </ul>
 <div>

@@ -1,18 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import UserCreateForm
 from django.http import HttpResponseForbidden
 from .models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
-
 from .forms import LoginForm
-from django.contrib.auth import authenticate, login
-
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
-from django.shortcuts import render
-from .models import User
 
 @login_required
 def users_list(request):
@@ -52,23 +45,20 @@ def logout_view(request):
 
 @login_required
 def create_user(request):
-    # Block students outright
     if request.user.role == User.Role.STUDENT:
         return HttpResponseForbidden("Students cannot create users.")
 
     if request.method == "POST":
         form = UserCreateForm(request.POST, current_user=request.user)
         if form.is_valid():
-            # Teachers can only create students (extra safety check)
-            if request.user.role == User.Role.TEACHER and form.cleaned_data["role"] != User.Role.STUDENT:
-                return HttpResponseForbidden("Teachers can only create students.")
-            
             new_user = form.save(commit=False)
-            # Username + password auto-generated in model.save()
+
+            if request.user.role == User.Role.TEACHER:
+                new_user.role = User.Role.STUDENT
+
             new_user.save()
-            return redirect("core:index")
+            return redirect("users:users_list")
     else:
         form = UserCreateForm(current_user=request.user)
 
     return render(request, "users/create_user.html", {"form": form})
-

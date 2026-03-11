@@ -12,9 +12,6 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(attrs={"placeholder": "Enter password"})
     )
 
-from django import forms
-from .models import User
-
 class UserCreateForm(forms.ModelForm):
     class Meta:
         model = User
@@ -24,10 +21,9 @@ class UserCreateForm(forms.ModelForm):
         self.current_user = kwargs.pop("current_user", None)
         super().__init__(*args, **kwargs)
 
-        # Restrict role choices based on current user
         if self.current_user:
             if self.current_user.role == User.Role.TEACHER:
-                self.fields["role"].choices = [(User.Role.STUDENT, "Student")]
-            elif self.current_user.role == User.Role.STUDENT:
-                # Students shouldn't even see the form
-                self.fields["role"].choices = []
+                # Remove the role field completely
+                self.fields.pop("role", None)
+
+
