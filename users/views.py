@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from .forms import LoginForm
+from django.db.models import Q
 
 @login_required
 def users_list(request):
@@ -13,11 +14,22 @@ def users_list(request):
         return HttpResponseForbidden("Students cannot view this page.")
 
     if request.user.role == User.Role.TEACHER:
-        users = User.objects.filter(role=User.Role.STUDENT)
+        users = User.objects.filter(role=User.Role.STUDENT).exclude(is_superuser=True)
     elif request.user.role == User.Role.ADMIN:
-        users = User.objects.all()
+        users = User.objects.exclude(is_superuser=True)
     else:
         users = []
+    
+    search_query = request.GET.get("q")
+    if search_query:
+        users = users.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+    
+    role_filter = request.GET.get("role")
+    if role_filter:
+        users = users.filter(role=role_filter)
 
     return render(request, "users/users_list.html", {
         "users": users,
@@ -102,3 +114,18 @@ def delete_user(request, user_id):
 
     return render(request, "users/confirm_delete.html", {"user": user_obj})
 
+@login_required
+def reset_password(request, user_id):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot reset passwords.")
+
+    user_obj = get_object_or_404(User, pk=user_id)
+
+    if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
+        return HttpResponseForbidden("Teachers can only reset student passwords.")
+
+    user_obj.set_password(user_obj.username)
+    user_obj.must_reset_password = True
+    user_obj.save()
+
+    return redirect("users:users_list")

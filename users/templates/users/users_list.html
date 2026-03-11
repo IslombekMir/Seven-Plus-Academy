@@ -4,6 +4,16 @@
 
 {% block content %}
 <h2>User List</h2>
+<form method="get">
+    <input type="text" name="q" placeholder="Search by name" value="{{ request.GET.q }}">
+    <select name="role">
+        <option value="">All Roles</option>
+        <option value="ADMIN" {% if request.GET.role == "ADMIN" %}selected{% endif %}>Admin</option>
+        <option value="TEACHER" {% if request.GET.role == "TEACHER" %}selected{% endif %}>Teacher</option>
+        <option value="STUDENT" {% if request.GET.role == "STUDENT" %}selected{% endif %}>Student</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
 
 <table>
     <thead>
@@ -12,6 +22,7 @@
             <th>Full Name</th>
             <th>Role</th>
             <th>Phone</th>
+            <th>Last Login</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -22,10 +33,12 @@
             <td>{{ user.get_full_name }}</td>
             <td>{{ user.role }}</td>
             <td>{{ user.phone_number }}</td>
+            <td>{{ user.last_login }}</td>
             <td>
                 {% if can_manage %}
                     <a href="{% url 'users:edit_user' user.id %}">Edit</a>
                     <a href="{% url 'users:delete_user' user.id %}">Delete</a>
+                    <a href="{% url 'users:reset_password' user.id %}">Reset Password</a>
                 {% endif %}
             </td>
         </tr>
