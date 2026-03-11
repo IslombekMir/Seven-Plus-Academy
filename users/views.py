@@ -19,7 +19,10 @@ def users_list(request):
     else:
         users = []
 
-    return render(request, "users/users_list.html", {"users": users})
+    return render(request, "users/users_list.html", {
+        "users": users,
+        "can_manage": request.user.role in [User.Role.ADMIN, User.Role.TEACHER],
+        })
 
 
 def login_view(request):
@@ -62,3 +65,40 @@ def create_user(request):
         form = UserCreateForm(current_user=request.user)
 
     return render(request, "users/create_user.html", {"form": form})
+
+@login_required
+def edit_user(request, user_id):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot edit users.")
+
+    user_obj = get_object_or_404(User, pk=user_id)
+
+    if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
+        return HttpResponseForbidden("Teachers can only edit student users.")
+
+    if request.method == "POST":
+        form = UserCreateForm(request.POST, instance=user_obj, current_user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect("users:users_list")
+    else:
+        form = UserCreateForm(instance=user_obj, current_user=request.user)
+
+    return render(request, "users/create_user.html", {"form": form, "edit_mode": True})
+
+@login_required
+def delete_user(request, user_id):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot delete users.")
+
+    user_obj = get_object_or_404(User, pk=user_id)
+
+    if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
+        return HttpResponseForbidden("Teachers can only delete student users.")
+
+    if request.method == "POST":
+        user_obj.delete()
+        return redirect("users:users_list")
+
+    return render(request, "users/confirm_delete.html", {"user": user_obj})
+

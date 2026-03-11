@@ -4,16 +4,37 @@
 
 {% block content %}
 <h2>User List</h2>
-{% if user.is_authenticated and user.role != 'STUDENT' %}
-    <div>
-        <a href="{% url 'users:create_user' %}">Add User</a>
-    </div>
-{% endif %}
-<ul>
-    {% for user in users %}
-        <li>{{ user.username }} - {{ user.get_full_name }} ({{ user.role }})</li>
-    {% empty %}
-        <li>No users available.</li>
-    {% endfor %}
-</ul>
+
+<table>
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Role</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.get_full_name }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.phone_number }}</td>
+            <td>
+                {% if can_manage %}
+                    <a href="{% url 'users:edit_user' user.id %}">Edit</a>
+                    <a href="{% url 'users:delete_user' user.id %}">Delete</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No users found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}
