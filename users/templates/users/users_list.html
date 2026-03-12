@@ -4,14 +4,17 @@
 
 {% block content %}
 <h2>User List</h2>
+<a href="{% url 'users:create_user' %}">New User</a>
 <form method="get">
     <input type="text" name="q" placeholder="Search by name" value="{{ request.GET.q }}">
-    <select name="role">
-        <option value="">All Roles</option>
-        <option value="ADMIN" {% if request.GET.role == "ADMIN" %}selected{% endif %}>Admin</option>
-        <option value="TEACHER" {% if request.GET.role == "TEACHER" %}selected{% endif %}>Teacher</option>
-        <option value="STUDENT" {% if request.GET.role == "STUDENT" %}selected{% endif %}>Student</option>
-    </select>
+    {% if request.user.ROLE == "ADMIN" %}
+        <select name="role">
+            <option value="">All Roles</option>
+            <option value="ADMIN" {% if request.GET.role == "ADMIN" %}selected{% endif %}>Admin</option>
+            <option value="TEACHER" {% if request.GET.role == "TEACHER" %}selected{% endif %}>Teacher</option>
+            <option value="STUDENT" {% if request.GET.role == "STUDENT" %}selected{% endif %}>Student</option>
+        </select>
+    {% endif %}
     <button type="submit">Filter</button>
 </form>
 
