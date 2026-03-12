@@ -7,7 +7,7 @@
 <a href="{% url 'users:create_user' %}">New User</a>
 <form method="get">
     <input type="text" name="q" placeholder="Search by name" value="{{ request.GET.q }}">
-    {% if request.user.ROLE == "ADMIN" %}
+    {% if request.user.role == "ADMIN" %}
         <select name="role">
             <option value="">All Roles</option>
             <option value="ADMIN" {% if request.GET.role == "ADMIN" %}selected{% endif %}>Admin</option>
@@ -47,7 +47,7 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5">No users found.</td>
+            <td colspan="6">No users found.</td>
         </tr>
         {% endfor %}
     </tbody>
