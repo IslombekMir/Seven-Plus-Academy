@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+{% block title %}Group List{%endblock%}
+
+{% block content %}
+<h2>Groups</h2>
+
+{% if user.role != "STUDENT" %}
+    <a href="{% url 'lessons:group_create' %}">New Group</a>
+{% endif %}
+
+<ul>
+    {% for group in groups %}
+        <li>
+            <a href="{% url 'lessons:group_detail' group.pk %}">{{ group.name }}</a>
+            {% if user.role == "ADMIN" or user == group.teacher %}
+                <a href="{% url 'lessons:group_edit' group.pk %}">Edit</a>
+                <a href="{% url 'lessons:group_delete' group.pk %}">Delete</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No groups available.</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

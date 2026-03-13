@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+{% block title %}Group List{%endblock%}
+
+{% block content %}
+
+<h2>{{ group.name }}</h2>
+<p>Subject: {{ group.subject }}</p>
+<p>Teacher: {{ group.teacher.get_full_name }}</p>
+<p>Homework: {{ group.homework_description }}</p>
+<p>Schedule: {{ group.week_days }} {{ group.start_time }} - {{ group.end_time }}</p>
+<p>Dates: {{ group.start_date }} to {{ group.end_date }}</p>
+
+{%endblock%}
