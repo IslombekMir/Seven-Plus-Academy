@@ -23,3 +23,33 @@ class Group(models.Model):
 
     def __str__(self):
         return self.name
+
+### Enrollment
+class Enrollment(models.Model):
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.RESTRICT,
+        related_name="enrollments",
+    )
+    student = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        related_name="enrollments",
+        limit_choices_to={"role": "STUDENT"},
+    )
+    start_date = models.DateField(default=date.today)
+    end_date = models.DateField(blank=True, null=True)
+    payment_amount = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["group", "student"], name="unique_group_student")
+        ]
+    
+    def save(self, *args, **kwargs):
+        if self.payment_amount is None:
+            self.payment_amount = self.group.default_payment_amount
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.group} - {self.student}"

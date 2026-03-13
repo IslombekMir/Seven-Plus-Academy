@@ -1,43 +1,43 @@
-{% extends "core/base.html" %}
+    {% extends "core/base.html" %}
 
-{% block title %}Subjects List{% endblock %}
+    {% block title %}Subjects List{% endblock %}
 
-{% block content %}
-<h2>Subjects List</h2>
+    {% block content %}
+    <h2>Subjects List</h2>
 
-{% if can_manage %}
-    <a href="{% url 'lessons:create_subject' %}">New Subject</a>
-{% endif %}
-<form method="get">
-    <input type="text" name="q" placeholder="Search by name" value="{{ request.GET.q }}">
-    <button type="submit">Filter</button>
-</form>
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            {% if can_manage %}
-                <th>Actions</th>
-            {% endif %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for subject in subjects %}
-        <tr>
-            <td>{{ subject.name }}</td>
-            <td>
+    {% if can_manage %}
+        <a href="{% url 'lessons:create_subject' %}">New Subject</a>
+    {% endif %}
+    <form method="get">
+        <input type="text" name="q" placeholder="Search by name" value="{{ request.GET.q }}">
+        <button type="submit">Filter</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
                 {% if can_manage %}
-                    <a href="{% url 'lessons:edit_subject' subject.id %}">Edit</a>
-                    <a href="{% url 'lessons:delete_subject' subject.id %}">Delete</a>
+                    <th>Actions</th>
                 {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="2">No subjects found.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subject in subjects %}
+            <tr>
+                <td>{{ subject.name }}</td>
+                <td>
+                    {% if can_manage %}
+                        <a href="{% url 'lessons:edit_subject' subject.id %}">Edit</a>
+                        <a href="{% url 'lessons:delete_subject' subject.id %}">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No subjects found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-{% endblock %}
+    {% endblock %}

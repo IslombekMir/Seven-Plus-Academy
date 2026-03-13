@@ -1,5 +1,6 @@
 from django import forms
-from .models import Subject, Group
+from .models import Subject, Group, Enrollment
+from users.models import User
 
 
 class SubjectCreateForm(forms.ModelForm):
@@ -28,5 +29,18 @@ class GroupForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         if current_user and current_user.role == "TEACHER":
-            # Hide teacher field for teachers
             self.fields.pop("teacher", None)
+
+class EnrollmentForm(forms.ModelForm):
+    class Meta:
+        model = Enrollment
+        fields = ["student", "start_date", "end_date", "payment_amount"]
+
+    def __init__(self, *args, **kwargs):
+        group = kwargs.pop("group", None)
+        super().__init__(*args, **kwargs)
+
+        qs = User.objects.filter(role=User.Role.STUDENT)
+        if group:
+            qs = qs.exclude(enrollments__group=group)
+        self.fields["student"].queryset = qs

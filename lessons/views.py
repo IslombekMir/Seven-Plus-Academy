@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Subject, Group
+from .models import Subject, Group, Enrollment
 from users.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .forms import SubjectCreateForm, GroupForm
+from .forms import SubjectCreateForm, GroupForm, EnrollmentForm
 
 ### Subject
 def subjects_list(request):
@@ -124,3 +124,74 @@ def group_edit(request, pk):
         form = GroupForm(instance=group, current_user=request.user)
     
     return render(request, "lessons/group_form.html", {"form": form})
+
+@login_required
+def group_detail(request, pk):
+    group = get_object_or_404(Group, pk=pk)
+
+    if can_manage_enrollments(request.user, group):
+        if request.method == "POST":
+            enrollment_form = EnrollmentForm(request.POST, group=group)
+            if enrollment_form.is_valid():
+                enrollment = enrollment_form.save(commit=False)
+                enrollment.group = group
+                enrollment.save()
+                return redirect("lessons:group_detail", pk=group.pk)
+        else:
+            enrollment_form = EnrollmentForm(group=group)
+    else:
+        enrollment_form = None
+
+    if request.user.role == User.Role.STUDENT:
+        enrollments = group.enrollments.filter(student=request.user).select_related("student")
+    else:
+        enrollments = group.enrollments.select_related("student").all()
+
+    return render(request, "lessons/group_detail.html", {
+        "group": group,
+        "enrollments": enrollments,
+        "enrollment_form": enrollment_form,
+    })
+
+### Enrollment
+def can_manage_enrollments(user, group):
+    return user.role == User.Role.ADMIN or group.teacher == user
+
+@login_required
+def enrollment_edit(request, pk):
+    enrollment = get_object_or_404(Enrollment, pk=pk)
+    group = enrollment.group
+
+    if not can_manage_enrollments(request.user, group):
+        return HttpResponseForbidden("You do not have permission to edit enrollments.")
+
+    if request.method == "POST":
+        form = EnrollmentForm(request.POST, instance=enrollment, group=group)
+        if form.is_valid():
+            form.save()
+            return redirect("lessons:group_detail", pk=group.pk)
+    else:
+        form = EnrollmentForm(instance=enrollment, group=group)
+
+    return render(request, "lessons/enrollment_form.html", {
+        "form": form,
+        "group": group,
+        "enrollment": enrollment,
+    })
+
+@login_required
+def enrollment_delete(request, pk):
+    enrollment = get_object_or_404(Enrollment, pk=pk)
+    group = enrollment.group
+
+    if not can_manage_enrollments(request.user, group):
+        return HttpResponseForbidden("You do not have permission to delete enrollments.")
+
+    if request.method == "POST":
+        enrollment.delete()
+        return redirect("lessons:group_detail", pk=group.pk)
+
+    return render(request, "lessons/enrollment_confirm_delete.html", {
+        "enrollment": enrollment,
+        "group": group,
+    })

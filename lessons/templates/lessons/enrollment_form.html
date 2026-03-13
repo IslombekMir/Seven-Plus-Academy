@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+{% block title %}Group List{%endblock%}
+
+{% block content %}
+<h3>Edit enrollment</h3>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save</button>
+</form>
+{% endblock %}

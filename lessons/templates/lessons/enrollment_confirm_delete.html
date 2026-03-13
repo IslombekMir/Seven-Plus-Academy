@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+{% block title %}Group List{%endblock%}
+
+{% block content %}
+<h3>Delete enrollment?</h3>
+<p>{{ enrollment.student.get_full_name }} in {{ group.name }}</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Confirm delete</button>
+  <a href="{% url 'lessons:group_detail' group.pk %}">Cancel</a>
+</form>
+{% endblock %}
