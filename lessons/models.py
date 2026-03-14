@@ -22,7 +22,7 @@ class Group(models.Model):
     end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.subject}'
 
 ### Enrollment
 class Enrollment(models.Model):

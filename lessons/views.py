@@ -4,8 +4,11 @@ from users.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from .forms import SubjectCreateForm, GroupForm, EnrollmentForm
+from django.db.models import RestrictedError
+from django.contrib import messages
 
 ### Subject
+@login_required
 def subjects_list(request):
     subjects = Subject.objects.all()
 
@@ -64,15 +67,10 @@ def delete_subject(request, subject_id):
     return render(request, "lessons/subject_confirm_delete.html", {"subject": subject})
 
 ### GROUP
-
+@login_required
 def group_list(request):
     groups = Group.objects.all()
     return render(request, "lessons/group_list.html", {"groups": groups})
-
-@login_required
-def group_detail(request, pk):
-    group = get_object_or_404(Group, pk=pk)
-    return render(request, "lessons/group_detail.html", {"group": group})
 
 @login_required
 def group_create(request):
@@ -101,8 +99,15 @@ def group_delete(request, pk):
     if request.user.role == "TEACHER" and group.teacher_id != request.user.id:
         return HttpResponseForbidden("Teachers can only delete their own groups.")
     if request.method == "POST":
-        group.delete()
-        return redirect("lessons:group_list")
+        try:
+            group.delete()
+            return redirect("lessons:group_list")
+        except RestrictedError:
+            messages.error(
+                request,
+                "Cannot delete this group — it still has active enrollments. "
+                "Please remove all enrollments first."
+            )
     return render(request, "lessons/group_confirm_delete.html", {"group": group})
 
 @login_required
@@ -144,8 +149,11 @@ def group_detail(request, pk):
 
     if request.user.role == User.Role.STUDENT:
         enrollments = group.enrollments.filter(student=request.user).select_related("student")
+    elif request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
+        enrollments = Enrollment.objects.none()
     else:
         enrollments = group.enrollments.select_related("student").all()
+
 
     return render(request, "lessons/group_detail.html", {
         "group": group,

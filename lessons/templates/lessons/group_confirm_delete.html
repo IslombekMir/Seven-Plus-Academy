@@ -2,7 +2,11 @@
 {% block title %}Group List{%endblock%}
 
 {% block content %}
-
+{% if messages %}
+  {% for message in messages %}
+    <p class="error">{{ message }}</p>
+  {% endfor %}
+{% endif %}
 <h2>Delete Group</h2>
 <p>Are you sure you want to delete {{ group.name }}?</p>
 <form method="post">

@@ -11,7 +11,7 @@
 <ul>
     {% for group in groups %}
         <li>
-            <a href="{% url 'lessons:group_detail' group.pk %}">{{ group.name }}</a>
+            <a href="{% url 'lessons:group_detail' group.pk %}">{{ group.name }} - {{ group.subject }}</a>
             {% if user.role == "ADMIN" or user == group.teacher %}
                 <a href="{% url 'lessons:group_edit' group.pk %}">Edit</a>
                 <a href="{% url 'lessons:group_delete' group.pk %}">Delete</a>

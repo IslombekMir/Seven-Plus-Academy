@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from .forms import LoginForm
 from django.db.models import Q
+from lessons.models import Group
 
 @login_required
 def users_list(request):
@@ -30,10 +31,20 @@ def users_list(request):
     role_filter = request.GET.get("role")
     if role_filter:
         users = users.filter(role=role_filter)
+    
+    groups_qs = Group.objects.all()
+    if request.user.role == User.Role.TEACHER:
+        groups_qs = groups_qs.filter(teacher=request.user)
+
+    group_filter = request.GET.get("group")
+    if group_filter:
+        users = users.filter(enrollments__group_id=group_filter).distinct()
 
     return render(request, "users/users_list.html", {
         "users": users,
         "can_manage": request.user.role in [User.Role.ADMIN, User.Role.TEACHER],
+        "groups": groups_qs,
+        "selected_group": group_filter,
         })
 
 
