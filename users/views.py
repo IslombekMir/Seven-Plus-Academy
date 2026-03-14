@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import UserCreateForm
 from django.http import HttpResponseForbidden
-from .models import User
+from .models import User, UserSettings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from .forms import LoginForm
 from django.db.models import Q
 from lessons.models import Group
+from lessons.models import Group, Enrollment
+from django.views.decorators.http import require_POST
 
 @login_required
 def users_list(request):
@@ -140,3 +142,46 @@ def reset_password(request, user_id):
     user_obj.save()
 
     return redirect("users:users_list")
+
+
+### Profile
+@login_required
+def profile(request):
+    user = request.user
+    context = {
+        "profile_user": user,
+    }
+
+    if user.role == User.Role.TEACHER:
+        groups = (
+            Group.objects
+            .filter(teacher=user)
+            .select_related("subject", "teacher")
+            .prefetch_related("enrollments__student")
+        )
+        context["groups"] = groups
+
+    elif user.role == User.Role.STUDENT:
+        enrollments = (
+            Enrollment.objects
+            .filter(student=user)
+            .select_related("group__subject", "group__teacher")
+        )
+        context["enrollments"] = enrollments
+
+    return render(request, "users/profile.html", context)
+
+
+### Theme
+@login_required
+@require_POST
+def toggle_theme(request):
+    settings = request.user.settings
+    settings.theme = (
+        UserSettings.Theme.DARK
+        if settings.theme == UserSettings.Theme.LIGHT
+        else UserSettings.Theme.LIGHT
+    )
+    settings.save(update_fields=["theme"])
+    return redirect("users:profile")
+

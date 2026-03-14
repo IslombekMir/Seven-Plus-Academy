@@ -3,13 +3,20 @@
 
 {% block content %}
 
-<h2>{{ group.name }}</h2>
-<p>Subject: {{ group.subject }}</p>
-<p>Teacher: {{ group.teacher.get_full_name }}</p>
-<P>FEE: {{group.default_payment_amount}}</P>
-<p>Schedule: {{ group.week_days }} {{ group.start_time }} - {{ group.end_time }}</p>
-<p>Dates: {{ group.start_date }} to {{ group.end_date }}</p>
-
+<div style="display:flex; gap:20px;">
+    <div>
+        <h2>{{ group.name }}</h2>
+        <p>Subject: {{ group.subject }}</p>
+        <p>Teacher: {{ group.teacher.get_full_name }}</p>
+        <P>FEE: {{group.default_payment_amount}}</P>
+        <p>Schedule: {{ group.week_days }} {{ group.start_time }} - {{ group.end_time }}</p>
+        <p>Dates: {{ group.start_date }} to {{ group.end_date }}</p>
+    </div>
+    <dib>
+        <p>Homework:</p>
+        <p>{{ group.homework_description }}</p>
+    </div>
+</div>
 
 <div style="display:flex; width: 100%; gap: 20px; margin-top: 20px;">
     <div>
