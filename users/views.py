@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UserCreateForm
+from .forms import UserCreateForm, UserEditForm
 from django.http import HttpResponseForbidden
 from .models import User, UserSettings
 from django.contrib.auth.decorators import login_required
@@ -102,12 +102,13 @@ def edit_user(request, user_id):
         return HttpResponseForbidden("Teachers can only edit student users.")
 
     if request.method == "POST":
-        form = UserCreateForm(request.POST, instance=user_obj, current_user=request.user)
+        form = UserEditForm(request.POST, instance=user_obj)
         if form.is_valid():
             form.save()
             return redirect("users:users_list")
     else:
-        form = UserCreateForm(instance=user_obj, current_user=request.user)
+        form = UserEditForm(instance=user_obj)
+
 
     return render(request, "users/create_user.html", {"form": form, "edit_mode": True})
 
