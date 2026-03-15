@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import UserCreateForm, UserEditForm
 from django.http import HttpResponseForbidden
-from .models import User, UserSettings
+from .models import User, UserSettings, TeacherProfile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
-from .forms import LoginForm
+from .forms import LoginForm, TeacherProfileForm
 from django.db.models import Q
 from lessons.models import Group
 from lessons.models import Group, Enrollment
@@ -48,7 +48,6 @@ def users_list(request):
         "groups": groups_qs,
         "selected_group": group_filter,
         })
-
 
 def login_view(request):
     if request.method == "POST":
@@ -186,3 +185,37 @@ def toggle_theme(request):
     settings.save(update_fields=["theme"])
     return redirect("users:profile")
 
+
+### Teacher Profiles
+def _can_edit_teacher_profile(user, teacher_user):
+    return user.role == User.Role.ADMIN or user == teacher_user
+
+@login_required
+def teachers_list(request):
+    teachers = User.objects.filter(role=User.Role.TEACHER).select_related("teacher_profile").order_by("first_name", "last_name", "username")
+
+    if request.user.role == User.Role.STUDENT:
+        teachers = teachers.filter(teacher_profile__is_active_profile=True)
+
+    return render(request, "users/teachers_list.html", {
+        "teachers": teachers,
+    })
+
+@login_required
+def edit_teacher_profile(request, teacher_id):
+    teacher = get_object_or_404(User, pk=teacher_id, role=User.Role.TEACHER)
+
+    if not _can_edit_teacher_profile(request.user, teacher):
+        return HttpResponseForbidden("You can only edit your own profile.")
+
+    profile, _ = TeacherProfile.objects.get_or_create(teacher=teacher)
+    form = TeacherProfileForm(request.POST or None, request.FILES or None, instance=profile)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("users:teachers_list")
+
+    return render(request, "users/edit_teacher_profile.html", {
+        "teacher": teacher,
+        "form": form,
+    })

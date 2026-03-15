@@ -15,4 +15,7 @@ urlpatterns = [
 
     path("profile/", views.profile, name="profile"),
     path('toggle-theme/', views.toggle_theme, name='toggle_theme'),
+
+    path("teachers/", views.teachers_list, name="teachers_list"),
+    path("teachers/<int:teacher_id>/edit/", views.edit_teacher_profile, name="edit_teacher_profile"),
 ]

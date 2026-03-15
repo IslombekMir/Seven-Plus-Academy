@@ -74,3 +74,18 @@ class UserSettings(models.Model):
     
     theme = models.CharField(max_length=20, choices=Theme.choices, default=Theme.LIGHT)
     language = models.CharField(max_length=30, choices=Language.choices, default=Language.UZBEK)
+
+
+class TeacherProfile(models.Model):
+    teacher = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="teacher_profile",
+        limit_choices_to={"role": User.Role.TEACHER},
+    )
+    bio = models.TextField(blank=True)
+    picture = models.ImageField(upload_to="teacher_pictures/", blank=True, null=True)
+    is_active_profile = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"TeacherProfile: {self.teacher.get_full_name() or self.teacher.username}"

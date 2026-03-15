@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+
+{% block title %}Edit Profile — {{ teacher.get_full_name|default:teacher.username }}{% endblock %}
+
+{% block content %}
+<h1>Edit Profile — {{ teacher.get_full_name|default:teacher.username }}</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{% url 'users:teachers_list' %}">Cancel</a>
+</form>
+{% endblock %}

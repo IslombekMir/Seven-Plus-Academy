@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+
+{% block title %}Teachers{% endblock %}
+
+{% block content %}
+<h1>Teachers</h1>
+
+{% if teachers %}
+    <div class="teachers-grid">
+        {% for teacher in teachers %}
+            <div class="teacher-card {% if teacher.teacher_profile and not teacher.teacher_profile.is_active_profile %}teacher-card--inactive{% endif %}" style="border:2px black solid;">
+                <div class="teacher-header">
+                    {% if teacher.teacher_profile and teacher.teacher_profile.picture %}
+                        <img src="{{ teacher.teacher_profile.picture.url }}" alt="{{ teacher.get_full_name }}" class="teacher-avatar">
+                    {% else %}
+                        <div class="teacher-avatar teacher-avatar--placeholder"></div>
+                    {% endif %}
+                    <div>
+                        <strong>{{ teacher.get_full_name|default:teacher.first_name }}</strong>
+                        {% if request.user.role == "ADMIN" or request.user.role == "TEACHER" %}
+                            <div class="teacher-username">{{ teacher.username }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if teacher.teacher_profile and teacher.teacher_profile.bio %}
+                    <p class="teacher-bio">{{ teacher.teacher_profile.bio }}</p>
+                {% else %}
+                    <p class="teacher-bio teacher-bio--empty">No bio yet.</p>
+                {% endif %}
+                {% if request.user.role == "ADMIN" or request.user == teacher %}
+                    <a href="{% url 'users:edit_teacher_profile' teacher.id %}">Edit Profile</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No teachers found.</p>
+{% endif %}
+{% endblock %}

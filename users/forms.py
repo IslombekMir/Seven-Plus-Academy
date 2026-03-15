@@ -1,5 +1,5 @@
 from django import forms
-from .models import User
+from .models import User, TeacherProfile
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -31,5 +31,7 @@ class UserEditForm(forms.ModelForm):
         model = User
         fields = ["first_name", "last_name", "phone_number"]
 
-
-
+class TeacherProfileForm(forms.ModelForm):
+    class Meta:
+        model = TeacherProfile
+        fields = ["bio", "picture", "is_active_profile"]
