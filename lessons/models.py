@@ -53,3 +53,19 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.group} - {self.student}"
+
+
+### Exam
+class Exam(models.Model):
+    name = models.CharField(max_length=100)
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.RESTRICT,
+        related_name="exams",
+    )
+    description = models.TextField(blank=True)
+    date = models.DateField(default=date.today)
+    full_mark = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.group} - {self.name}"

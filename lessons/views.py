@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Subject, Group, Enrollment
+from .models import Subject, Group, Enrollment, Exam
 from users.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .forms import SubjectCreateForm, GroupForm, EnrollmentForm
+from .forms import SubjectCreateForm, GroupForm, EnrollmentForm, ExamForm
 from django.db.models import RestrictedError
 from django.contrib import messages
+from django.forms import modelform_factory
 
 ### Subject
 @login_required
@@ -201,5 +202,94 @@ def enrollment_delete(request, pk):
 
     return render(request, "lessons/enrollment_confirm_delete.html", {
         "enrollment": enrollment,
+        "group": group,
+    })
+
+### Exam
+def can_manage_exams(user, group):
+    return user.role == User.Role.ADMIN or group.teacher == user
+
+def can_view_exams(user, group):
+    if user.role == User.Role.ADMIN:
+        return True
+    if user.role == User.Role.TEACHER:
+        return group.teacher == user
+    if user.role == User.Role.STUDENT:
+        return group.enrollments.filter(student=user).exists()
+    return False
+
+
+@login_required
+def exam_create(request, group_id):
+    group = get_object_or_404(Group, pk=group_id)
+
+    if not can_manage_exams(request.user, group):
+        return HttpResponseForbidden("You do not have permission to create exams.")
+
+    if request.method == "POST":
+        form = ExamForm(request.POST)
+        if form.is_valid():
+            exam = form.save(commit=False)
+            exam.group = group
+            exam.save()
+            return redirect("lessons:exam_list", group_id=group.pk)
+    else:
+        form = ExamForm()
+
+    return render(request, "lessons/exam_form.html", {
+        "form": form,
+        "group": group,
+    })
+
+@login_required
+def exam_list(request, group_id):
+    group = get_object_or_404(Group, pk=group_id)
+
+    if not can_view_exams(request.user, group):
+        return HttpResponseForbidden("You do not have permission to view exams.")
+
+    exams = group.exams.all().order_by("-date")
+
+    return render(request, "lessons/exam_list.html", {
+        "group": group,
+        "exams": exams,
+    })
+
+@login_required
+def exam_edit(request, pk):
+    exam = get_object_or_404(Exam, pk=pk)
+    group = exam.group
+
+    if not can_manage_exams(request.user, group):
+        return HttpResponseForbidden("You do not have permission to edit exams.")
+
+    if request.method == "POST":
+        form = ExamForm(request.POST, instance=exam)
+        if form.is_valid():
+            form.save()
+            return redirect("lessons:exam_list", group_id=group.pk)
+    else:
+        form = ExamForm(instance=exam)
+
+    return render(request, "lessons/exam_form.html", {
+        "form": form,
+        "group": group,
+        "exam": exam,
+    })
+
+@login_required
+def exam_delete(request, pk):
+    exam = get_object_or_404(Exam, pk=pk)
+    group = exam.group
+
+    if not can_manage_exams(request.user, group):
+        return HttpResponseForbidden("You do not have permission to delete exams.")
+
+    if request.method == "POST":
+        exam.delete()
+        return redirect("lessons:exam_list", group_id=group.pk)
+
+    return render(request, "lessons/exam_confirm_delete.html", {
+        "exam": exam,
         "group": group,
     })

@@ -17,4 +17,10 @@ urlpatterns = [
 
     path("enrollments/<int:pk>/edit/", views.enrollment_edit, name="enrollment_edit"),
     path("enrollments/<int:pk>/delete/", views.enrollment_delete, name="enrollment_delete"),
+
+    path("groups/<int:group_id>/exams/", views.exam_list, name="exam_list"),
+    path("groups/<int:group_id>/exams/create/", views.exam_create, name="exam_create"),
+
+    path("exams/<int:pk>/edit/", views.exam_edit, name="exam_edit"),
+    path("exams/<int:pk>/delete/", views.exam_delete, name="exam_delete"),
 ]

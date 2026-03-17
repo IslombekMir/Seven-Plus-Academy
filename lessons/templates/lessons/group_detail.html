@@ -47,5 +47,8 @@
         </form>
     </div>
     {% endif %}
+    <div>
+        <a href="{% url 'lessons:exam_list' group.pk %}">View Exams</a>
+    </div>
 </div>
 {%endblock%}

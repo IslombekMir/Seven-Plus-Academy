@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+{% block title %}Exam List{% endblock %}
+
+{% block content %}
+<h2>Exams for {{ group.name }}</h2>
+
+{% if request.user == group.teacher or request.user.role == 'ADMIN' %}
+    <a href="{% url 'lessons:exam_create' group.pk %}">Create Exam</a>
+{% endif %}
+
+<ul>
+    {% for exam in exams %}
+        <li>
+            {{ exam.name }} - {{ exam.date }} - {{ exam.full_mark }}
+
+            {% if request.user.role == 'ADMIN' or request.user == group.teacher %}
+                <a href="{% url 'lessons:exam_edit' exam.pk %}">Edit</a>
+                <a href="{% url 'lessons:exam_delete' exam.pk %}">Delete</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No exams yet.</li>
+    {% endfor %}
+</ul>
+
+
+<a href="{% url 'lessons:group_detail' group.pk %}">Back to Group</a>
+{% endblock %}

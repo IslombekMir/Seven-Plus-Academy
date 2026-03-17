@@ -1,5 +1,5 @@
 from django import forms
-from .models import Subject, Group, Enrollment
+from .models import Subject, Group, Enrollment, Exam
 from users.models import User
 
 
@@ -44,3 +44,29 @@ class EnrollmentForm(forms.ModelForm):
         if group:
             qs = qs.exclude(enrollments__group=group)
         self.fields["student"].queryset = qs
+
+class ExamForm(forms.ModelForm):
+    class Meta:
+        model = Exam
+        fields = ["name", "description", "date", "full_mark"]
+        widgets = {
+            "name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter exam name",
+            }),
+            "description": forms.Textarea(attrs={
+                "class": "form-control",
+                "placeholder": "Enter exam description",
+                "rows": 4,
+            }),
+            "date": forms.DateInput(attrs={
+                "class": "form-control",
+                "type": "date",
+            }),
+            "full_mark": forms.NumberInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter full mark",
+                "min": 1,
+            }),
+        }
+
