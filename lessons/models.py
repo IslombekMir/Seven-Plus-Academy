@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 from datetime import date
+from django.core.exceptions import ValidationError
 
 class Subject(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -55,7 +56,7 @@ class Enrollment(models.Model):
         return f"{self.group} - {self.student}"
 
 
-### Exam
+### Exam and Mark
 class Exam(models.Model):
     name = models.CharField(max_length=100)
     group = models.ForeignKey(
@@ -69,3 +70,37 @@ class Exam(models.Model):
 
     def __str__(self):
         return f"{self.group} - {self.name}"
+
+class Mark(models.Model):
+    exam = models.ForeignKey(
+        Exam,
+        on_delete=models.CASCADE,
+        related_name="marks",
+    )
+    enrollment = models.ForeignKey(
+        Enrollment,
+        on_delete=models.RESTRICT,
+        related_name="marks",
+    )
+    mark = models.PositiveIntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["exam", "enrollment"],
+                name="unique_exam_enrollment_mark",
+            )
+        ]
+
+    def clean(self):
+        if self.exam_id and self.enrollment_id:
+            if self.enrollment.group_id != self.exam.group_id:
+                raise ValidationError("Enrollment and Exam must belong to the same group.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        exam_str = getattr(self.exam, "name", "No exam")
+        return f"{exam_str} - {self.enrollment.student} - {self.mark}"

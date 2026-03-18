@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Subject, Group, Enrollment, Exam
+from .models import Subject, Group, Enrollment, Exam, Mark
 from users.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .forms import SubjectCreateForm, GroupForm, EnrollmentForm, ExamForm
+from .forms import SubjectCreateForm, GroupForm, EnrollmentForm, ExamForm, MarkForm
 from django.db.models import RestrictedError
 from django.contrib import messages
 from django.forms import modelform_factory
@@ -256,6 +256,34 @@ def exam_list(request, group_id):
     })
 
 @login_required
+def exam_detail(request, pk):
+    exam = get_object_or_404(Exam, pk=pk)
+    group = exam.group
+
+    if not can_view_exams(request.user, group):
+        return HttpResponseForbidden("You do not have permission to view this exam.")
+
+    marks = exam.marks.select_related("enrollment__student").all()
+
+    if can_manage_marks(request.user, group):
+        if request.method == "POST":
+            form = MarkForm(request.POST, exam=exam)
+            if form.is_valid():
+                form.save()
+                return redirect("lessons:exam_detail", pk=exam.pk)
+        else:
+            form = MarkForm(exam=exam)
+    else:
+        form = None
+
+    return render(request, "lessons/exam_detail.html", {
+        "exam": exam,
+        "group": group,
+        "marks": marks,
+        "form": form,
+    })
+
+@login_required
 def exam_edit(request, pk):
     exam = get_object_or_404(Exam, pk=pk)
     group = exam.group
@@ -291,5 +319,26 @@ def exam_delete(request, pk):
 
     return render(request, "lessons/exam_confirm_delete.html", {
         "exam": exam,
+        "group": group,
+    })
+
+### Mark
+def can_manage_marks(user, group):
+    return user.role == User.Role.ADMIN or group.teacher == user
+
+@login_required
+def mark_delete(request, pk):
+    mark = get_object_or_404(Mark, pk=pk)
+    group = mark.exam.group
+
+    if not can_manage_marks(request.user, group):
+        return HttpResponseForbidden("You do not have permission to delete marks.")
+
+    if request.method == "POST":
+        mark.delete()
+        return redirect("lessons:exam_detail", pk=mark.exam.pk)
+
+    return render(request, "lessons/mark_confirm_delete.html", {
+        "mark": mark,
         "group": group,
     })

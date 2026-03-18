@@ -1,0 +1,60 @@
+{% extends "core/base.html" %}
+
+{% block title %} Exam Details {% endblock %}
+
+{% block content %}
+<h1>{{ exam.name }}</h1>
+<p>Group: {{ group.name }}</p>
+<p>Date: {{ exam.date }}</p>
+<p>Full Mark: {{ exam.full_mark }}</p>
+{% if exam.description %}
+<p>{{ exam.description }}</p>
+{% endif %}
+
+{% if form %}
+<button onclick="document.getElementById('mark-modal').style.display='flex'">Add Mark</button>
+
+<div id="mark-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    <div style="background:white; padding:2rem; border-radius:8px; min-width:300px;">
+        <h2>Add Mark</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Save</button>
+            <button type="button" onclick="document.getElementById('mark-modal').style.display='none'">Cancel</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<h2>Marks</h2>
+{% if marks %}
+<table>
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Mark</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mark in marks %}
+        <tr>
+            <td>{{ mark.enrollment.student }}</td>
+            <td>{{ mark.mark }} / {{ exam.full_mark }}</td>
+            <td>
+                {% if form %}
+                <form method="POST" action="{% url 'lessons:mark_delete' mark.pk %}">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No marks yet.</p>
+{% endif %}
+{% endblock %}

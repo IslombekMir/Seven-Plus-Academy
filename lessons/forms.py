@@ -1,5 +1,5 @@
 from django import forms
-from .models import Subject, Group, Enrollment, Exam
+from .models import Subject, Group, Enrollment, Exam, Mark
 from users.models import User
 
 
@@ -70,3 +70,22 @@ class ExamForm(forms.ModelForm):
             }),
         }
 
+class MarkForm(forms.ModelForm):
+    class Meta:
+        model = Mark
+        fields = ['enrollment', 'mark']
+
+    def __init__(self, *args, exam=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.exam = exam  # ✅ STORE IT
+
+        if exam:
+            self.fields['enrollment'].queryset = Enrollment.objects.filter(group=exam.group)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.exam = self.exam
+
+        if commit:
+            instance.save()
+        return instance

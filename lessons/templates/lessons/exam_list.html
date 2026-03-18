@@ -11,7 +11,7 @@
 <ul>
     {% for exam in exams %}
         <li>
-            {{ exam.name }} - {{ exam.date }} - {{ exam.full_mark }}
+            <a href="{% url 'lessons:exam_detail' exam.pk %}">{{ exam.name }}</a> - {{ exam.date }} - {{ exam.full_mark }}
 
             {% if request.user.role == 'ADMIN' or request.user == group.teacher %}
                 <a href="{% url 'lessons:exam_edit' exam.pk %}">Edit</a>
