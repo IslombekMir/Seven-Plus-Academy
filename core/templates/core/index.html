@@ -23,6 +23,9 @@
         <li><a href="{% url 'lessons:subjects_list' %}">Subjects</a></li>
         <li><a href="{% url 'lessons:group_list' %}">Groups</a></li>
         <li><a href="{% url 'users:teachers_list' %}">Teachers</a></li>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'payments:dashboard' %}">Payments</a></li>
+        {% endif %}
     </ul>
 <div>
 {% endblock %}

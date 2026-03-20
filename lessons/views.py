@@ -6,7 +6,8 @@ from django.http import HttpResponseForbidden
 from .forms import SubjectCreateForm, GroupForm, EnrollmentForm, ExamForm, MarkForm
 from django.db.models import RestrictedError
 from django.contrib import messages
-from django.forms import modelform_factory
+from django.utils import timezone
+from payments.models import Payment
 
 ### Subject
 @login_required
@@ -154,12 +155,46 @@ def group_detail(request, pk):
     else:
         enrollments = group.enrollments.select_related("student").all()
 
+    current_date = timezone.now()
+    selected_month = request.GET.get("month") or str(current_date.month)
+    selected_year = request.GET.get("year") or str(current_date.year)
+
+    payments = (
+        group.payments
+        .select_related("student", "enrollment")
+        .order_by("-payment_year", "-payment_month", "-created_at")
+    )
+
+    if request.user.role == User.Role.STUDENT:
+        payments = payments.filter(student=request.user)
+
+    if selected_month:
+        payments = payments.filter(payment_month=selected_month)
+
+    if selected_year:
+        payments = payments.filter(payment_year=selected_year)
+
+    available_years = (
+        Payment.objects
+        .filter(group=group)
+        .order_by("-payment_year")
+        .values_list("payment_year", flat=True)
+        .distinct()
+    )
+
+    if not available_years:
+        available_years = [current_date.year]
 
     return render(request, "lessons/group_detail.html", {
         "group": group,
         "enrollments": enrollments,
         "enrollment_form": enrollment_form,
         "can_manage_payments": request.user.role == User.Role.ADMIN or group.teacher == request.user,
+        "payments": payments,
+        "selected_month": selected_month,
+        "selected_year": selected_year,
+        "months": range(1, 13),
+        "years": available_years,
     })
 
 ### Enrollment

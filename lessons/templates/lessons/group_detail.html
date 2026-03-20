@@ -32,7 +32,9 @@
                             <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}">Delete</a>
                     {% endif %}
                     {% if can_manage_payments %}
-                        <a href="{% url 'payments:payment_create' enrollment.pk %}">Add payment</a>
+                        <a href="{% url 'payments:payment_create' enrollment.pk %}?month={{ selected_month }}&year={{ selected_year }}">
+                            Add payment
+                        </a>
                     {% endif %}
                 </li>
             {% empty %}
@@ -55,20 +57,44 @@
     </div>
     <div>
         <h3>Payments</h3>
+
+        <form method="get" style="margin-bottom: 12px;">
+            <label for="payment-month">Month:</label>
+            <select name="month" id="payment-month">
+                {% for month in months %}
+                    <option value="{{ month }}" {% if selected_month == month|stringformat:"s" %}selected{% endif %}>
+                        {{ month }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="payment-year">Year:</label>
+            <select name="year" id="payment-year">
+                {% for year in years %}
+                    <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
+                        {{ year }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Filter</button>
+            <a href="{% url 'lessons:group_detail' group.pk %}">Reset</a>
+        </form>
+
         <ul>
-            {% for payment in group.payments.all %}
+            {% for payment in payments %}
                 <li>
                     {{ payment.student.get_full_name }}
+                    - {{ payment.payment_month }}/{{ payment.payment_year }}
                     - paid: {{ payment.paid_amount }}/{{ payment.expected_amount }}
                     - {{ payment.created_at|date:"Y-m-d H:i" }}
                     {% if can_manage_payments %}
                         <a href="{% url 'payments:payment_edit' payment.pk %}">Edit</a>
                         <a href="{% url 'payments:payment_delete' payment.pk %}">Delete</a>
                     {% endif %}
-
                 </li>
             {% empty %}
-                <li>No payments yet.</li>
+                <li>No payments found for this month and year.</li>
             {% endfor %}
         </ul>
     </div>

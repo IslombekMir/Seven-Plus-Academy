@@ -1,7 +1,13 @@
 from django.db import models
 from lessons.models import Enrollment, Group
 from users.models import User
+from django.utils import timezone
 
+def current_year():
+    return timezone.now().year
+
+def current_month():
+    return timezone.now().month
 
 class Payment(models.Model):
     enrollment = models.ForeignKey(
@@ -32,6 +38,8 @@ class Payment(models.Model):
         decimal_places=2,
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    payment_year = models.PositiveSmallIntegerField(default=current_year)
+    payment_month = models.PositiveSmallIntegerField(default=current_month)
 
     def save(self, *args, **kwargs):
         self.student = self.enrollment.student

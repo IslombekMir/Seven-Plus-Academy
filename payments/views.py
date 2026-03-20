@@ -2,9 +2,18 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 
-from lessons.models import Enrollment
+from lessons.models import Enrollment, Group
 from users.models import User
 from .forms import PaymentForm
+
+from datetime import date
+from decimal import Decimal
+from django.db.models import DecimalField, Sum, Value
+from django.db.models.functions import Coalesce
+
+from .models import Payment
+from django.urls import reverse
+
 
 
 def can_manage_payments(user, enrollment):
@@ -21,22 +30,33 @@ def payment_create(request, enrollment_id):
     if not can_manage_payments(request.user, enrollment):
         return HttpResponseForbidden("You do not have permission to create payments.")
 
+    initial = {}
+    selected_month = request.GET.get("month")
+    selected_year = request.GET.get("year")
+
+    if selected_month:
+        initial["payment_month"] = selected_month
+    if selected_year:
+        initial["payment_year"] = selected_year
+
     if request.method == "POST":
         form = PaymentForm(request.POST)
         if form.is_valid():
             payment = form.save(commit=False)
             payment.enrollment = enrollment
             payment.save()
-            return redirect("lessons:group_detail", pk=enrollment.group.pk)
+            return redirect(
+                f"{reverse('lessons:group_detail', kwargs={'pk': enrollment.group.pk})}"
+                f"?month={payment.payment_month}&year={payment.payment_year}"
+            )
     else:
-        form = PaymentForm()
+        form = PaymentForm(initial=initial)
 
     return render(request, "payments/payment_form.html", {
         "form": form,
         "enrollment": enrollment,
     })
 
-from .models import Payment
 
 
 @login_required
@@ -52,8 +72,11 @@ def payment_edit(request, pk):
     if request.method == "POST":
         form = PaymentForm(request.POST, instance=payment)
         if form.is_valid():
-            form.save()
-            return redirect("lessons:group_detail", pk=payment.group.pk)
+            payment = form.save()
+            return redirect(
+                f"{reverse('lessons:group_detail', kwargs={'pk': payment.group.pk})}"
+                f"?month={payment.payment_month}&year={payment.payment_year}"
+            )
     else:
         form = PaymentForm(instance=payment)
 
@@ -62,6 +85,7 @@ def payment_edit(request, pk):
         "payment": payment,
         "enrollment": payment.enrollment,
     })
+
 
 
 @login_required
@@ -81,4 +105,109 @@ def payment_delete(request, pk):
 
     return render(request, "payments/payment_confirm_delete.html", {
         "payment": payment,
+    })
+
+
+@login_required
+def payment_dashboard(request):
+    scoped_payments = (
+        Payment.objects
+        .select_related("student", "group", "group__teacher", "enrollment")
+        .order_by("-payment_year", "-payment_month", "-created_at")
+    )
+
+    if request.user.role == User.Role.TEACHER:
+        scoped_payments = scoped_payments.filter(group__teacher=request.user)
+    elif request.user.role == User.Role.STUDENT:
+        scoped_payments = scoped_payments.filter(student=request.user)
+
+    selected_month = request.GET.get("month", "")
+    selected_teacher = request.GET.get("teacher", "")
+    selected_student = request.GET.get("student", "")
+    selected_group = request.GET.get("group", "")
+
+    payments = scoped_payments
+
+    if selected_month:
+        try:
+            year_str, month_str = selected_month.split("-")
+            payments = payments.filter(
+                payment_year=int(year_str),
+                payment_month=int(month_str),
+            )
+        except ValueError:
+            pass
+
+    if selected_teacher:
+        payments = payments.filter(group__teacher_id=selected_teacher)
+
+    if selected_student:
+        payments = payments.filter(student_id=selected_student)
+
+    if selected_group:
+        payments = payments.filter(group_id=selected_group)
+
+    money_field = DecimalField(max_digits=12, decimal_places=2)
+    totals = payments.aggregate(
+        total_paid=Coalesce(
+            Sum("paid_amount"),
+            Value(Decimal("0.00")),
+            output_field=money_field,
+        ),
+        total_expected=Coalesce(
+            Sum("expected_amount"),
+            Value(Decimal("0.00")),
+            output_field=money_field,
+        ),
+    )
+
+    total_paid = totals["total_paid"]
+    total_expected = totals["total_expected"]
+    collection_percent = round((total_paid / total_expected) * 100, 1) if total_expected else 0
+
+    teacher_ids = scoped_payments.values_list("group__teacher_id", flat=True).distinct()
+    student_ids = scoped_payments.values_list("student_id", flat=True).distinct()
+    group_ids = scoped_payments.values_list("group_id", flat=True).distinct()
+
+    teachers = User.objects.filter(
+        pk__in=teacher_ids,
+        role=User.Role.TEACHER,
+    ).order_by("first_name", "last_name", "username")
+
+    students = User.objects.filter(
+        pk__in=student_ids,
+        role=User.Role.STUDENT,
+    ).order_by("first_name", "last_name", "username")
+
+    groups = Group.objects.filter(
+        pk__in=group_ids,
+    ).select_related("subject", "teacher").order_by("name")
+
+    month_rows = (
+        scoped_payments
+        .values("payment_year", "payment_month")
+        .distinct()
+        .order_by("-payment_year", "-payment_month")
+    )
+    month_choices = [
+        {
+            "value": f"{row['payment_year']}-{row['payment_month']:02d}",
+            "label": date(row["payment_year"], row["payment_month"], 1).strftime("%B %Y"),
+        }
+        for row in month_rows
+    ]
+
+    return render(request, "payments/payment_dashboard.html", {
+        "payments": payments,
+        "teachers": teachers,
+        "students": students,
+        "groups": groups,
+        "month_choices": month_choices,
+        "selected_month": selected_month,
+        "selected_teacher": selected_teacher,
+        "selected_student": selected_student,
+        "selected_group": selected_group,
+        "total_paid": total_paid,
+        "total_expected": total_expected,
+        "collection_percent": collection_percent,
     })
