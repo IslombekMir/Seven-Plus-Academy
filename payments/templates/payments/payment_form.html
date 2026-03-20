@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% block title %}Payment Form{% endblock %}
+
+{% block content %}
+<h3>{% if payment %}Edit payment{% else %}Create payment{% endif %}</h3>
+
+<p>Student: {{ enrollment.student.get_full_name }} ({{ enrollment.student.username }})</p>
+<p>Group: {{ enrollment.group.name }}</p>
+<p>Expected amount: {{ enrollment.payment_amount }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save</button>
+  <a href="{% url 'lessons:group_detail' enrollment.group.pk %}">Cancel</a>
+</form>
+{% endblock %}

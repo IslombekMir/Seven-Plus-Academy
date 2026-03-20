@@ -91,7 +91,6 @@ def group_create(request):
 
     return render(request, "lessons/group_form.html", {"form": form})
 
-
 @login_required
 def group_delete(request, pk):
     if request.user.role == "STUDENT":
@@ -160,6 +159,7 @@ def group_detail(request, pk):
         "group": group,
         "enrollments": enrollments,
         "enrollment_form": enrollment_form,
+        "can_manage_payments": request.user.role == User.Role.ADMIN or group.teacher == request.user,
     })
 
 ### Enrollment

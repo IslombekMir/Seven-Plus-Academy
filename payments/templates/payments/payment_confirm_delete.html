@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% block title %}Delete Payment{% endblock %}
+
+{% block content %}
+<h3>Delete payment?</h3>
+
+<p>Student: {{ payment.student.get_full_name }}</p>
+<p>Group: {{ payment.group.name }}</p>
+<p>Paid amount: {{ payment.paid_amount }}</p>
+<p>Expected amount: {{ payment.expected_amount }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Confirm delete</button>
+  <a href="{% url 'lessons:group_detail' payment.group.pk %}">Cancel</a>
+</form>
+{% endblock %}

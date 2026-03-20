@@ -31,6 +31,9 @@
                             <a href="{% url 'lessons:enrollment_edit' enrollment.pk %}">Edit</a>
                             <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}">Delete</a>
                     {% endif %}
+                    {% if can_manage_payments %}
+                        <a href="{% url 'payments:payment_create' enrollment.pk %}">Add payment</a>
+                    {% endif %}
                 </li>
             {% empty %}
                 <li>No students enrolled yet.</li>
@@ -49,6 +52,25 @@
     {% endif %}
     <div>
         <a href="{% url 'lessons:exam_list' group.pk %}">View Exams</a>
+    </div>
+    <div>
+        <h3>Payments</h3>
+        <ul>
+            {% for payment in group.payments.all %}
+                <li>
+                    {{ payment.student.get_full_name }}
+                    - paid: {{ payment.paid_amount }}/{{ payment.expected_amount }}
+                    - {{ payment.created_at|date:"Y-m-d H:i" }}
+                    {% if can_manage_payments %}
+                        <a href="{% url 'payments:payment_edit' payment.pk %}">Edit</a>
+                        <a href="{% url 'payments:payment_delete' payment.pk %}">Delete</a>
+                    {% endif %}
+
+                </li>
+            {% empty %}
+                <li>No payments yet.</li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 {%endblock%}
