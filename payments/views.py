@@ -193,7 +193,6 @@ def payment_dashboard(request):
 
     selected_month = request.GET.get("month", "")
     selected_teacher = request.GET.get("teacher", "")
-    selected_student = request.GET.get("student", "")
     selected_group = request.GET.get("group", "")
 
     payments = scoped_payments
@@ -210,9 +209,6 @@ def payment_dashboard(request):
 
     if selected_teacher:
         payments = payments.filter(group__teacher_id=selected_teacher)
-
-    if selected_student:
-        payments = payments.filter(student_id=selected_student)
 
     if selected_group:
         payments = payments.filter(group_id=selected_group)
@@ -236,17 +232,11 @@ def payment_dashboard(request):
     collection_percent = round((total_paid / total_expected) * 100, 1) if total_expected else 0
 
     teacher_ids = scoped_payments.values_list("group__teacher_id", flat=True).distinct()
-    student_ids = scoped_payments.values_list("student_id", flat=True).distinct()
     group_ids = scoped_payments.values_list("group_id", flat=True).distinct()
 
     teachers = User.objects.filter(
         pk__in=teacher_ids,
         role=User.Role.TEACHER,
-    ).order_by("first_name", "last_name", "username")
-
-    students = User.objects.filter(
-        pk__in=student_ids,
-        role=User.Role.STUDENT,
     ).order_by("first_name", "last_name", "username")
 
     groups = Group.objects.filter(
@@ -270,12 +260,10 @@ def payment_dashboard(request):
     return render(request, "payments/payment_dashboard.html", {
         "payments": payments,
         "teachers": teachers,
-        "students": students,
         "groups": groups,
         "month_choices": month_choices,
         "selected_month": selected_month,
         "selected_teacher": selected_teacher,
-        "selected_student": selected_student,
         "selected_group": selected_group,
         "total_paid": total_paid,
         "total_expected": total_expected,
