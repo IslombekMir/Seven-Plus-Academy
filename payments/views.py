@@ -14,10 +14,78 @@ from django.db.models.functions import Coalesce
 from .models import Payment
 from django.urls import reverse
 
+from django.utils import timezone
+
 
 
 def can_manage_payments(user, enrollment):
     return user.role == User.Role.ADMIN or enrollment.group.teacher == user
+
+
+def can_view_group_payments(user, group):
+    if user.role == User.Role.ADMIN:
+        return True
+    if user.role == User.Role.TEACHER:
+        return group.teacher == user
+    if user.role == User.Role.STUDENT:
+        return group.enrollments.filter(student=user).exists()
+    return False
+
+
+@login_required
+def payment_group_detail(request, group_id):
+    group = get_object_or_404(
+        Group.objects.select_related("subject", "teacher"),
+        pk=group_id,
+    )
+
+    if not can_view_group_payments(request.user, group):
+        return HttpResponseForbidden("You do not have permission to view this payments page.")
+
+    enrollments = group.enrollments.select_related("student").all()
+    if request.user.role == User.Role.STUDENT:
+        enrollments = enrollments.filter(student=request.user)
+
+    current_date = timezone.now()
+    selected_month = request.GET.get("month") or str(current_date.month)
+    selected_year = request.GET.get("year") or str(current_date.year)
+
+    payments = (
+        group.payments
+        .select_related("student", "enrollment")
+        .order_by("-payment_year", "-payment_month", "-created_at")
+    )
+
+    if request.user.role == User.Role.STUDENT:
+        payments = payments.filter(student=request.user)
+
+    if selected_month:
+        payments = payments.filter(payment_month=selected_month)
+
+    if selected_year:
+        payments = payments.filter(payment_year=selected_year)
+
+    available_years = (
+        Payment.objects
+        .filter(group=group)
+        .order_by("-payment_year")
+        .values_list("payment_year", flat=True)
+        .distinct()
+    )
+
+    if not available_years:
+        available_years = [current_date.year]
+
+    return render(request, "payments/group_detail.html", {
+        "group": group,
+        "enrollments": enrollments,
+        "payments": payments,
+        "selected_month": selected_month,
+        "selected_year": selected_year,
+        "months": range(1, 13),
+        "years": available_years,
+        "can_manage_payments": request.user.role == User.Role.ADMIN or group.teacher == request.user,
+    })
 
 
 @login_required
@@ -46,9 +114,10 @@ def payment_create(request, enrollment_id):
             payment.enrollment = enrollment
             payment.save()
             return redirect(
-                f"{reverse('lessons:group_detail', kwargs={'pk': enrollment.group.pk})}"
+                f"{reverse('payments:group_detail', kwargs={'group_id': enrollment.group.pk})}"
                 f"?month={payment.payment_month}&year={payment.payment_year}"
             )
+
     else:
         form = PaymentForm(initial=initial)
 
@@ -74,9 +143,10 @@ def payment_edit(request, pk):
         if form.is_valid():
             payment = form.save()
             return redirect(
-                f"{reverse('lessons:group_detail', kwargs={'pk': payment.group.pk})}"
+                f"{reverse('payments:group_detail', kwargs={'group_id': payment.group.pk})}"
                 f"?month={payment.payment_month}&year={payment.payment_year}"
             )
+
     else:
         form = PaymentForm(instance=payment)
 
@@ -101,7 +171,7 @@ def payment_delete(request, pk):
     if request.method == "POST":
         group_pk = payment.group.pk
         payment.delete()
-        return redirect("lessons:group_detail", pk=group_pk)
+        return redirect("payments:group_detail", group_id=group_pk)
 
     return render(request, "payments/payment_confirm_delete.html", {
         "payment": payment,

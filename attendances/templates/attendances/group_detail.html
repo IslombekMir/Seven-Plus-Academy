@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ group.name }} Attendances{% endblock %}
+
+{% block content %}
+<h1>{{ group.name }} Attendances</h1>
+
+<p>Subject: {{ group.subject }}</p>
+<p>Teacher: {{ group.teacher.get_full_name }}</p>
+<p><a href="{% url 'lessons:group_detail' group.pk %}">Back to group</a></p>
+
+{% if form %}
+    <h3>Create attendance session</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create session</button>
+    </form>
+{% endif %}
+
+<h3>Attendance sessions</h3>
+<ul>
+    {% for session in sessions %}
+        <li>
+            <a href="{% url 'attendances:session_detail' session.pk %}">{{ session.date }}</a>
+            - created by {{ session.created_by.get_full_name|default:session.created_by.username }}
+            - {{ session.attendances.count }} records
+        </li>
+    {% empty %}
+        <li>No attendance sessions yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -6,8 +6,8 @@ from django.http import HttpResponseForbidden
 from .forms import SubjectCreateForm, GroupForm, EnrollmentForm, ExamForm, MarkForm
 from django.db.models import RestrictedError
 from django.contrib import messages
-from django.utils import timezone
 from payments.models import Payment
+from django.utils import timezone
 
 ### Subject
 @login_required
@@ -186,16 +186,11 @@ def group_detail(request, pk):
         available_years = [current_date.year]
 
     return render(request, "lessons/group_detail.html", {
-        "group": group,
-        "enrollments": enrollments,
-        "enrollment_form": enrollment_form,
-        "can_manage_payments": request.user.role == User.Role.ADMIN or group.teacher == request.user,
-        "payments": payments,
-        "selected_month": selected_month,
-        "selected_year": selected_year,
-        "months": range(1, 13),
-        "years": available_years,
-    })
+    "group": group,
+    "enrollments": enrollments,
+    "enrollment_form": enrollment_form,
+})
+
 
 ### Enrollment
 def can_manage_enrollments(user, group):

@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Attendance Session{% endblock %}
+
+{% block content %}
+<h1>{{ group.name }} - {{ session.date }}</h1>
+
+<p>Teacher: {{ group.teacher.get_full_name }}</p>
+<p>Created by: {{ session.created_by.get_full_name|default:session.created_by.username }}</p>
+<p><a href="{% url 'attendances:group_detail' group.pk %}">Back to group attendance</a></p>
+
+{% if can_manage %}
+    <form method="post">
+        {% csrf_token %}
+        <table border="1" cellpadding="8">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for field in form %}
+                    <tr>
+                        <td>{{ field.label }}</td>
+                        <td>{{ field }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="submit" style="margin-top: 12px;">Save attendance</button>
+    </form>
+{% else %}
+    <ul>
+        {% for attendance in session.attendances.all %}
+            <li>
+                {{ attendance.student.get_full_name }} ({{ attendance.student.username }})
+                - {{ attendance.get_status_display }}
+            </li>
+        {% empty %}
+            <li>No attendance records yet.</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

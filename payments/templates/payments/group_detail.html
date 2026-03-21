@@ -1,0 +1,69 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ group.name }} Payments{% endblock %}
+
+{% block content %}
+<h1>{{ group.name }} Payments</h1>
+
+<p>Subject: {{ group.subject }}</p>
+<p>Teacher: {{ group.teacher.get_full_name }}</p>
+<p><a href="{% url 'lessons:group_detail' group.pk %}">Back to group</a></p>
+
+<h3>Students</h3>
+<ul>
+    {% for enrollment in enrollments %}
+        <li>
+            {{ enrollment.student.get_full_name }} ({{ enrollment.student.username }})
+            {% if can_manage_payments %}
+                <a href="{% url 'payments:payment_create' enrollment.pk %}?month={{ selected_month }}&year={{ selected_year }}">
+                    Add payment
+                </a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No students enrolled yet.</li>
+    {% endfor %}
+</ul>
+
+<h3>Payments</h3>
+
+<form method="get" style="margin-bottom: 12px;">
+    <label for="payment-month">Month:</label>
+    <select name="month" id="payment-month">
+        {% for month in months %}
+            <option value="{{ month }}" {% if selected_month == month|stringformat:"s" %}selected{% endif %}>
+                {{ month }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label for="payment-year">Year:</label>
+    <select name="year" id="payment-year">
+        {% for year in years %}
+            <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
+                {{ year }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+    <a href="{% url 'payments:group_detail' group.pk %}">Reset</a>
+</form>
+
+<ul>
+    {% for payment in payments %}
+        <li>
+            {{ payment.student.get_full_name }}
+            - {{ payment.payment_month }}/{{ payment.payment_year }}
+            - paid: {{ payment.paid_amount }}/{{ payment.expected_amount }}
+            - {{ payment.created_at|date:"Y-m-d H:i" }}
+            {% if can_manage_payments %}
+                <a href="{% url 'payments:payment_edit' payment.pk %}">Edit</a>
+                <a href="{% url 'payments:payment_delete' payment.pk %}">Delete</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No payments found for this month and year.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

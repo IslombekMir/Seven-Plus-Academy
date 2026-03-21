@@ -26,6 +26,10 @@
         {% if user.is_authenticated %}
             <li><a href="{% url 'payments:dashboard' %}">Payments</a></li>
         {% endif %}
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'attendances:dashboard' %}">Attendances</a></li>
+        {% endif %}
+
     </ul>
 <div>
 {% endblock %}

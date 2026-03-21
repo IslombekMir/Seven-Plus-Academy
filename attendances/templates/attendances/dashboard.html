@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Attendances{% endblock %}
+
+{% block content %}
+<h1>Attendances</h1>
+
+<ul>
+    {% for group in groups %}
+        <li style="margin-bottom: 20px;">
+            <p>
+                <a href="{% url 'attendances:group_detail' group.pk %}">{{ group.name }}</a>
+                - {{ group.subject }}
+                - {{ group.teacher.get_full_name }}
+            </p>
+        </li>
+    {% empty %}
+        <li>No groups available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
