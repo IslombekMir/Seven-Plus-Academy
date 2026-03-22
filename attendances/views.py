@@ -118,11 +118,15 @@ def attendance_session_detail(request, pk):
         for attendance in attendances
     }
 
+    enrollment_attendance_pairs = [
+        (enrollment, attendance_map.get(enrollment.pk))
+        for enrollment in enrollments
+    ]
+
     return render(request, "attendances/session_detail.html", {
         "session": session,
         "group": group,
         "form": form,
-        "enrollments": enrollments,
-        "attendance_map": attendance_map,
+        "enrollment_attendance_pairs": enrollment_attendance_pairs,
         "can_manage": can_manage_attendance(request.user, group),
     })
