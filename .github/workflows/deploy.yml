@@ -42,7 +42,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
             cd /root/islombek/Seven-Plus-Academy &&
-            docker compose down --remove-orphans &&
             docker compose pull web &&
-            docker compose up -d web
+            docker compose up -d --no-deps --build web
           "
