@@ -41,7 +41,7 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
-            cd /root/academy-app &&
+            cd /root/islombek/Seven-Plus-Academy &&
             docker compose pull web &&
             docker compose up -d --no-deps --force-recreate web
           "
