@@ -17,9 +17,7 @@ services:
       - academy_network
 
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: islombekwiut/academy_web:latest
     container_name: academy_web
     restart: unless-stopped
     env_file:
@@ -46,7 +44,7 @@ services:
       - web
     ports:
       - "80:80"
-      - "443:443"        # ← added
+      - "443:443"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - static_volume:/app/staticfiles:ro
