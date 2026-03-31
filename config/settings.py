@@ -145,3 +145,4 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.sevenplusac.uz",
 ]
 # test ci/cd
+# test again
