@@ -18,4 +18,6 @@ urlpatterns = [
 
     path("teachers/", views.teachers_list, name="teachers_list"),
     path("teachers/<int:teacher_id>/edit/", views.edit_teacher_profile, name="edit_teacher_profile"),
+
+    path("force-password-change/", views.force_password_change, name="force_password_change"),
 ]

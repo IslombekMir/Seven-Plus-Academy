@@ -1,15 +1,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UserCreateForm, UserEditForm
 from django.http import HttpResponseForbidden
 from .models import User, UserSettings, TeacherProfile
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.http import HttpResponse
-from .forms import LoginForm, TeacherProfileForm
 from django.db.models import Q
 from lessons.models import Group
 from lessons.models import Group, Enrollment
 from django.views.decorators.http import require_POST
+
+from .forms import (
+    LoginForm,
+    TeacherProfileForm,
+    UserCreateForm,
+    UserEditForm,
+)
+
+from .forms import FirstLoginPasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+
 
 @login_required
 def users_list(request):
@@ -58,6 +68,8 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
+                if user.must_reset_password:
+                    return redirect("users:force_password_change")
                 return redirect("core:index")
             else:
                 form.add_error(None, "Invalid username or password")
@@ -219,3 +231,19 @@ def edit_teacher_profile(request, teacher_id):
         "teacher": teacher,
         "form": form,
     })
+
+### Password Change
+@login_required
+def force_password_change(request):
+    user = request.user
+
+    form = FirstLoginPasswordChangeForm(user, request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        user.must_reset_password = False
+        user.save()
+        update_session_auth_hash(request, user)  # keep user logged in
+        return redirect("core:index")
+
+    return render(request, "users/force_password_change.html", {"form": form})
