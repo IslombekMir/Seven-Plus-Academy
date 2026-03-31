@@ -34,10 +34,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     && rm -rf /var/lib/apt/lists/* && \
     addgroup --system app && \
-    adduser --system --ingroup app app
+    adduser --system --ingroup app --home /home/app app
+    mkdir -p /home/app
+    chown -R app:app /home/app
 
 COPY --from=builder /opt/venv /opt/venv
 COPY . .
+
+RUN chown -R app:app /app
 
 RUN mkdir -p /app/staticfiles /app/media \
     && chown -R app:app /app/staticfiles /app/media
