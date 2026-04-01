@@ -17,6 +17,7 @@ services:
       - academy_network
 
   web:
+    web:
     image: islombekwiut/academy_web:latest
     container_name: academy_web
     restart: unless-stopped
