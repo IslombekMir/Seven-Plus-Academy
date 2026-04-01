@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from lessons.models import Enrollment, Group
 from users.models import User
-from .forms import PaymentForm
+from .forms import PaymentForm, MONTH_CHOICES
 
 from datetime import date
 from decimal import Decimal
@@ -82,7 +82,7 @@ def payment_group_detail(request, group_id):
         "payments": payments,
         "selected_month": selected_month,
         "selected_year": selected_year,
-        "months": range(1, 13),
+        "months": MONTH_CHOICES,
         "years": available_years,
         "can_manage_payments": request.user.role == User.Role.ADMIN or group.teacher == request.user,
     })
@@ -126,8 +126,6 @@ def payment_create(request, enrollment_id):
         "enrollment": enrollment,
     })
 
-
-
 @login_required
 def payment_edit(request, pk):
     payment = get_object_or_404(
@@ -155,8 +153,6 @@ def payment_edit(request, pk):
         "payment": payment,
         "enrollment": payment.enrollment,
     })
-
-
 
 @login_required
 def payment_delete(request, pk):
@@ -200,11 +196,15 @@ def payment_dashboard(request):
     elif request.user.role == User.Role.STUDENT:
         scoped_payments = scoped_payments.filter(student=request.user)
 
+    selected_student = request.GET.get("student", "")
     selected_month = request.GET.get("month", "")
     selected_teacher = request.GET.get("teacher", "")
     selected_group = request.GET.get("group", "")
 
     payments = scoped_payments
+
+    if selected_student:
+        payments = payments.filter(student_id=selected_student)
 
     if selected_month:
         try:
@@ -240,8 +240,14 @@ def payment_dashboard(request):
     total_expected = totals["total_expected"]
     collection_percent = round((total_paid / total_expected) * 100, 1) if total_expected else 0
 
+    student_ids = scoped_payments.values_list("student_id", flat=True).distinct()
     teacher_ids = scoped_payments.values_list("group__teacher_id", flat=True).distinct()
     group_ids = scoped_payments.values_list("group_id", flat=True).distinct()
+
+    students = User.objects.filter(
+        pk__in=student_ids,
+        role=User.Role.STUDENT,
+    ).order_by("first_name", "last_name", "username")
 
     teachers = User.objects.filter(
         pk__in=teacher_ids,
@@ -269,10 +275,12 @@ def payment_dashboard(request):
     return render(request, "payments/payment_dashboard.html", {
         "payment_groups": payment_groups,
         "payments": payments,
+        "students": students,
         "teachers": teachers,
         "groups": groups,
         "month_choices": month_choices,
         "selected_month": selected_month,
+        "selected_student": selected_student,
         "selected_teacher": selected_teacher,
         "selected_group": selected_group,
         "total_paid": total_paid,

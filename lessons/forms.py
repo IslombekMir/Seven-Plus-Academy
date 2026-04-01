@@ -43,7 +43,18 @@ class EnrollmentForm(forms.ModelForm):
         qs = User.objects.filter(role=User.Role.STUDENT)
         if group:
             qs = qs.exclude(enrollments__group=group)
-        self.fields["student"].queryset = qs
+
+        if self.instance and self.instance.pk and self.instance.student_id:
+            qs = qs | User.objects.filter(pk=self.instance.student_id)
+            self.fields["student"].disabled = True
+
+        self.fields["student"].queryset = qs.distinct()
+
+    def clean_student(self):
+        if self.instance and self.instance.pk:
+            return self.instance.student
+        return self.cleaned_data["student"]
+
 
 class ExamForm(forms.ModelForm):
     class Meta:

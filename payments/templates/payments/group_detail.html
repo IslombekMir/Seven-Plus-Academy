@@ -30,12 +30,13 @@
 <form method="get" style="margin-bottom: 12px;">
     <label for="payment-month">Month:</label>
     <select name="month" id="payment-month">
-        {% for month in months %}
-            <option value="{{ month }}" {% if selected_month == month|stringformat:"s" %}selected{% endif %}>
-                {{ month }}
+        {% for month_value, month_label in months %}
+            <option value="{{ month_value }}" {% if selected_month == month_value|stringformat:"s" %}selected{% endif %}>
+                {{ month_label }}
             </option>
         {% endfor %}
     </select>
+
 
     <label for="payment-year">Year:</label>
     <select name="year" id="payment-year">
