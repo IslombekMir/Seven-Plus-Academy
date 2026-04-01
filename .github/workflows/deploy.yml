@@ -48,5 +48,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
             cd /root/islombek/Seven-Plus-Academy &&
             docker compose pull web &&
-            docker compose up -d --force-recreate --no-deps web
+            docker compose up -d --force-recreate --no-deps web &&
+            docker compose up -d --force-recreate --no-deps nginx
           "
