@@ -1,11 +1,24 @@
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
+
+{% block title %}Delete User{% endblock %}
 
 {% block content %}
-<h2>Delete User</h2>
-<p>Are you sure you want to delete {{user.username}} - {{ user.get_full_name }} ({{ user.username }})?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, delete</button>
-    <a href="{% url 'users:users_list' %}">Cancel</a>
-</form>
+<div class="confirm-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Delete User</h1>
+  </div>
+
+  <div class="card confirm-card">
+    <p>Are you sure you want to delete <span class="danger-text">{{ user.get_full_name }}</span> ({{ user.username }})?</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="inline-actions">
+        <button type="submit" style="background:var(--danger);">Yes, delete</button>
+        <a href="{% url 'users:users_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

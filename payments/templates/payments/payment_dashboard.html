@@ -1,118 +1,145 @@
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
 
 {% block title %}Payments{% endblock %}
 
 {% block content %}
-<h2>Payments</h2>
-<h3>Groups</h3>
-<ul>
-    {% for group in payment_groups %}
-        <li style="margin-bottom: 20px;">
-            <p>
-                <a href="{% url 'payments:group_detail' group.pk %}">{{ group.name }}</a>
-                - {{ group.subject }}
-                - {{ group.teacher.get_full_name|default:group.teacher.username }}
-            </p>
-        </li>
-    {% empty %}
-        <li>No groups available.</li>
-    {% endfor %}
-</ul>
+<div class="dashboard-page">
 
-<form method="get" id="payments-filter-form">
-    <select name="month">
+  <div class="page-header">
+    <h1 class="page-title">Payments</h1>
+  </div>
+
+  <div class="stats-grid">
+    {% for group in payment_groups %}
+      <div class="stat-card">
+        <div class="stat-label">{{ group.subject }} · {{ group.teacher.get_full_name|default:group.teacher.username }}</div>
+        <div class="stat-value" style="font-size:1.1rem;">
+          <a href="{% url 'payments:group_detail' group.pk %}">{{ group.name }}</a>
+        </div>
+      </div>
+    {% empty %}
+      <div class="empty-state">No groups available.</div>
+    {% endfor %}
+  </div>
+
+  <form method="get" id="payments-filter-form">
+    <div class="filter-bar">
+
+      <select name="month">
         <option value="">All Months</option>
         {% for month in month_choices %}
-            <option value="{{ month.value }}" {% if selected_month == month.value %}selected{% endif %}>
-                {{ month.label }}
-            </option>
+          <option value="{{ month.value }}" {% if selected_month == month.value %}selected{% endif %}>
+            {{ month.label }}
+          </option>
         {% endfor %}
-    </select>
+      </select>
 
-    {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
+      {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
         <select name="teacher">
-            <option value="">All Teachers</option>
-            {% for teacher in teachers %}
-                <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
-                    {{ teacher.get_full_name|default:teacher.username }}
-                </option>
-            {% endfor %}
+          <option value="">All Teachers</option>
+          {% for teacher in teachers %}
+            <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
+              {{ teacher.get_full_name|default:teacher.username }}
+            </option>
+          {% endfor %}
         </select>
-    {% endif %}
+      {% endif %}
 
-    {% if request.user.role != "STUDENT" %}
+      {% if request.user.role != "STUDENT" %}
         <select name="student">
-            <option value="">All Students</option>
-            {% for student in students %}
-                <option value="{{ student.id }}" {% if selected_student == student.id|stringformat:"s" %}selected{% endif %}>
-                    {{ student.get_full_name|default:student.username }}
-                </option>
-            {% endfor %}
+          <option value="">All Students</option>
+          {% for student in students %}
+            <option value="{{ student.id }}" {% if selected_student == student.id|stringformat:"s" %}selected{% endif %}>
+              {{ student.get_full_name|default:student.username }}
+            </option>
+          {% endfor %}
         </select>
-    {% endif %}
+      {% endif %}
 
-    <select name="group">
+      <select name="group">
         <option value="">All Groups</option>
         {% for group in groups %}
-            <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
-                {{ group.name }} - {{ group.subject }}
-            </option>
+          <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
+            {{ group.name }} - {{ group.subject }}
+          </option>
         {% endfor %}
-    </select>
+      </select>
 
-    <button type="submit">Filter</button>
-    <a href="{% url 'payments:dashboard' %}">Reset</a>
-</form>
+      <div class="filter-bar__actions">
+        <button type="submit">Filter</button>
+        <a href="{% url 'payments:dashboard' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset</a>
+      </div>
 
-<div style="margin: 20px 0; padding: 16px; border: 1px solid #ccc;">
-    <h3>Collection Indicator</h3>
-    <p>Paid: {{ total_paid }}</p>
-    <p>Expected: {{ total_expected }}</p>
-    <p>Collected: {{ collection_percent }}%</p>
-
-    <div style="width: 100%; max-width: 480px; height: 18px; border: 1px solid #999; background: #eee;">
-        <div
-            style="height: 100%; width: {% if collection_percent > 100 %}100{% else %}{{ collection_percent }}{% endif %}%; background: {% if collection_percent >= 100 %}green{% elif collection_percent >= 70 %}orange{% else %}crimson{% endif %};">
-        </div>
     </div>
+  </form>
+
+  <div class="card">
+    <h3 class="page-title" style="margin-bottom:var(--space-4);">Collection Indicator</h3>
+    <div class="stats-grid" style="margin-bottom:var(--space-4);">
+      <div class="stat-card">
+        <div class="stat-label">Paid</div>
+        <div class="stat-value" style="color:var(--success);">{{ total_paid }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Expected</div>
+        <div class="stat-value">{{ total_expected }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Collection Rate</div>
+        <div class="stat-value">{{ collection_percent }}%</div>
+      </div>
+    </div>
+    <div class="progress">
+      <div class="progress__bar
+        {% if collection_percent >= 100 %}progress__bar--success
+        {% elif collection_percent >= 70 %}progress__bar--warning
+        {% else %}progress__bar--danger{% endif %}"
+        style="width: {% if collection_percent > 100 %}100{% else %}{{ collection_percent }}{% endif %}%;">
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Student</th>
+          <th>Teacher</th>
+          <th>Group</th>
+          <th>Paid</th>
+          <th>Expected</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for payment in payments %}
+          <tr>
+            <td>{{ payment.payment_year }}-{{ payment.payment_month|stringformat:"02d" }}</td>
+            <td>{{ payment.student.get_full_name|default:payment.student.username }}</td>
+            <td>{{ payment.group.teacher.get_full_name|default:payment.group.teacher.username }}</td>
+            <td>{{ payment.group.name }}</td>
+            <td>{{ payment.paid_amount }}</td>
+            <td>{{ payment.expected_amount }}</td>
+            <td>{{ payment.created_at|date:"Y-m-d H:i" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">No payments found.</div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
 </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Month</th>
-            <th>Student</th>
-            <th>Teacher</th>
-            <th>Group</th>
-            <th>Paid</th>
-            <th>Expected</th>
-            <th>Created At</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for payment in payments %}
-            <tr>
-                <td>{{ payment.payment_year }}-{{ payment.payment_month|stringformat:"02d" }}</td>
-                <td>{{ payment.student.get_full_name|default:payment.student.username }}</td>
-                <td>{{ payment.group.teacher.get_full_name|default:payment.group.teacher.username }}</td>
-                <td>{{ payment.group.name }}</td>
-                <td>{{ payment.paid_amount }}</td>
-                <td>{{ payment.expected_amount }}</td>
-                <td>{{ payment.created_at|date:"Y-m-d H:i" }}</td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="7">No payments found.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
 <script>
-    document.querySelectorAll("#payments-filter-form select").forEach(function (el) {
-        el.addEventListener("change", function () {
-            this.form.submit();
-        });
-    });
+  document.querySelectorAll("#payments-filter-form select").forEach(function (el) {
+    el.addEventListener("change", function () { this.form.submit(); });
+  });
 </script>
+
 {% endblock %}

@@ -1,0 +1,33 @@
+.teachers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.teacher-card {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.teacher-header {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.teacher-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface-alt);
+}
+
+.teacher-username {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.teacher-bio--empty {
+  color: var(--muted);
+}

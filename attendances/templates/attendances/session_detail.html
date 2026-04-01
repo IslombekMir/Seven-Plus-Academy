@@ -3,44 +3,65 @@
 {% block title %}Attendance Session{% endblock %}
 
 {% block content %}
-<h1>{{ group.name }} - {{ session.date }}</h1>
+<div class="detail-page">
 
-<p>Teacher: {{ group.teacher.get_full_name }}</p>
-<p>Created by: {{ session.created_by.get_full_name|default:session.created_by.username }}</p>
-<p><a href="{% url 'attendances:group_detail' group.pk %}">Back to group attendance</a></p>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ group.name }} — {{ session.date }}</h1>
+      <p class="page-subtitle">
+        Teacher: {{ group.teacher.get_full_name }} ·
+        Created by: {{ session.created_by.get_full_name|default:session.created_by.username }}
+      </p>
+    </div>
+    <a href="{% url 'attendances:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Back to group attendance</a>
+  </div>
 
-{% if can_manage %}
-    <form method="post">
+  {% if can_manage %}
+    <div class="card">
+      <form method="post" class="stack">
         {% csrf_token %}
-        <table border="1" cellpadding="8">
+        <div class="table-wrap">
+          <table>
             <thead>
-                <tr>
-                    <th>Student</th>
-                    <th>Status</th>
-                </tr>
+              <tr>
+                <th>Student</th>
+                <th>Status</th>
+              </tr>
             </thead>
             <tbody>
-                {% for field in form %}
-                    <tr>
-                        <td>{{ field.label }}</td>
-                        <td>{{ field }}</td>
-                    </tr>
-                {% endfor %}
+              {% for field in form %}
+                <tr>
+                  <td>{{ field.label }}</td>
+                  <td>{{ field }}</td>
+                </tr>
+              {% endfor %}
             </tbody>
-        </table>
-
-        <button type="submit" style="margin-top: 12px;">Save attendance</button>
-    </form>
-{% else %}
-    <ul>
+          </table>
+        </div>
+        <div>
+          <button type="submit">Save attendance</button>
+        </div>
+      </form>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="stack">
         {% for enrollment, attendance in enrollment_attendance_pairs %}
-            <li>
-                {{ enrollment.student.get_full_name }}
-                - {% if attendance %}{{ attendance.get_status_display }}{% else %}No record{% endif %}
-            </li>
+          <div style="display:flex; justify-content:space-between; padding: var(--space-2) 0; border-bottom: 1px solid var(--border);">
+            <span>{{ enrollment.student.get_full_name }}</span>
+            <span style="color:
+              {% if attendance.status == 'PRESENT' %}var(--success)
+              {% elif attendance.status == 'ABSENT' %}var(--danger)
+              {% else %}var(--muted){% endif %};">
+              {% if attendance %}{{ attendance.get_status_display }}{% else %}No record{% endif %}
+            </span>
+          </div>
         {% empty %}
-            <li>No attendance records yet.</li>
+          <div class="empty-state">No attendance records yet.</div>
         {% endfor %}
-    </ul>
-{% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+</div>
 {% endblock %}

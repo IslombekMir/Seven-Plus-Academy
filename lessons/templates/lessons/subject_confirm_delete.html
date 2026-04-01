@@ -3,13 +3,22 @@
 {% block title %}Delete Subject{% endblock %}
 
 {% block content %}
-<h2>Delete Subject</h2>
+<div class="confirm-page">
 
-<p>Are you sure you want to delete "{{ subject.name }}"?</p>
+  <div class="page-header">
+    <h1 class="page-title">Delete Subject</h1>
+  </div>
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Delete</button>
-    <a href="{% url 'lessons:subjects_list' %}">Cancel</a>
-</form>
+  <div class="card confirm-card">
+    <p>Are you sure you want to delete <span class="danger-text">{{ subject.name }}</span>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="inline-actions">
+        <button type="submit" style="background:var(--danger);">Delete</button>
+        <a href="{% url 'lessons:subjects_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

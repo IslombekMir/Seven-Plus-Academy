@@ -1,17 +1,41 @@
 {% extends 'core/base.html' %}
+
 {% block title %}Delete Payment{% endblock %}
 
 {% block content %}
-<h3>Delete payment?</h3>
+<div class="confirm-page">
 
-<p>Student: {{ payment.student.get_full_name }}</p>
-<p>Group: {{ payment.group.name }}</p>
-<p>Paid amount: {{ payment.paid_amount }}</p>
-<p>Expected amount: {{ payment.expected_amount }}</p>
+  <div class="page-header">
+    <h1 class="page-title">Delete Payment?</h1>
+  </div>
 
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">Confirm delete</button>
-  <a href="{% url 'lessons:group_detail' payment.group.pk %}">Cancel</a>
-</form>
+  <div class="card confirm-card">
+    <div class="info-grid" style="margin-bottom:var(--space-4);">
+      <div>
+        <div class="stat-label">Student</div>
+        <div style="font-weight:600;">{{ payment.student.get_full_name }}</div>
+      </div>
+      <div>
+        <div class="stat-label">Group</div>
+        <div style="font-weight:600;">{{ payment.group.name }}</div>
+      </div>
+      <div>
+        <div class="stat-label">Paid Amount</div>
+        <div style="font-weight:600;">{{ payment.paid_amount }}</div>
+      </div>
+      <div>
+        <div class="stat-label">Expected Amount</div>
+        <div style="font-weight:600;">{{ payment.expected_amount }}</div>
+      </div>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="inline-actions">
+        <button type="submit" style="background:var(--danger);">Confirm delete</button>
+        <a href="{% url 'lessons:group_detail' payment.group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

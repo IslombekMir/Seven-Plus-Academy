@@ -1,39 +1,51 @@
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
 
 {% block title %}Teachers{% endblock %}
 
 {% block content %}
-<h1>Teachers</h1>
+<div class="list-page">
 
-{% if teachers %}
-    <div class="teachers-grid">
-        {% for teacher in teachers %}
-            <div class="teacher-card {% if teacher.teacher_profile and not teacher.teacher_profile.is_active_profile %}teacher-card--inactive{% endif %}" style="border:2px black solid;">
-                <div class="teacher-header">
-                    {% if teacher.teacher_profile and teacher.teacher_profile.picture %}
-                        <img src="{{ teacher.teacher_profile.picture.url }}" alt="{{ teacher.get_full_name }}" class="teacher-avatar">
-                    {% else %}
-                        <div class="teacher-avatar teacher-avatar--placeholder"></div>
-                    {% endif %}
-                    <div>
-                        <strong>{{ teacher.get_full_name|default:teacher.first_name }}</strong>
-                        {% if request.user.role == "ADMIN" or request.user.role == "TEACHER" %}
-                            <div class="teacher-username">{{ teacher.username }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-                {% if teacher.teacher_profile and teacher.teacher_profile.bio %}
-                    <p class="teacher-bio">{{ teacher.teacher_profile.bio }}</p>
-                {% else %}
-                    <p class="teacher-bio teacher-bio--empty">No bio yet.</p>
-                {% endif %}
-                {% if request.user.role == "ADMIN" or request.user == teacher %}
-                    <a href="{% url 'users:edit_teacher_profile' teacher.id %}">Edit Profile</a>
-                {% endif %}
+  <div class="page-header">
+    <h1 class="page-title">Teachers</h1>
+  </div>
+
+  {% if teachers %}
+    <div class="stats-grid">
+      {% for teacher in teachers %}
+        <div class="card {% if teacher.teacher_profile and not teacher.teacher_profile.is_active_profile %}card--inactive{% endif %}"
+          style="{% if teacher.teacher_profile and not teacher.teacher_profile.is_active_profile %}opacity:0.6;{% endif %}">
+
+          <div style="display:flex; align-items:center; gap:var(--space-3); margin-bottom:var(--space-3);">
+            {% if teacher.teacher_profile and teacher.teacher_profile.picture %}
+              <img src="{{ teacher.teacher_profile.picture.url }}" alt="{{ teacher.get_full_name }}"
+                style="width:48px; height:48px; border-radius:50%; object-fit:cover; border:1px solid var(--border);">
+            {% else %}
+              <div style="width:48px; height:48px; border-radius:50%; background:var(--surface-alt); border:1px solid var(--border);"></div>
+            {% endif %}
+            <div>
+              <div style="font-weight:700;">{{ teacher.get_full_name|default:teacher.first_name }}</div>
+              {% if request.user.role == "ADMIN" or request.user.role == "TEACHER" %}
+                <div class="stat-label">{{ teacher.username }}</div>
+              {% endif %}
             </div>
-        {% endfor %}
+          </div>
+
+          {% if teacher.teacher_profile and teacher.teacher_profile.bio %}
+            <p style="color:var(--muted); font-size:0.9rem; margin:0 0 var(--space-3);">{{ teacher.teacher_profile.bio }}</p>
+          {% else %}
+            <p style="color:var(--muted); font-size:0.9rem; font-style:italic; margin:0 0 var(--space-3);">No bio yet.</p>
+          {% endif %}
+
+          {% if request.user.role == "ADMIN" or request.user == teacher %}
+            <a href="{% url 'users:edit_teacher_profile' teacher.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border); width:100%;">Edit Profile</a>
+          {% endif %}
+
+        </div>
+      {% endfor %}
     </div>
-{% else %}
-    <p>No teachers found.</p>
-{% endif %}
+  {% else %}
+    <div class="empty-state">No teachers found.</div>
+  {% endif %}
+
+</div>
 {% endblock %}

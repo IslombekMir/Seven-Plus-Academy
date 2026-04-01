@@ -3,106 +3,133 @@
 {% block title %}Attendances{% endblock %}
 
 {% block content %}
-<h1>Attendances</h1>
+<div class="dashboard-page">
 
-<ul>
+  <div class="page-header">
+    <h1 class="page-title">Attendances</h1>
+  </div>
+
+  <div class="stats-grid">
     {% for group in groups %}
-        <li style="margin-bottom: 20px;">
-            <p>
-                <a href="{% url 'attendances:group_detail' group.pk %}">{{ group.name }}</a>
-                - {{ group.subject }}
-                - {{ group.teacher.get_full_name }}
-            </p>
-        </li>
+      <div class="stat-card">
+        <div class="stat-label">{{ group.subject }} · {{ group.teacher.get_full_name }}</div>
+        <div class="stat-value">
+          <a href="{% url 'attendances:group_detail' group.pk %}">{{ group.name }}</a>
+        </div>
+      </div>
     {% empty %}
-        <li>No groups available.</li>
+      <div class="empty-state">No groups available.</div>
     {% endfor %}
-</ul>
-<form method="get" id="attendance-filter-form">
-    {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
-        <select name="teacher">
-            <option value="">All Teachers</option>
-            {% for teacher in teachers %}
-                <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
-                    {{ teacher.get_full_name|default:teacher.username }}
-                </option>
-            {% endfor %}
-        </select>
-    {% endif %}
+  </div>
 
-    <select name="group">
+  <form method="get" id="attendance-filter-form">
+    <div class="filter-bar">
+      {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
+        <select name="teacher">
+          <option value="">All Teachers</option>
+          {% for teacher in teachers %}
+            <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
+              {{ teacher.get_full_name|default:teacher.username }}
+            </option>
+          {% endfor %}
+        </select>
+      {% endif %}
+
+      <select name="group">
         <option value="">All Groups</option>
         {% for group in dashboard_groups %}
-            <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
-                {{ group.name }} - {{ group.subject }}
-            </option>
+          <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
+            {{ group.name }} - {{ group.subject }}
+          </option>
         {% endfor %}
-    </select>
+      </select>
 
-    <select name="status">
+      <select name="status">
         <option value="">All Statuses</option>
         <option value="PRESENT" {% if selected_status == "PRESENT" %}selected{% endif %}>Present</option>
-        <option value="ABSENT" {% if selected_status == "ABSENT" %}selected{% endif %}>Absent</option>
+        <option value="ABSENT"  {% if selected_status == "ABSENT"  %}selected{% endif %}>Absent</option>
         <option value="UNKNOWN" {% if selected_status == "UNKNOWN" %}selected{% endif %}>Unknown</option>
-    </select>
+      </select>
 
-    <button type="submit">Filter</button>
-    <a href="{% url 'attendances:dashboard' %}">Reset</a>
-</form>
-
-<div style="margin: 20px 0; padding: 16px; border: 1px solid #ccc;">
-    <h3>Attendance Indicator</h3>
-    <p>Present: {{ total_present }}</p>
-    <p>Absent: {{ total_absent }}</p>
-    <p>Unknown: {{ total_unknown }}</p>
-    <p>Attendance Rate: {{ attendance_percent }}%</p>
-
-    <div style="width: 100%; max-width: 480px; height: 18px; border: 1px solid #999; background: #eee;">
-        <div
-            style="height: 100%; width: {{ attendance_percent }}%; background: {% if attendance_percent >= 80 %}green{% elif attendance_percent >= 60 %}orange{% else %}crimson{% endif %};">
-        </div>
+      <div class="filter-bar__actions">
+        <button type="submit">Filter</button>
+        <a href="{% url 'attendances:dashboard' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset</a>
+      </div>
     </div>
+  </form>
+
+  <div class="card">
+    <h3 class="page-title">Attendance Indicator</h3>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Present</div>
+        <div class="stat-value" style="color:var(--success);">{{ total_present }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Absent</div>
+        <div class="stat-value" style="color:var(--danger);">{{ total_absent }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Unknown</div>
+        <div class="stat-value" style="color:var(--warning);">{{ total_unknown }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Attendance Rate</div>
+        <div class="stat-value">{{ attendance_percent }}%</div>
+      </div>
+    </div>
+    <div style="margin-top: var(--space-4);">
+      <div class="progress">
+        <div class="progress__bar
+          {% if attendance_percent >= 80 %}progress__bar--success
+          {% elif attendance_percent >= 60 %}progress__bar--warning
+          {% else %}progress__bar--danger{% endif %}"
+          style="width: {{ attendance_percent }}%;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Group</th>
+          <th>Subject</th>
+          <th>Teacher</th>
+          <th>Created By</th>
+          <th>Students</th>
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for session in sessions %}
+          <tr>
+            <td>{{ session.date }}</td>
+            <td>{{ session.group.name }}</td>
+            <td>{{ session.group.subject }}</td>
+            <td>{{ session.group.teacher.get_full_name|default:session.group.teacher.username }}</td>
+            <td>{{ session.created_by.get_full_name|default:session.created_by.username }}</td>
+            <td>{{ session.attendances.count }}</td>
+            <td><a href="{% url 'attendances:session_detail' session.pk %}">Open</a></td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">No attendance sessions found.</div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
 </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Group</th>
-            <th>Subject</th>
-            <th>Teacher</th>
-            <th>Created By</th>
-            <th>Students</th>
-            <th>View</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for session in sessions %}
-            <tr>
-                <td>{{ session.date }}</td>
-                <td>{{ session.group.name }}</td>
-                <td>{{ session.group.subject }}</td>
-                <td>{{ session.group.teacher.get_full_name|default:session.group.teacher.username }}</td>
-                <td>{{ session.created_by.get_full_name|default:session.created_by.username }}</td>
-                <td>{{ session.attendances.count }}</td>
-                <td>
-                    <a href="{% url 'attendances:session_detail' session.pk %}">Open</a>
-                </td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="7">No attendance sessions found.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
 <script>
-    document.querySelectorAll("#attendance-filter-form select").forEach(function (el) {
-        el.addEventListener("change", function () {
-            this.form.submit();
-        });
-    });
+  document.querySelectorAll("#attendance-filter-form select").forEach(function (el) {
+    el.addEventListener("change", function () { this.form.submit(); });
+  });
 </script>
-
 {% endblock %}

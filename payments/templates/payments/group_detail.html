@@ -3,68 +3,101 @@
 {% block title %}{{ group.name }} Payments{% endblock %}
 
 {% block content %}
-<h1>{{ group.name }} Payments</h1>
+<div class="detail-page">
 
-<p>Subject: {{ group.subject }}</p>
-<p>Teacher: {{ group.teacher.get_full_name }}</p>
-<p><a href="{% url 'lessons:group_detail' group.pk %}">Back to group</a></p>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ group.name }} Payments</h1>
+      <p class="page-subtitle">{{ group.subject }} · {{ group.teacher.get_full_name }}</p>
+    </div>
+    <a href="{% url 'lessons:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Back to group</a>
+  </div>
 
-<h3>Students</h3>
-<ul>
-    {% for enrollment in enrollments %}
-        <li>
-            {{ enrollment.student.get_full_name }} ({{ enrollment.student.username }})
-            {% if can_manage_payments %}
-                <a href="{% url 'payments:payment_create' enrollment.pk %}?month={{ selected_month }}&year={{ selected_year }}">
-                    Add payment
-                </a>
-            {% endif %}
-        </li>
-    {% empty %}
-        <li>No students enrolled yet.</li>
-    {% endfor %}
-</ul>
+  <div class="card">
+    <h3 class="page-title" style="margin-bottom:var(--space-4);">Students</h3>
+    <div class="stack">
+      {% for enrollment in enrollments %}
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:var(--space-2) 0; border-bottom:1px solid var(--border);">
+          <span>
+            {{ enrollment.student.get_full_name }}
+            <span class="page-subtitle" style="display:inline; margin-left:var(--space-2);">({{ enrollment.student.username }})</span>
+          </span>
+          {% if can_manage_payments %}
+            <a href="{% url 'payments:payment_create' enrollment.pk %}?month={{ selected_month }}&year={{ selected_year }}" class="button">Add payment</a>
+          {% endif %}
+        </div>
+      {% empty %}
+        <div class="empty-state">No students enrolled yet.</div>
+      {% endfor %}
+    </div>
+  </div>
 
-<h3>Payments</h3>
-
-<form method="get" style="margin-bottom: 12px;">
-    <label for="payment-month">Month:</label>
-    <select name="month" id="payment-month">
-        {% for month_value, month_label in months %}
+  <form method="get">
+    <div class="filter-bar">
+      <div>
+        <label for="payment-month" style="display:block; font-size:0.875rem; color:var(--muted); margin-bottom:var(--space-1);">Month</label>
+        <select name="month" id="payment-month">
+          {% for month_value, month_label in months %}
             <option value="{{ month_value }}" {% if selected_month == month_value|stringformat:"s" %}selected{% endif %}>
-                {{ month_label }}
+              {{ month_label }}
             </option>
-        {% endfor %}
-    </select>
-
-
-    <label for="payment-year">Year:</label>
-    <select name="year" id="payment-year">
-        {% for year in years %}
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="payment-year" style="display:block; font-size:0.875rem; color:var(--muted); margin-bottom:var(--space-1);">Year</label>
+        <select name="year" id="payment-year">
+          {% for year in years %}
             <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
-                {{ year }}
+              {{ year }}
             </option>
-        {% endfor %}
-    </select>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filter-bar__actions">
+        <button type="submit">Filter</button>
+        <a href="{% url 'payments:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset</a>
+      </div>
+    </div>
+  </form>
 
-    <button type="submit">Filter</button>
-    <a href="{% url 'payments:group_detail' group.pk %}">Reset</a>
-</form>
-
-<ul>
-    {% for payment in payments %}
-        <li>
-            {{ payment.student.get_full_name }}
-            - {{ payment.payment_month }}/{{ payment.payment_year }}
-            - paid: {{ payment.paid_amount }}/{{ payment.expected_amount }}
-            - {{ payment.created_at|date:"Y-m-d H:i" }}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Period</th>
+          <th>Paid / Expected</th>
+          <th>Date</th>
+          {% if can_manage_payments %}<th>Actions</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for payment in payments %}
+          <tr>
+            <td>{{ payment.student.get_full_name }}</td>
+            <td>{{ payment.payment_month }}/{{ payment.payment_year }}</td>
+            <td>{{ payment.paid_amount }} / {{ payment.expected_amount }}</td>
+            <td>{{ payment.created_at|date:"Y-m-d H:i" }}</td>
             {% if can_manage_payments %}
-                <a href="{% url 'payments:payment_edit' payment.pk %}">Edit</a>
-                <a href="{% url 'payments:payment_delete' payment.pk %}">Delete</a>
+              <td>
+                <div class="inline-actions">
+                  <a href="{% url 'payments:payment_edit' payment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Edit</a>
+                  <a href="{% url 'payments:payment_delete' payment.pk %}" class="button" style="background:var(--danger);">Delete</a>
+                </div>
+              </td>
             {% endif %}
-        </li>
-    {% empty %}
-        <li>No payments found for this month and year.</li>
-    {% endfor %}
-</ul>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="{% if can_manage_payments %}5{% else %}4{% endif %}">
+              <div class="empty-state">No payments found for this period.</div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
 {% endblock %}

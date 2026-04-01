@@ -1,11 +1,23 @@
 {% extends 'core/base.html' %}
-{% block title %}Group List{%endblock%}
+
+{% block title %}Edit Enrollment{% endblock %}
 
 {% block content %}
-<h3>Edit enrollment</h3>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Save</button>
-</form>
+<div class="form-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Edit Enrollment</h1>
+  </div>
+
+  <div class="card form-card">
+    <form method="post" class="form-grid">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div>
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

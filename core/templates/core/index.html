@@ -1,35 +1,60 @@
-{%extends 'core/base.html'%}
+{% extends 'core/base.html' %}
 
-{%block title%} Home {% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block style %}
-    {% load static %}
-    {{block.super}}
-    <link rel="stylesheet" href="{% static 'core/index.css' %}">
+  {% load static %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'core/index.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class='page-blocks'>
-    <ul>
-        {% if user.is_authenticated and user.role != 'STUDENT' %}
-            <li><a href="{% url 'users:users_list' %}">
-                {% if request.user.role == 'ADMIN' %}
-                    Users
-                {% else %}
-                    Students
-                {% endif %}
-                </a></li>
-        {% endif %}
-        <li><a href="{% url 'lessons:subjects_list' %}">Subjects</a></li>
-        <li><a href="{% url 'lessons:group_list' %}">Groups</a></li>
-        <li><a href="{% url 'users:teachers_list' %}">Teachers</a></li>
-        {% if user.is_authenticated %}
-            <li><a href="{% url 'payments:dashboard' %}">Payments</a></li>
-        {% endif %}
-        {% if user.is_authenticated %}
-            <li><a href="{% url 'attendances:dashboard' %}">Attendances</a></li>
-        {% endif %}
+<div class="dashboard-page">
 
-    </ul>
-<div>
+  <div class="page-header">
+    <h1 class="page-title">Welcome</h1>
+  </div>
+
+  <div class="stats-grid">
+
+    {% if user.is_authenticated and user.role != 'STUDENT' %}
+      <a href="{% url 'users:users_list' %}" class="stat-card" style="text-decoration:none;">
+        <div class="stat-label">Directory</div>
+        <div class="stat-value" style="font-size:1.1rem;">
+          {% if request.user.role == 'ADMIN' %}Users{% else %}Students{% endif %}
+        </div>
+      </a>
+    {% endif %}
+
+    <a href="{% url 'lessons:subjects_list' %}" class="stat-card" style="text-decoration:none;">
+      <div class="stat-label">Curriculum</div>
+      <div class="stat-value" style="font-size:1.1rem;">Subjects</div>
+    </a>
+
+    <a href="{% url 'lessons:group_list' %}" class="stat-card" style="text-decoration:none;">
+      <div class="stat-label">Classes</div>
+      <div class="stat-value" style="font-size:1.1rem;">Groups</div>
+    </a>
+
+    <a href="{% url 'users:teachers_list' %}" class="stat-card" style="text-decoration:none;">
+      <div class="stat-label">Staff</div>
+      <div class="stat-value" style="font-size:1.1rem;">Teachers</div>
+    </a>
+
+    {% if user.is_authenticated %}
+      <a href="{% url 'payments:dashboard' %}" class="stat-card" style="text-decoration:none;">
+        <div class="stat-label">Finance</div>
+        <div class="stat-value" style="font-size:1.1rem;">Payments</div>
+      </a>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      <a href="{% url 'attendances:dashboard' %}" class="stat-card" style="text-decoration:none;">
+        <div class="stat-label">Tracking</div>
+        <div class="stat-value" style="font-size:1.1rem;">Attendances</div>
+      </a>
+    {% endif %}
+
+  </div>
+</div>
 {% endblock %}

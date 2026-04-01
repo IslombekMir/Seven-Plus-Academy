@@ -1,12 +1,24 @@
 {% extends 'core/base.html' %}
-{% block title %}Group List{%endblock%}
+
+{% block title %}Delete Enrollment{% endblock %}
 
 {% block content %}
-<h3>Delete enrollment?</h3>
-<p>{{ enrollment.student.get_full_name }} in {{ group.name }}</p>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">Confirm delete</button>
-  <a href="{% url 'lessons:group_detail' group.pk %}">Cancel</a>
-</form>
+<div class="confirm-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Delete Enrollment?</h1>
+  </div>
+
+  <div class="card confirm-card">
+    <p>Are you sure you want to remove <span class="danger-text">{{ enrollment.student.get_full_name }}</span> from <strong>{{ group.name }}</strong>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="inline-actions">
+        <button type="submit">Confirm delete</button>
+        <a href="{% url 'lessons:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

@@ -1,17 +1,39 @@
 {% extends 'core/base.html' %}
-{% block title %}Payment Form{% endblock %}
+
+{% block title %}{% if payment %}Edit Payment{% else %}Create Payment{% endif %}{% endblock %}
 
 {% block content %}
-<h3>{% if payment %}Edit payment{% else %}Create payment{% endif %}</h3>
+<div class="form-page">
 
-<p>Student: {{ enrollment.student.get_full_name }} ({{ enrollment.student.username }})</p>
-<p>Group: {{ enrollment.group.name }}</p>
-<p>Expected amount: {{ enrollment.payment_amount }}</p>
+  <div class="page-header">
+    <h1 class="page-title">{% if payment %}Edit Payment{% else %}Create Payment{% endif %}</h1>
+  </div>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Save</button>
-  <a href="{% url 'lessons:group_detail' enrollment.group.pk %}">Cancel</a>
-</form>
+  <div class="card form-card">
+    <div class="info-grid" style="margin-bottom:var(--space-5);">
+      <div>
+        <div class="stat-label">Student</div>
+        <div style="font-weight:600;">{{ enrollment.student.get_full_name }} <span style="color:var(--muted);">({{ enrollment.student.username }})</span></div>
+      </div>
+      <div>
+        <div class="stat-label">Group</div>
+        <div style="font-weight:600;">{{ enrollment.group.name }}</div>
+      </div>
+      <div>
+        <div class="stat-label">Expected Amount</div>
+        <div style="font-weight:600;">{{ enrollment.payment_amount }}</div>
+      </div>
+    </div>
+
+    <form method="post" class="form-grid">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="inline-actions">
+        <button type="submit">Save</button>
+        <a href="{% url 'lessons:group_detail' enrollment.group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

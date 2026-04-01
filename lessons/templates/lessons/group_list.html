@@ -1,25 +1,52 @@
 {% extends 'core/base.html' %}
-{% block title %}Group List{%endblock%}
+
+{% block title %}Groups{% endblock %}
 
 {% block content %}
-<h2>Groups</h2>
+<div class="list-page">
 
-{% if user.role != "STUDENT" %}
-    <a href="{% url 'lessons:group_create' %}">New Group</a>
-{% endif %}
+  <div class="page-header">
+    <h1 class="page-title">Groups</h1>
+    {% if user.role != "STUDENT" %}
+      <a href="{% url 'lessons:group_create' %}" class="button">New Group</a>
+    {% endif %}
+  </div>
 
-<ul>
-    {% for group in groups %}
-        <li>
-            <a href="{% url 'lessons:group_detail' group.pk %}">{{ group.name }} - {{ group.subject }}</a>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Subject</th>
+          {% if user.role == "ADMIN" or user == group.teacher %}
+            <th>Actions</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for group in groups %}
+          <tr>
+            <td><a href="{% url 'lessons:group_detail' group.pk %}">{{ group.name }}</a></td>
+            <td>{{ group.subject }}</td>
             {% if user.role == "ADMIN" or user == group.teacher %}
-                <a href="{% url 'lessons:group_edit' group.pk %}">Edit</a>
-                <a href="{% url 'lessons:group_delete' group.pk %}">Delete</a>
+              <td>
+                <div class="inline-actions">
+                  <a href="{% url 'lessons:group_edit' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Edit</a>
+                  <a href="{% url 'lessons:group_delete' group.pk %}" class="button" style="background:var(--danger);">Delete</a>
+                </div>
+              </td>
             {% endif %}
-        </li>
-    {% empty %}
-        <li>No groups available.</li>
-    {% endfor %}
-</ul>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3">
+              <div class="empty-state">No groups available.</div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
+</div>
 {% endblock %}

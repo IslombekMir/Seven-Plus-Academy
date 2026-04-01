@@ -1,17 +1,30 @@
 {% extends 'core/base.html' %}
-{% block title %}Group List{%endblock%}
+
+{% block title %}Delete Group{% endblock %}
 
 {% block content %}
-{% if messages %}
-  {% for message in messages %}
-    <p class="error">{{ message }}</p>
-  {% endfor %}
-{% endif %}
-<h2>Delete Group</h2>
-<p>Are you sure you want to delete {{ group.name }}?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, delete</button>
-    <a href="{% url 'lessons:group_list' %}">Cancel</a>
-</form>
+<div class="confirm-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Delete Group</h1>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="card" style="border-color:var(--danger); color:var(--danger);">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card confirm-card">
+    <p>Are you sure you want to delete <span class="danger-text">{{ group.name }}</span>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="inline-actions">
+        <button type="submit" style="background:var(--danger);">Yes, delete</button>
+        <a href="{% url 'lessons:group_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

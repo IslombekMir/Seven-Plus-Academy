@@ -1,22 +1,39 @@
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
 
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    <div>
+<div class="form-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Login</h1>
+  </div>
+
+  <div class="card form-card">
+    <form method="post" class="form-grid">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div style="color:var(--danger);">{{ form.non_field_errors }}</div>
+      {% endif %}
+      <div>
         {{ form.username.label_tag }}
         {{ form.username }}
-        {{ form.username.errors }}
-    </div>
-    <div>
+        {% if form.username.errors %}
+          <div style="color:var(--danger); font-size:0.875rem;">{{ form.username.errors }}</div>
+        {% endif %}
+      </div>
+      <div>
         {{ form.password.label_tag }}
         {{ form.password }}
-        {{ form.password.errors }}
-    </div>
-    <button type="submit">Login</button>
-</form>
+        {% if form.password.errors %}
+          <div style="color:var(--danger); font-size:0.875rem;">{{ form.password.errors }}</div>
+        {% endif %}
+      </div>
+      <div>
+        <button type="submit">Login</button>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

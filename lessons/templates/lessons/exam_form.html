@@ -1,18 +1,25 @@
 {% extends 'core/base.html' %}
-{% block title %}Create Exam{% endblock %}
+
+{% block title %}{% if exam %}Edit Exam{% else %}Create Exam{% endif %}{% endblock %}
 
 {% block content %}
-<h2>
-    {% if exam %}
-        Edit Exam for {{ group.name }}
-    {% else %}
-        Create Exam for {{ group.name }}
-    {% endif %}
-</h2>
+<div class="form-page">
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+  <div class="page-header">
+    <h1 class="page-title">
+      {% if exam %}Edit Exam for {{ group.name }}{% else %}Create Exam for {{ group.name }}{% endif %}
+    </h1>
+  </div>
+
+  <div class="card form-card">
+    <form method="post" class="form-grid">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div>
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

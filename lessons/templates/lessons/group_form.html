@@ -1,12 +1,23 @@
 {% extends 'core/base.html' %}
-{% block title %}Group List{%endblock%}
+
+{% block title %}{% if group %}Edit Group{% else %}Create Group{% endif %}{% endblock %}
 
 {% block content %}
+<div class="form-page">
 
-<h2>Create Group</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
-{%endblock%}
+  <div class="page-header">
+    <h1 class="page-title">{% if group %}Edit Group{% else %}Create Group{% endif %}</h1>
+  </div>
+
+  <div class="card form-card">
+    <form method="post" class="form-grid">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div>
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

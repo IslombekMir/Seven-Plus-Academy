@@ -1,69 +1,94 @@
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
 
-{% block title %} Exam Details {% endblock %}
+{% block title %}Exam Details{% endblock %}
 
 {% block content %}
-<h1>{{ exam.name }}</h1>
-<p>Group: {{ group.name }}</p>
-<p>Date: {{ exam.date }}</p>
-{% if exam.description %}
-<p>{{ exam.description }}</p>
-{% endif %}
+<div class="detail-page">
 
-<p>Full Mark: {{ exam.full_mark }}</p>
-<p>
-    Average Score:
-    {% if average_mark is not None %}
-        {{ average_mark|floatformat:1 }} / {{ exam.full_mark }}
-    {% else %}
-        No records yet
-    {% endif %}
-</p>
-
-{% if form %}
-<button onclick="document.getElementById('mark-modal').style.display='flex'">Add Mark</button>
-
-<div id="mark-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
-    <div style="background:white; padding:2rem; border-radius:8px; min-width:300px;">
-        <h2>Add Mark</h2>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Save</button>
-            <button type="button" onclick="document.getElementById('mark-modal').style.display='none'">Cancel</button>
-        </form>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ exam.name }}</h1>
+      <p class="page-subtitle">{{ group.name }} · {{ exam.date }}</p>
     </div>
-</div>
-{% endif %}
+    {% if form %}
+      <button onclick="document.getElementById('mark-modal').style.display='flex'">Add Mark</button>
+    {% endif %}
+  </div>
 
-<h2>Marks</h2>
-{% if marks %}
-<table>
-    <thead>
+  {% if exam.description %}
+    <div class="card">
+      <p>{{ exam.description }}</p>
+    </div>
+  {% endif %}
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Full Mark</div>
+      <div class="stat-value">{{ exam.full_mark }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Average Score</div>
+      <div class="stat-value">
+        {% if average_mark is not None %}
+          {{ average_mark|floatformat:1 }} / {{ exam.full_mark }}
+        {% else %}
+          <span style="color:var(--muted); font-size:1rem;">No records yet</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
         <tr>
-            <th>Student</th>
-            <th>Mark</th>
-            <th>Actions</th>
+          <th>Student</th>
+          <th>Mark</th>
+          {% if form %}<th>Actions</th>{% endif %}
         </tr>
-    </thead>
-    <tbody>
+      </thead>
+      <tbody>
         {% for mark in marks %}
-        <tr>
+          <tr>
             <td>{{ mark.enrollment.student }}</td>
             <td>{{ mark.mark }} / {{ exam.full_mark }}</td>
-            <td>
-                {% if form %}
+            {% if form %}
+              <td>
                 <form method="POST" action="{% url 'lessons:mark_delete' mark.pk %}">
-                    {% csrf_token %}
-                    <button type="submit">Delete</button>
+                  {% csrf_token %}
+                  <button type="submit" style="background:var(--danger);">Delete</button>
                 </form>
-                {% endif %}
+              </td>
+            {% endif %}
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="{% if form %}3{% else %}2{% endif %}">
+              <div class="empty-state">No marks yet.</div>
             </td>
-        </tr>
+          </tr>
         {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p>No marks yet.</p>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+{% if form %}
+  <div id="mark-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); justify-content:center; align-items:center; z-index:100;">
+    <div class="card form-card" style="min-width:320px;">
+      <h2 class="page-title" style="margin-bottom:var(--space-4);">Add Mark</h2>
+      <form method="POST" class="form-grid">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="inline-actions">
+          <button type="submit">Save</button>
+          <button type="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);"
+            onclick="document.getElementById('mark-modal').style.display='none'">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
 {% endif %}
+
 {% endblock %}

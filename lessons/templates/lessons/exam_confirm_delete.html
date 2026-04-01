@@ -1,14 +1,24 @@
 {% extends 'core/base.html' %}
+
 {% block title %}Delete Exam{% endblock %}
 
 {% block content %}
-<h2>Delete Exam</h2>
-<p>Are you sure you want to delete "{{ exam.name }}" from {{ group.name }}?</p>
+<div class="confirm-page">
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, delete</button>
-</form>
+  <div class="page-header">
+    <h1 class="page-title">Delete Exam</h1>
+  </div>
 
-<a href="{% url 'lessons:exam_list' group.pk %}">Cancel</a>
+  <div class="card confirm-card">
+    <p>Are you sure you want to delete <span class="danger-text">{{ exam.name }}</span> from <strong>{{ group.name }}</strong>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="inline-actions">
+        <button type="submit">Yes, delete</button>
+        <a href="{% url 'lessons:exam_list' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

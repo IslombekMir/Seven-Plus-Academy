@@ -3,31 +3,46 @@
 {% block title %}{{ group.name }} Attendances{% endblock %}
 
 {% block content %}
-<h1>{{ group.name }} Attendances</h1>
+<div class="detail-page">
 
-<p>Subject: {{ group.subject }}</p>
-<p>Teacher: {{ group.teacher.get_full_name }}</p>
-<p><a href="{% url 'lessons:group_detail' group.pk %}">Back to group</a></p>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ group.name }} Attendances</h1>
+      <p class="page-subtitle">{{ group.subject }} · {{ group.teacher.get_full_name }}</p>
+    </div>
+    <a href="{% url 'lessons:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Back to group</a>
+  </div>
 
-{% if form %}
-    <h3>Create attendance session</h3>
-    <form method="post">
+  {% if form %}
+    <div class="card form-card">
+      <h3 class="page-title">Create Attendance Session</h3>
+      <form method="post" class="form-grid" style="margin-top:var(--space-4);">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Create session</button>
-    </form>
-{% endif %}
+        <div>
+          <button type="submit">Create session</button>
+        </div>
+      </form>
+    </div>
+  {% endif %}
 
-<h3>Attendance sessions</h3>
-<ul>
+  <div class="stack">
+    <h3 class="page-title">Attendance Sessions</h3>
     {% for session in sessions %}
-        <li>
+      <div class="card" style="padding: var(--space-3) var(--space-5);">
+        <div class="page-header" style="margin-bottom:0;">
+          <div>
             <a href="{% url 'attendances:session_detail' session.pk %}">{{ session.date }}</a>
-            - created by {{ session.created_by.get_full_name|default:session.created_by.username }}
-            - {{ session.attendances.count }} records
-        </li>
+            <span class="page-subtitle" style="display:inline; margin-left:var(--space-3);">
+              {{ session.attendances.count }} records · created by {{ session.created_by.get_full_name|default:session.created_by.username }}
+            </span>
+          </div>
+        </div>
+      </div>
     {% empty %}
-        <li>No attendance sessions yet.</li>
+      <div class="empty-state">No attendance sessions yet.</div>
     {% endfor %}
-</ul>
+  </div>
+
+</div>
 {% endblock %}
