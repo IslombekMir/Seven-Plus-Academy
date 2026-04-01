@@ -14,7 +14,7 @@
         {% if user.is_authenticated and user.role != 'STUDENT' %}
             <li><a href="{% url 'users:users_list' %}">
                 {% if request.user.role == 'ADMIN' %}
-                    Users
+                    User
                 {% else %}
                     Students
                 {% endif %}
