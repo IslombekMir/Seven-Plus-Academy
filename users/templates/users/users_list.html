@@ -4,25 +4,26 @@
 
 {% block content %}
 <h2>User List</h2>
+<p>Showing {{ filtered_user_count }} of {{ total_user_count }} users</p>
 <a href="{% url 'users:create_user' %}">New User</a>
 <form method="get">
-    <input type="text" name="q" placeholder="Search by name" value="{{ request.GET.q }}">
+    <input type="text" name="q" value="{{ request.GET.q }}" oninput="clearTimeout(this._t); this._t=setTimeout(() => this.form.submit(), 400);">
     {% if request.user.role == "ADMIN" %}
-        <select name="role">
+        <select name="role" onchange="this.form.submit()">
             <option value="">All Roles</option>
             <option value="ADMIN" {% if request.GET.role == "ADMIN" %}selected{% endif %}>Admin</option>
             <option value="TEACHER" {% if request.GET.role == "TEACHER" %}selected{% endif %}>Teacher</option>
             <option value="STUDENT" {% if request.GET.role == "STUDENT" %}selected{% endif %}>Student</option>
         </select>
     {% endif %}
-    <select name="group">
-    <option value="">All Groups</option>
-    {% for group in groups %}
-        <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
-            {{ group.name }} - {{ group.subject }}
-        </option>
-    {% endfor %}
-</select>
+    <select name="group" onchange="this.form.submit()">
+        <option value="">All Groups</option>
+            {% for group in groups %}
+                <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
+                    {{ group.name }} - {{ group.subject }}
+                </option>
+            {% endfor %}
+    </select>
 
     <button type="submit">Filter</button>
 </form>

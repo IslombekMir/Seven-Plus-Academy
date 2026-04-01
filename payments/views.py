@@ -180,6 +180,15 @@ def payment_delete(request, pk):
 
 @login_required
 def payment_dashboard(request):
+    if request.user.role == User.Role.STUDENT:
+        payment_groups = Group.objects.filter(enrollments__student=request.user).distinct()
+    elif request.user.role == User.Role.TEACHER:
+        payment_groups = Group.objects.filter(teacher=request.user)
+    else:
+        payment_groups = Group.objects.all()
+
+    payment_groups = payment_groups.select_related("subject", "teacher")
+
     scoped_payments = (
         Payment.objects
         .select_related("student", "group", "group__teacher", "enrollment")
@@ -258,6 +267,7 @@ def payment_dashboard(request):
     ]
 
     return render(request, "payments/payment_dashboard.html", {
+        "payment_groups": payment_groups,
         "payments": payments,
         "teachers": teachers,
         "groups": groups,
@@ -269,3 +279,4 @@ def payment_dashboard(request):
         "total_expected": total_expected,
         "collection_percent": collection_percent,
     })
+

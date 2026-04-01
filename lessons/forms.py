@@ -70,17 +70,25 @@ class ExamForm(forms.ModelForm):
             }),
         }
 
+# lessons/forms.py
 class MarkForm(forms.ModelForm):
     class Meta:
         model = Mark
-        fields = ['enrollment', 'mark']
+        fields = ["enrollment", "mark"]
 
     def __init__(self, *args, exam=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.exam = exam  # ✅ STORE IT
+        self.exam = exam
 
         if exam:
-            self.fields['enrollment'].queryset = Enrollment.objects.filter(group=exam.group)
+            available_enrollments = Enrollment.objects.filter(group=exam.group).exclude(
+                marks__exam=exam
+            )
+
+            self.fields["enrollment"].queryset = available_enrollments
+            self.fields["enrollment"].label_from_instance = (
+                lambda enrollment: enrollment.student.get_full_name() or enrollment.student.username
+            )
 
     def save(self, commit=True):
         instance = super().save(commit=False)

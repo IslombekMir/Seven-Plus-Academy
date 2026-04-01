@@ -8,6 +8,7 @@ from django.db.models import RestrictedError
 from django.contrib import messages
 from payments.models import Payment
 from django.utils import timezone
+from django.db.models import Avg
 
 ### Subject
 @login_required
@@ -294,6 +295,7 @@ def exam_detail(request, pk):
         return HttpResponseForbidden("You do not have permission to view this exam.")
 
     marks = exam.marks.select_related("enrollment__student").all()
+    average_mark = marks.aggregate(avg=Avg("mark"))["avg"]
 
     if can_manage_marks(request.user, group):
         if request.method == "POST":
@@ -311,7 +313,9 @@ def exam_detail(request, pk):
         "group": group,
         "marks": marks,
         "form": form,
+        "average_mark": average_mark,
     })
+
 
 @login_required
 def exam_edit(request, pk):

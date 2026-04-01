@@ -4,6 +4,20 @@
 
 {% block content %}
 <h2>Payments</h2>
+<h3>Groups</h3>
+<ul>
+    {% for group in payment_groups %}
+        <li style="margin-bottom: 20px;">
+            <p>
+                <a href="{% url 'payments:group_detail' group.pk %}">{{ group.name }}</a>
+                - {{ group.subject }}
+                - {{ group.teacher.get_full_name|default:group.teacher.username }}
+            </p>
+        </li>
+    {% empty %}
+        <li>No groups available.</li>
+    {% endfor %}
+</ul>
 
 <form method="get" id="payments-filter-form">
     <select name="month">

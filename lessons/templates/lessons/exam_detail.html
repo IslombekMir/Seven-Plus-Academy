@@ -6,10 +6,19 @@
 <h1>{{ exam.name }}</h1>
 <p>Group: {{ group.name }}</p>
 <p>Date: {{ exam.date }}</p>
-<p>Full Mark: {{ exam.full_mark }}</p>
 {% if exam.description %}
 <p>{{ exam.description }}</p>
 {% endif %}
+
+<p>Full Mark: {{ exam.full_mark }}</p>
+<p>
+    Average Score:
+    {% if average_mark is not None %}
+        {{ average_mark|floatformat:1 }} / {{ exam.full_mark }}
+    {% else %}
+        No records yet
+    {% endif %}
+</p>
 
 {% if form %}
 <button onclick="document.getElementById('mark-modal').style.display='flex'">Add Mark</button>

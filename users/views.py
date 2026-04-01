@@ -31,19 +31,21 @@ def users_list(request):
     elif request.user.role == User.Role.ADMIN:
         users = User.objects.exclude(is_superuser=True)
     else:
-        users = []
-    
+        users = User.objects.none()
+
+    total_user_count = users.count()
+
     search_query = request.GET.get("q")
     if search_query:
         users = users.filter(
             Q(first_name__icontains=search_query) |
             Q(last_name__icontains=search_query)
         )
-    
+
     role_filter = request.GET.get("role")
     if role_filter:
         users = users.filter(role=role_filter)
-    
+
     groups_qs = Group.objects.all()
     if request.user.role == User.Role.TEACHER:
         groups_qs = groups_qs.filter(teacher=request.user)
@@ -52,12 +54,17 @@ def users_list(request):
     if group_filter:
         users = users.filter(enrollments__group_id=group_filter).distinct()
 
+    filtered_user_count = users.count()
+
     return render(request, "users/users_list.html", {
         "users": users,
+        "filtered_user_count": filtered_user_count,
+        "total_user_count": total_user_count,
         "can_manage": request.user.role in [User.Role.ADMIN, User.Role.TEACHER],
         "groups": groups_qs,
         "selected_group": group_filter,
-        })
+    })
+
 
 def login_view(request):
     if request.method == "POST":
