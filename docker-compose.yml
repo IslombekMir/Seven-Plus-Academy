@@ -17,7 +17,7 @@ services:
       - academy_network
 
   web:
-    image: islombekwiut/academy_web:latest
+    image: ${{ secrets.DOCKERHUB_USERNAME }}/academy_web:latest
     container_name: academy_web
     restart: unless-stopped
     env_file:
