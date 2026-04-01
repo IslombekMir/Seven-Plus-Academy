@@ -150,3 +150,4 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesSto
 # test again
 # chech again
 # test ci again
+# test test
