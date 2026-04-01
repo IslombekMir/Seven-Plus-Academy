@@ -22,10 +22,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/academy_web:${{ github.sha }} .
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/academy_web:latest \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/academy_web:${{ github.sha }} .
 
-      - name: Push image to DockerHub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/academy_web:${{ github.sha }}
+      - name: Push image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/academy_web:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/academy_web:${{ github.sha }}
 
   deploy:
     name: Deploy to Server

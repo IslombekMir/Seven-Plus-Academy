@@ -17,7 +17,7 @@ services:
       - academy_network
 
   web:
-    image: islombekwiut/academy_web:${GITHUB_SHA}
+    image: islombekwiut/academy_web:latest
     container_name: academy_web
     restart: unless-stopped
     env_file:
