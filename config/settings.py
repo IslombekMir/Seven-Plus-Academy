@@ -144,6 +144,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://sevenplusac.uz",
     "https://www.sevenplusac.uz",
 ]
+
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 # test ci/cd
 # test again
 # chech again
