@@ -97,7 +97,6 @@ def removed_users(request):
         "can_manage": request.user.role in [User.Role.ADMIN, User.Role.TEACHER],
     })
 
-
 @login_required
 def remove_user(request, user_id):
     if request.user.role == User.Role.STUDENT:
@@ -252,8 +251,6 @@ def delete_user(request, user_id):
         "can_delete": can_delete,
     })
 
-
-
 @login_required
 def reset_password(request, user_id):
     if request.user.role == User.Role.STUDENT:
@@ -269,7 +266,6 @@ def reset_password(request, user_id):
     user_obj.save()
 
     return redirect("users:users_list")
-
 
 ### Profile
 @login_required
@@ -297,7 +293,6 @@ def profile(request):
         context["enrollments"] = enrollments
 
     return render(request, "users/profile.html", context)
-
 
 ### Theme
 @login_required

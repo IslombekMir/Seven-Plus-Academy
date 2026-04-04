@@ -6,10 +6,16 @@
 <div class="list-page">
 
   <div class="page-header">
-    <h1 class="page-title">Groups</h1>
-    {% if user.role != "STUDENT" %}
-      <a href="{% url 'lessons:group_create' %}" class="button">New Group</a>
-    {% endif %}
+    <div>
+      <h1 class="page-title">Groups</h1>
+      <p class="page-subtitle">Active groups currently shown in the main list</p>
+    </div>
+    <div class="inline-actions">
+      {% if user.role != "STUDENT" %}
+        <a href="{% url 'lessons:removed_groups' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Removed Groups</a>
+        <a href="{% url 'lessons:group_create' %}" class="button">New Group</a>
+      {% endif %}
+    </div>
   </div>
 
   <div class="table-wrap">
@@ -18,7 +24,7 @@
         <tr>
           <th>Name</th>
           <th>Subject</th>
-          {% if user.role == "ADMIN" or user == group.teacher %}
+          {% if user.role != "STUDENT" %}
             <th>Actions</th>
           {% endif %}
         </tr>
@@ -32,14 +38,14 @@
               <td>
                 <div class="inline-actions">
                   <a href="{% url 'lessons:group_edit' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Edit</a>
-                  <a href="{% url 'lessons:group_delete' group.pk %}" class="button" style="background:var(--danger);">Delete</a>
+                  <a href="{% url 'lessons:remove_group' group.pk %}" class="button" style="background:var(--danger);">Remove</a>
                 </div>
               </td>
             {% endif %}
           </tr>
         {% empty %}
           <tr>
-            <td colspan="3">
+            <td colspan="{% if user.role != 'STUDENT' %}3{% else %}2{% endif %}">
               <div class="empty-state">No groups available.</div>
             </td>
           </tr>

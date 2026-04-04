@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Remove Group{% endblock %}
+
+{% block content %}
+<div class="confirm-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Remove Group</h1>
+  </div>
+
+  <div class="card confirm-card">
+    <p>Are you sure you want to remove <span class="danger-text">{{ group.name }}</span>?</p>
+    <p>This will hide the group from the main list and close any active enrollments in it.</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="inline-actions">
+        <button type="submit" style="background:var(--danger);">Yes, remove</button>
+        <a href="{% url 'lessons:group_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

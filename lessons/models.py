@@ -13,6 +13,7 @@ class Group(models.Model):
     name = models.CharField(max_length=100, unique=True)
     subject = models.ForeignKey(Subject, on_delete=models.RESTRICT, related_name="groups")
     teacher = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={"role": "TEACHER"}, related_name="teaching_groups")
+    is_active = models.BooleanField(default=True)
     homework_description = models.TextField(blank=True, null=True)
     homework_updated_at = models.DateTimeField(blank=True, null=True)
     default_payment_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)

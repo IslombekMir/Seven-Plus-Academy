@@ -10,8 +10,11 @@ urlpatterns = [
     path("subjects/<int:subject_id>/delete/", views.delete_subject, name="delete_subject"),
 
     path("groups/", views.group_list, name="group_list"),
+    path("groups/removed/", views.removed_groups, name="removed_groups"),
     path("groups/<int:pk>/", views.group_detail, name="group_detail"),
     path("groups/create/", views.group_create, name="group_create"),
+    path("groups/<int:pk>/remove/", views.remove_group, name="remove_group"),
+    path("groups/<int:pk>/restore/", views.restore_group, name="restore_group"),
     path("groups/<int:pk>/delete/", views.group_delete, name="group_delete"),
     path("groups/<int:pk>/edit/", views.group_edit, name="group_edit"),
 

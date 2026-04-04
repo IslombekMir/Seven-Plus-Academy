@@ -72,10 +72,29 @@ def delete_subject(request, subject_id):
     return render(request, "lessons/subject_confirm_delete.html", {"subject": subject})
 
 ### GROUP
+def _group_queryset_for_user(user):
+    return Group.objects.select_related("subject", "teacher")
+
+def _can_permanently_delete_group(group):
+    has_enrollments = Enrollment.objects.filter(group=group).exists()
+    has_exams = Exam.objects.filter(group=group).exists()
+    has_payments = Payment.objects.filter(group=group).exists()
+    return not (has_enrollments or has_exams or has_payments)
+
 @login_required
 def group_list(request):
-    groups = Group.objects.all()
+    groups = _group_queryset_for_user(request.user).filter(is_active=True)
     return render(request, "lessons/group_list.html", {"groups": groups})
+
+@login_required
+def removed_groups(request):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot view removed groups.")
+
+    groups = _group_queryset_for_user(request.user).filter(is_active=False)
+    if request.user.role == User.Role.TEACHER:
+        groups = groups.filter(teacher=request.user)
+    return render(request, "lessons/removed_groups.html", {"groups": groups})
 
 @login_required
 def group_create(request):
@@ -96,23 +115,80 @@ def group_create(request):
     return render(request, "lessons/group_form.html", {"form": form})
 
 @login_required
-def group_delete(request, pk):
-    if request.user.role == "STUDENT":
-        return HttpResponseForbidden("Students cannot delete groups.")
-    group = get_object_or_404(Group, pk=pk)
-    if request.user.role == "TEACHER" and group.teacher_id != request.user.id:
-        return HttpResponseForbidden("Teachers can only delete their own groups.")
+def remove_group(request, pk):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot remove groups.")
+
+    group = get_object_or_404(Group, pk=pk, is_active=True)
+
+    if request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
+        return HttpResponseForbidden("Teachers can only remove their own groups.")
+
     if request.method == "POST":
+        with transaction.atomic():
+            group.is_active = False
+            group.save(update_fields=["is_active"])
+            Enrollment.objects.filter(group=group, is_active=True).update(
+                is_active=False,
+                end_date=timezone.localdate(),
+            )
+
+        return redirect("lessons:group_list")
+
+    return render(request, "lessons/group_confirm_remove.html", {"group": group})
+
+
+@login_required
+def restore_group(request, pk):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot restore groups.")
+
+    group = get_object_or_404(Group, pk=pk, is_active=False)
+
+    if request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
+        return HttpResponseForbidden("Teachers can only restore their own groups.")
+
+    if request.method == "POST":
+        group.is_active = True
+        group.save(update_fields=["is_active"])
+        return redirect("lessons:removed_groups")
+
+    return render(request, "lessons/group_confirm_restore.html", {"group": group})
+
+
+@login_required
+def group_delete(request, pk):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot delete groups.")
+
+    group = get_object_or_404(Group, pk=pk, is_active=False)
+
+    if request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
+        return HttpResponseForbidden("Teachers can only delete their own groups.")
+
+    if request.method == "POST":
+        if not _can_permanently_delete_group(group):
+            messages.error(
+                request,
+                "This group has enrollment, exam, or payment history and cannot be permanently deleted."
+            )
+            return redirect("lessons:removed_groups")
+
         try:
             group.delete()
-            return redirect("lessons:group_list")
+            messages.success(request, "Group was permanently deleted.")
         except RestrictedError:
             messages.error(
                 request,
-                "Cannot delete this group — it still has active enrollments. "
-                "Please remove all enrollments first."
+                "This group still has related records that prevent permanent deletion."
             )
-    return render(request, "lessons/group_confirm_delete.html", {"group": group})
+
+        return redirect("lessons:removed_groups")
+
+    return render(request, "lessons/group_confirm_delete.html", {
+        "group": group,
+        "can_delete": _can_permanently_delete_group(group),
+    })
 
 @login_required
 def group_edit(request, pk):
@@ -138,7 +214,7 @@ def group_edit(request, pk):
 def group_detail(request, pk):
     group = get_object_or_404(Group, pk=pk)
 
-    if can_manage_enrollments(request.user, group):
+    if group.is_active and can_manage_enrollments(request.user, group):
         if request.method == "POST":
             enrollment_form = EnrollmentForm(request.POST, group=group)
             if enrollment_form.is_valid():
@@ -217,7 +293,7 @@ def group_detail(request, pk):
 
 ### Enrollment
 def can_manage_enrollments(user, group):
-    return user.role == User.Role.ADMIN or group.teacher == user
+    return group.is_active and (user.role == User.Role.ADMIN or group.teacher == user)
 
 @login_required
 def enrollment_edit(request, pk):
