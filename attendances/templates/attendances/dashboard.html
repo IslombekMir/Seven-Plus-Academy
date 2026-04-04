@@ -35,6 +35,17 @@
         </select>
       {% endif %}
 
+      <input type="date" name="date" value="{{ selected_date }}">
+
+      <select name="student">
+      <option value="">All Students</option>
+      {% for student in students %}
+        <option value="{{ student.id }}" {% if selected_student == student.id|stringformat:"s" %}selected{% endif %}>
+          {{ student.get_full_name|default:student.username }}
+        </option>
+      {% endfor %}
+    </select>
+
       <select name="group">
         <option value="">All Groups</option>
         {% for group in dashboard_groups %}
@@ -95,30 +106,22 @@
       <thead>
         <tr>
           <th>Date</th>
+          <th>Student</th>
           <th>Group</th>
           <th>Subject</th>
           <th>Teacher</th>
-          <th>Created By</th>
-          <th>Students</th>
-          <th>View</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        {% for session in sessions %}
+        {% for attendance in attendances %}
           <tr>
-            <td>{{ session.date }}</td>
-            <td>{{ session.group.name }}</td>
-            <td>{{ session.group.subject }}</td>
-            <td>{{ session.group.teacher.get_full_name|default:session.group.teacher.username }}</td>
-            <td>{{ session.created_by.get_full_name|default:session.created_by.username }}</td>
-            <td>{{ session.attendances.count }}</td>
-            <td><a href="{% url 'attendances:session_detail' session.pk %}">Open</a></td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="7">
-              <div class="empty-state">No attendance sessions found.</div>
-            </td>
+            <td>{{ attendance.session.date }}</td>
+            <td>{{ attendance.student.get_full_name|default:attendance.student.username }}</td>
+            <td>{{ attendance.session.group.name }}</td>
+            <td>{{ attendance.session.group.subject }}</td>
+            <td>{{ attendance.session.group.teacher.get_full_name|default:attendance.session.group.teacher.username }}</td>
+            <td>{{ attendance.get_status_display }}</td>
           </tr>
         {% endfor %}
       </tbody>
@@ -128,7 +131,7 @@
 </div>
 
 <script>
-  document.querySelectorAll("#attendance-filter-form select").forEach(function (el) {
+  document.querySelectorAll("#attendance-filter-form select, #attendance-filter-form input[type='date']").forEach(function (el) {
     el.addEventListener("change", function () { this.form.submit(); });
   });
 </script>

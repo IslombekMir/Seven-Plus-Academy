@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Removed Users{% endblock %}
+
+{% block content %}
+<div class="list-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Removed Users</h1>
+      <p class="page-subtitle">Inactive users moved from the main users list</p>
+    </div>
+    <a href="{% url 'users:users_list' %}" class="button">Back to Users</a>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Role</th>
+          <th>Phone</th>
+          {% if can_manage %}<th>Actions</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+          <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.get_full_name }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.phone_number }}</td>
+            {% if can_manage %}
+              <td>
+                <div class="inline-actions">
+                  <a href="{% url 'users:restore_user' user.id %}" class="button">Restore</a>
+                  <a href="{% url 'users:delete_user' user.id %}" class="button" style="background:var(--danger);">Delete Permanently</a>
+                </div>
+              </td>
+            {% endif %}
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="{% if can_manage %}5{% else %}4{% endif %}">
+              <div class="empty-state">No removed users found.</div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

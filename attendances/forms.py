@@ -2,6 +2,8 @@ from django import forms
 
 from lessons.models import Enrollment
 from .models import Attendance, AttendanceSession
+from django.forms import modelformset_factory
+
 
 
 class AttendanceSessionForm(forms.ModelForm):
@@ -47,3 +49,17 @@ class AttendanceBulkForm(forms.Form):
             attendance.student = enrollment.student
             attendance.status = status
             attendance.save()
+
+class AttendanceRecordForm(forms.ModelForm):
+    class Meta:
+        model = Attendance
+        fields = ["status"]
+        widgets = {
+            "status": forms.Select(),
+        }
+
+AttendanceRecordFormSet = modelformset_factory(
+    Attendance,
+    form=AttendanceRecordForm,
+    extra=0,
+)

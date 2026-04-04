@@ -46,14 +46,14 @@
   {% else %}
     <div class="card">
       <div class="stack">
-        {% for enrollment, attendance in enrollment_attendance_pairs %}
+        {% for attendance in attendances %}
           <div style="display:flex; justify-content:space-between; padding: var(--space-2) 0; border-bottom: 1px solid var(--border);">
-            <span>{{ enrollment.student.get_full_name }}</span>
+            <span>{{ attendance.student.get_full_name|default:attendance.student.username }}</span>
             <span style="color:
               {% if attendance.status == 'PRESENT' %}var(--success)
               {% elif attendance.status == 'ABSENT' %}var(--danger)
               {% else %}var(--muted){% endif %};">
-              {% if attendance %}{{ attendance.get_status_display }}{% else %}No record{% endif %}
+              {{ attendance.get_status_display }}
             </span>
           </div>
         {% empty %}
@@ -62,6 +62,5 @@
       </div>
     </div>
   {% endif %}
-
 </div>
 {% endblock %}

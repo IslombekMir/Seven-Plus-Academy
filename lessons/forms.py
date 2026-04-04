@@ -39,22 +39,22 @@ class EnrollmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         group = kwargs.pop("group", None)
         super().__init__(*args, **kwargs)
-
-        qs = User.objects.filter(role=User.Role.STUDENT)
+        
+        qs = User.objects.filter(role=User.Role.STUDENT, is_active=True)
         if group:
-            qs = qs.exclude(enrollments__group=group)
+            qs = qs.exclude(enrollments__group=group, enrollments__is_active=True)
 
         if self.instance and self.instance.pk and self.instance.student_id:
             qs = qs | User.objects.filter(pk=self.instance.student_id)
             self.fields["student"].disabled = True
 
         self.fields["student"].queryset = qs.distinct()
+        self.fields["start_date"].required = False
 
     def clean_student(self):
         if self.instance and self.instance.pk:
             return self.instance.student
         return self.cleaned_data["student"]
-
 
 class ExamForm(forms.ModelForm):
     class Meta:
@@ -92,9 +92,13 @@ class MarkForm(forms.ModelForm):
         self.exam = exam
 
         if exam:
-            available_enrollments = Enrollment.objects.filter(group=exam.group).exclude(
+            available_enrollments = Enrollment.objects.filter(
+                group=exam.group,
+                is_active=True,
+            ).exclude(
                 marks__exam=exam
             )
+
 
             self.fields["enrollment"].queryset = available_enrollments
             self.fields["enrollment"].label_from_instance = (

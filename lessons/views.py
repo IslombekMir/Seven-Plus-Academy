@@ -9,6 +9,8 @@ from django.contrib import messages
 from payments.models import Payment
 from django.utils import timezone
 from django.db.models import Avg
+from django.db import transaction
+
 
 ### Subject
 @login_required
@@ -140,21 +142,42 @@ def group_detail(request, pk):
         if request.method == "POST":
             enrollment_form = EnrollmentForm(request.POST, group=group)
             if enrollment_form.is_valid():
-                enrollment = enrollment_form.save(commit=False)
-                enrollment.group = group
-                enrollment.save()
+                with transaction.atomic():
+                    student = enrollment_form.cleaned_data["student"]
+                    existing_enrollment = Enrollment.objects.filter(
+                        group=group,
+                        student=student,
+                    ).first()
+
+                    if existing_enrollment:
+                        existing_enrollment.is_active = True
+                        existing_enrollment.end_date = None
+                        existing_enrollment.payment_amount = enrollment_form.cleaned_data["payment_amount"]
+                        existing_enrollment.save(update_fields=["is_active", "end_date", "payment_amount"])
+                    else:
+                        enrollment = enrollment_form.save(commit=False)
+                        enrollment.group = group
+                        enrollment.is_active = True
+                        enrollment.start_date = (
+                            enrollment_form.cleaned_data["start_date"] or timezone.localdate()
+                        )
+                        enrollment.save()
                 return redirect("lessons:group_detail", pk=group.pk)
         else:
             enrollment_form = EnrollmentForm(group=group)
     else:
         enrollment_form = None
-
+    
     if request.user.role == User.Role.STUDENT:
-        enrollments = group.enrollments.filter(student=request.user).select_related("student")
+        enrollments = group.enrollments.filter(
+            student=request.user,
+            is_active=True,
+        ).select_related("student")
     elif request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
         enrollments = Enrollment.objects.none()
     else:
-        enrollments = group.enrollments.select_related("student").all()
+        enrollments = group.enrollments.filter(is_active=True).select_related("student")
+
 
     current_date = timezone.now()
     selected_month = request.GET.get("month") or str(current_date.month)
@@ -192,7 +215,6 @@ def group_detail(request, pk):
     "enrollment_form": enrollment_form,
 })
 
-
 ### Enrollment
 def can_manage_enrollments(user, group):
     return user.role == User.Role.ADMIN or group.teacher == user
@@ -219,6 +241,7 @@ def enrollment_edit(request, pk):
         "enrollment": enrollment,
     })
 
+### Soft delete - more like remove
 @login_required
 def enrollment_delete(request, pk):
     enrollment = get_object_or_404(Enrollment, pk=pk)
@@ -228,13 +251,19 @@ def enrollment_delete(request, pk):
         return HttpResponseForbidden("You do not have permission to delete enrollments.")
 
     if request.method == "POST":
-        enrollment.delete()
+        enrollment.is_active = False
+
+        if enrollment.end_date is None:
+            enrollment.end_date = timezone.localdate()
+
+        enrollment.save(update_fields=["is_active", "end_date"])
         return redirect("lessons:group_detail", pk=group.pk)
 
     return render(request, "lessons/enrollment_confirm_delete.html", {
         "enrollment": enrollment,
         "group": group,
     })
+
 
 ### Exam
 def can_manage_exams(user, group):
@@ -246,9 +275,8 @@ def can_view_exams(user, group):
     if user.role == User.Role.TEACHER:
         return group.teacher == user
     if user.role == User.Role.STUDENT:
-        return group.enrollments.filter(student=user).exists()
+        return group.enrollments.filter(student=user, is_active=True).exists()
     return False
-
 
 @login_required
 def exam_create(request, group_id):
@@ -315,7 +343,6 @@ def exam_detail(request, pk):
         "form": form,
         "average_mark": average_mark,
     })
-
 
 @login_required
 def exam_edit(request, pk):

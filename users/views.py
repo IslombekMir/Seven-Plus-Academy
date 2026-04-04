@@ -9,6 +9,11 @@ from django.db.models import Q
 from lessons.models import Group
 from lessons.models import Group, Enrollment
 from django.views.decorators.http import require_POST
+from django.db import transaction
+from datetime import date
+from django.db.models.deletion import ProtectedError
+from payments.models import Payment
+from attendances.models import Attendance
 
 from .forms import (
     LoginForm,
@@ -27,9 +32,12 @@ def users_list(request):
         return HttpResponseForbidden("Students cannot view this page.")
 
     if request.user.role == User.Role.TEACHER:
-        users = User.objects.filter(role=User.Role.STUDENT).exclude(is_superuser=True)
+        users = User.objects.filter(
+            role=User.Role.STUDENT,
+            is_active=True,
+        ).exclude(is_superuser=True)
     elif request.user.role == User.Role.ADMIN:
-        users = User.objects.exclude(is_superuser=True)
+        users = User.objects.filter(is_active=True).exclude(is_superuser=True)
     else:
         users = User.objects.none()
 
@@ -52,7 +60,10 @@ def users_list(request):
 
     group_filter = request.GET.get("group")
     if group_filter:
-        users = users.filter(enrollments__group_id=group_filter).distinct()
+        users = users.filter(
+            enrollments__group_id=group_filter,
+            enrollments__is_active=True,
+        ).distinct()
 
     filtered_user_count = users.count()
 
@@ -65,6 +76,70 @@ def users_list(request):
         "selected_group": group_filter,
     })
 
+
+@login_required
+def removed_users(request):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot view this page.")
+
+    if request.user.role == User.Role.TEACHER:
+        users = User.objects.filter(
+            role=User.Role.STUDENT,
+            is_active=False,
+        ).exclude(is_superuser=True)
+    elif request.user.role == User.Role.ADMIN:
+        users = User.objects.filter(is_active=False).exclude(is_superuser=True)
+    else:
+        users = User.objects.none()
+
+    return render(request, "users/removed_users.html", {
+        "users": users,
+        "can_manage": request.user.role in [User.Role.ADMIN, User.Role.TEACHER],
+    })
+
+
+@login_required
+def remove_user(request, user_id):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot remove users.")
+
+    user_obj = get_object_or_404(User, pk=user_id, is_active=True)
+
+    if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
+        return HttpResponseForbidden("Teachers can only remove student users.")
+    
+    if request.method == "POST":
+        with transaction.atomic():
+            user_obj.is_active = False
+            user_obj.save(update_fields=["is_active"])
+
+            Enrollment.objects.filter(student=user_obj, is_active=True).update(
+                is_active=False,
+                end_date=date.today(),
+            )
+
+        return redirect("users:users_list")
+
+    return render(request, "users/confirm_remove.html", {"user": user_obj})
+
+@login_required
+def restore_user(request, user_id):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot restore users.")
+
+    user_obj = get_object_or_404(User, pk=user_id, is_active=False)
+
+    if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
+        return HttpResponseForbidden("Teachers can only restore student users.")
+
+    if request.method == "POST":
+        user_obj.is_active = True
+        user_obj.set_password(user_obj.username)
+        user_obj.must_reset_password = True
+        user_obj.save(update_fields=["is_active", "password", "must_reset_password"])
+        return redirect("users:removed_users")
+
+    return render(request, "users/confirm_restore.html", {"user": user_obj})
 
 def login_view(request):
     if request.method == "POST":
@@ -130,21 +205,54 @@ def edit_user(request, user_id):
 
     return render(request, "users/create_user.html", {"form": form, "edit_mode": True})
 
+def _can_permanently_delete_user(user_obj):
+    has_attendance_history = (
+        Attendance.objects.filter(student=user_obj).exists()
+        or Attendance.objects.filter(enrollment__student=user_obj).exists()
+    )
+    has_payment_history = (
+        Payment.objects.filter(student=user_obj).exists()
+        or Payment.objects.filter(enrollment__student=user_obj).exists()
+    )
+    return not (has_attendance_history or has_payment_history)
+
+@login_required
 @login_required
 def delete_user(request, user_id):
     if request.user.role == User.Role.STUDENT:
         return HttpResponseForbidden("Students cannot delete users.")
 
-    user_obj = get_object_or_404(User, pk=user_id)
+    user_obj = get_object_or_404(User, pk=user_id, is_active=False)
 
     if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
         return HttpResponseForbidden("Teachers can only delete student users.")
 
     if request.method == "POST":
-        user_obj.delete()
-        return redirect("users:users_list")
+        if not _can_permanently_delete_user(user_obj):
+            messages.error(
+                request,
+                "This user has attendance or payment history and cannot be permanently deleted."
+            )
+            return redirect("users:removed_users")
 
-    return render(request, "users/confirm_delete.html", {"user": user_obj})
+        try:
+            user_obj.delete()
+            messages.success(request, "User was permanently deleted.")
+        except ProtectedError:
+            messages.error(
+                request,
+                "This user still has related records that prevent permanent deletion."
+            )
+
+        return redirect("users:removed_users")
+
+    can_delete = _can_permanently_delete_user(user_obj)
+    return render(request, "users/confirm_delete.html", {
+        "user": user_obj,
+        "can_delete": can_delete,
+    })
+
+
 
 @login_required
 def reset_password(request, user_id):

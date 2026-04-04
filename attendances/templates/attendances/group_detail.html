@@ -25,9 +25,17 @@
       </form>
     </div>
   {% endif %}
-
   <div class="stack">
     <h3 class="page-title">Attendance Sessions</h3>
+    <form method="get" id="group-session-filter-form">
+      <div class="filter-bar">
+        <input type="date" name="date" value="{{ selected_date }}">
+        <div class="filter-bar__actions">
+          <button type="submit">Filter</button>
+          <a href="{% url 'attendances:group_detail' group.pk %}" class="button">Reset</a>
+        </div>
+      </div>
+    </form>
     {% for session in sessions %}
       <div class="card" style="padding: var(--space-3) var(--space-5);">
         <div class="page-header" style="margin-bottom:0;">

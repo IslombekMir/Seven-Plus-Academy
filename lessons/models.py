@@ -38,6 +38,7 @@ class Enrollment(models.Model):
         related_name="enrollments",
         limit_choices_to={"role": "STUDENT"},
     )
+    is_active = models.BooleanField(default=True)
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(blank=True, null=True)
     payment_amount = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)

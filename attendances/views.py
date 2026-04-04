@@ -5,21 +5,23 @@ from django.shortcuts import get_object_or_404, redirect, render
 from lessons.models import Enrollment, Group
 from users.models import User
 
-from .forms import AttendanceBulkForm, AttendanceSessionForm
-from .models import AttendanceSession
+from .forms import AttendanceSessionForm, AttendanceBulkForm
+
+from django.db.models import Count, Q
+from .models import AttendanceSession, Attendance
+from django.core.exceptions import ValidationError
+from django.urls import reverse
+from urllib.parse import urlencode
+
 
 
 def can_manage_attendance(user, group):
     return user.role == User.Role.ADMIN or group.teacher == user
 
-
-from django.db.models import Count, Q
-from .models import AttendanceSession, Attendance
-
 @login_required
 def attendance_dashboard(request):
     if request.user.role == User.Role.STUDENT:
-        groups = Group.objects.filter(enrollments__student=request.user).distinct()
+        groups = Group.objects.filter(enrollments__student=request.user, enrollments__is_active=True).distinct()
     elif request.user.role == User.Role.TEACHER:
         groups = Group.objects.filter(teacher=request.user)
     else:
@@ -27,9 +29,11 @@ def attendance_dashboard(request):
 
     groups = groups.select_related("subject", "teacher").prefetch_related("attendance_sessions")
 
+    selected_student = request.GET.get("student", "")
     selected_teacher = request.GET.get("teacher", "")
     selected_group = request.GET.get("group", "")
     selected_status = request.GET.get("status", "")
+    selected_date = request.GET.get("date", "")
 
     sessions = AttendanceSession.objects.select_related(
         "group", "group__subject", "group__teacher", "created_by"
@@ -38,7 +42,7 @@ def attendance_dashboard(request):
     if request.user.role == User.Role.TEACHER:
         sessions = sessions.filter(group__teacher=request.user)
     elif request.user.role == User.Role.STUDENT:
-        sessions = sessions.filter(group__enrollments__student=request.user).distinct()
+        sessions = sessions.filter(group__enrollments__student=request.user, group__enrollments__is_active=True).distinct()
 
     if selected_teacher:
         sessions = sessions.filter(group__teacher_id=selected_teacher)
@@ -60,6 +64,17 @@ def attendance_dashboard(request):
 
     if selected_group:
         attendances = attendances.filter(session__group_id=selected_group)
+    
+    if selected_date:
+        attendances = attendances.filter(session__date=selected_date)
+    
+    students = User.objects.filter(
+        pk__in=attendances.values_list("student_id", flat=True).distinct(),
+        role=User.Role.STUDENT,
+    ).order_by("first_name", "last_name", "username")
+
+    if selected_student:
+        attendances = attendances.filter(student_id=selected_student)
 
     if selected_status:
         attendances = attendances.filter(status=selected_status)
@@ -77,8 +92,14 @@ def attendance_dashboard(request):
     total_unknown = totals["total_unknown"] or 0
     attendance_percent = round((total_present / total_records) * 100, 1) if total_records else 0
 
-    teacher_ids = sessions.values_list("group__teacher_id", flat=True).distinct()
-    group_ids = sessions.values_list("group_id", flat=True).distinct()
+    teacher_ids = attendances.values_list("session__group__teacher_id", flat=True).distinct()
+    group_ids = attendances.values_list("session__group_id", flat=True).distinct()
+    student_ids = attendances.values_list("student_id", flat=True).distinct()
+
+    students = User.objects.filter(
+        pk__in=student_ids,
+        role=User.Role.STUDENT,
+    ).order_by("first_name", "last_name", "username")
 
     teachers = User.objects.filter(
         pk__in=teacher_ids,
@@ -90,21 +111,22 @@ def attendance_dashboard(request):
     ).select_related("subject", "teacher").order_by("name")
 
     return render(request, "attendances/dashboard.html", {
-        "groups": groups,  # keep your existing list untouched
-        "sessions": sessions,
+        "groups": groups,
+        "attendances": attendances.order_by("-session__date", "-updated_at"),
+        "students": students,
+        "selected_student": selected_student,
         "teachers": teachers,
         "dashboard_groups": dashboard_groups,
         "selected_teacher": selected_teacher,
         "selected_group": selected_group,
         "selected_status": selected_status,
+        "selected_date": selected_date,
         "total_records": total_records,
         "total_present": total_present,
         "total_absent": total_absent,
         "total_unknown": total_unknown,
         "attendance_percent": attendance_percent,
     })
-
-
 
 @login_required
 def attendance_group_detail(request, group_id):
@@ -116,7 +138,6 @@ def attendance_group_detail(request, group_id):
     if request.user.role == User.Role.STUDENT:
         if not group.enrollments.filter(student=request.user).exists():
             return HttpResponseForbidden("You do not have permission to view this attendance page.")
-
     elif request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
         return HttpResponseForbidden("Teachers can only view attendance for their own groups.")
 
@@ -131,14 +152,24 @@ def attendance_group_detail(request, group_id):
                 session.created_by = request.user
                 session.save()
 
-                enrollments = Enrollment.objects.filter(group=group).select_related("student")
-                for enrollment in enrollments:
-                    session.attendances.get_or_create(
-                        enrollment=enrollment,
-                        defaults={
-                            "student": enrollment.student,
-                        },
-                    )
+                try:
+                    session.full_clean()
+                    session.save()
+                except ValidationError as exc:
+                    form.add_error(None, exc)
+                else:
+                    enrollments = Enrollment.objects.filter(
+                        group=group,
+                        is_active=True,
+                    ).select_related("student")
+
+                    for enrollment in enrollments:
+                        session.attendances.get_or_create(
+                            enrollment=enrollment,
+                            defaults={
+                                "student": enrollment.student,
+                            },
+                        )
 
                 return redirect("attendances:session_detail", pk=session.pk)
         else:
@@ -146,11 +177,24 @@ def attendance_group_detail(request, group_id):
     else:
         form = None
 
+    selected_date = request.GET.get("date", "")
+
+    sessions = group.attendance_sessions.select_related("created_by").prefetch_related(
+        "attendances"
+    ).order_by("-date", "-created_at")
+
+    if selected_date:
+        sessions = sessions.filter(date=selected_date)
+
+
+
+
     return render(request, "attendances/group_detail.html", {
         "group": group,
         "sessions": sessions,
         "form": form,
         "can_manage": can_manage_attendance(request.user, group),
+        "selected_date": selected_date,
     })
 
 
@@ -163,47 +207,52 @@ def attendance_session_detail(request, pk):
     group = session.group
 
     if request.user.role == User.Role.STUDENT:
-        if not group.enrollments.filter(student=request.user).exists():
+        if not session.attendances.filter(student=request.user).exists():
             return HttpResponseForbidden("You do not have permission to view this session.")
     elif request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
         return HttpResponseForbidden("Teachers can only view attendance for their own groups.")
 
-    enrollments = Enrollment.objects.filter(group=group).select_related("student").order_by("student__first_name", "student__last_name")
+    attendances = session.attendances.select_related(
+        "student", "enrollment"
+    ).order_by("student__first_name", "student__last_name")
 
-    # Students only see their own enrollment
     if request.user.role == User.Role.STUDENT:
-        enrollments = enrollments.filter(student=request.user)
+        attendances = attendances.filter(student=request.user)
+
+    historical_enrollment_ids = session.attendances.values_list("enrollment_id", flat=True)
+
+    editable_enrollments = Enrollment.objects.filter(
+        Q(group=group, is_active=True) | Q(pk__in=historical_enrollment_ids)
+    ).select_related("student").distinct().order_by(
+        "student__first_name",
+        "student__last_name",
+    )
+
+    if request.user.role == User.Role.STUDENT:
+        editable_enrollments = editable_enrollments.filter(student=request.user)
 
     if request.method == "POST":
         if not can_manage_attendance(request.user, group):
             return HttpResponseForbidden("You do not have permission to update attendance.")
 
-        form = AttendanceBulkForm(request.POST, session=session, enrollments=enrollments)
+        form = AttendanceBulkForm(
+            request.POST,
+            session=session,
+            enrollments=editable_enrollments,
+        )
         if form.is_valid():
             form.save()
             return redirect("attendances:session_detail", pk=session.pk)
     else:
-        form = AttendanceBulkForm(session=session, enrollments=enrollments)
-
-    attendances = session.attendances.select_related("student", "enrollment")
-
-    if request.user.role == User.Role.STUDENT:
-        attendances = attendances.filter(student=request.user)
-
-    attendance_map = {
-        attendance.enrollment_id: attendance
-        for attendance in attendances
-    }
-
-    enrollment_attendance_pairs = [
-        (enrollment, attendance_map.get(enrollment.pk))
-        for enrollment in enrollments
-    ]
+        form = AttendanceBulkForm(
+            session=session,
+            enrollments=editable_enrollments,
+        )
 
     return render(request, "attendances/session_detail.html", {
         "session": session,
         "group": group,
         "form": form,
-        "enrollment_attendance_pairs": enrollment_attendance_pairs,
+        "attendances": attendances,
         "can_manage": can_manage_attendance(request.user, group),
     })

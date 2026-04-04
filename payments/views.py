@@ -28,9 +28,8 @@ def can_view_group_payments(user, group):
     if user.role == User.Role.TEACHER:
         return group.teacher == user
     if user.role == User.Role.STUDENT:
-        return group.enrollments.filter(student=user).exists()
+        return group.enrollments.filter(student=user, is_active=True).exists()
     return False
-
 
 @login_required
 def payment_group_detail(request, group_id):
@@ -42,7 +41,7 @@ def payment_group_detail(request, group_id):
     if not can_view_group_payments(request.user, group):
         return HttpResponseForbidden("You do not have permission to view this payments page.")
 
-    enrollments = group.enrollments.select_related("student").all()
+    enrollments = group.enrollments.filter(is_active=True).select_related("student")
     if request.user.role == User.Role.STUDENT:
         enrollments = enrollments.filter(student=request.user)
 
@@ -93,6 +92,7 @@ def payment_create(request, enrollment_id):
     enrollment = get_object_or_404(
         Enrollment.objects.select_related("student", "group", "group__teacher"),
         pk=enrollment_id,
+        is_active=True,
     )
 
     if not can_manage_payments(request.user, enrollment):
@@ -177,7 +177,7 @@ def payment_delete(request, pk):
 @login_required
 def payment_dashboard(request):
     if request.user.role == User.Role.STUDENT:
-        payment_groups = Group.objects.filter(enrollments__student=request.user).distinct()
+        payment_groups = Group.objects.filter(enrollments__student=request.user, enrollments__is_active=True).distinct()
     elif request.user.role == User.Role.TEACHER:
         payment_groups = Group.objects.filter(teacher=request.user)
     else:

@@ -56,7 +56,7 @@
             <div class="inline-actions">
               {% if enrollment_form is not None %}
                 <a href="{% url 'lessons:enrollment_edit' enrollment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Edit</a>
-                <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}" class="button" style="background:var(--danger);">Delete</a>
+                <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}" class="button" style="background:var(--danger);">Remove</a>
               {% endif %}
               {% if can_manage_payments %}
                 <a href="{% url 'payments:payment_create' enrollment.pk %}?month={{ selected_month }}&year={{ selected_year }}" class="button">Add payment</a>
