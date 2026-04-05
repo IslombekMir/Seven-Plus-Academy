@@ -15,8 +15,7 @@ from .models import Payment
 from django.urls import reverse
 
 from django.utils import timezone
-
-
+from django.db.models import DecimalField, F, Sum, Value
 
 def can_manage_payments(user, enrollment):
     return user.role == User.Role.ADMIN or enrollment.group.teacher == user
@@ -85,7 +84,6 @@ def payment_group_detail(request, group_id):
         "years": available_years,
         "can_manage_payments": request.user.role == User.Role.ADMIN or group.teacher == request.user,
     })
-
 
 @login_required
 def payment_create(request, enrollment_id):
@@ -173,18 +171,8 @@ def payment_delete(request, pk):
         "payment": payment,
     })
 
-
 @login_required
 def payment_dashboard(request):
-    if request.user.role == User.Role.STUDENT:
-        payment_groups = Group.objects.filter(enrollments__student=request.user, enrollments__is_active=True).distinct()
-    elif request.user.role == User.Role.TEACHER:
-        payment_groups = Group.objects.filter(teacher=request.user)
-    else:
-        payment_groups = Group.objects.all()
-
-    payment_groups = payment_groups.select_related("subject", "teacher")
-
     scoped_payments = (
         Payment.objects
         .select_related("student", "group", "group__teacher", "enrollment")
@@ -200,6 +188,7 @@ def payment_dashboard(request):
     selected_month = request.GET.get("month", "")
     selected_teacher = request.GET.get("teacher", "")
     selected_group = request.GET.get("group", "")
+    selected_payment_status = request.GET.get("payment_status", "")
 
     payments = scoped_payments
 
@@ -221,6 +210,12 @@ def payment_dashboard(request):
 
     if selected_group:
         payments = payments.filter(group_id=selected_group)
+    
+    if selected_payment_status == "fully_paid":
+        payments = payments.filter(paid_amount__gte=F("expected_amount"))
+    elif selected_payment_status == "not_fully_paid":
+        payments = payments.filter(paid_amount__lt=F("expected_amount"))
+
 
     money_field = DecimalField(max_digits=12, decimal_places=2)
     totals = payments.aggregate(
@@ -273,7 +268,6 @@ def payment_dashboard(request):
     ]
 
     return render(request, "payments/payment_dashboard.html", {
-        "payment_groups": payment_groups,
         "payments": payments,
         "students": students,
         "teachers": teachers,
@@ -286,5 +280,9 @@ def payment_dashboard(request):
         "total_paid": total_paid,
         "total_expected": total_expected,
         "collection_percent": collection_percent,
+        "can_edit_rows": request.user.role in [User.Role.ADMIN, User.Role.TEACHER],
+        "selected_payment_status": selected_payment_status,
     })
+
+
 

@@ -76,7 +76,6 @@ def users_list(request):
         "selected_group": group_filter,
     })
 
-
 @login_required
 def removed_users(request):
     if request.user.role == User.Role.STUDENT:
@@ -215,7 +214,6 @@ def _can_permanently_delete_user(user_obj):
     )
     return not (has_attendance_history or has_payment_history)
 
-@login_required
 @login_required
 def delete_user(request, user_id):
     if request.user.role == User.Role.STUDENT:

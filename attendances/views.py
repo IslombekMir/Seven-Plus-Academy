@@ -10,8 +10,6 @@ from .forms import AttendanceSessionForm, AttendanceBulkForm
 from django.db.models import Count, Q
 from .models import AttendanceSession, Attendance
 from django.core.exceptions import ValidationError
-from django.urls import reverse
-from urllib.parse import urlencode
 
 
 
@@ -20,35 +18,11 @@ def can_manage_attendance(user, group):
 
 @login_required
 def attendance_dashboard(request):
-    if request.user.role == User.Role.STUDENT:
-        groups = Group.objects.filter(enrollments__student=request.user, enrollments__is_active=True).distinct()
-    elif request.user.role == User.Role.TEACHER:
-        groups = Group.objects.filter(teacher=request.user)
-    else:
-        groups = Group.objects.all()
-
-    groups = groups.select_related("subject", "teacher").prefetch_related("attendance_sessions")
-
     selected_student = request.GET.get("student", "")
     selected_teacher = request.GET.get("teacher", "")
     selected_group = request.GET.get("group", "")
     selected_status = request.GET.get("status", "")
     selected_date = request.GET.get("date", "")
-
-    sessions = AttendanceSession.objects.select_related(
-        "group", "group__subject", "group__teacher", "created_by"
-    ).prefetch_related("attendances").order_by("-date", "-created_at")
-
-    if request.user.role == User.Role.TEACHER:
-        sessions = sessions.filter(group__teacher=request.user)
-    elif request.user.role == User.Role.STUDENT:
-        sessions = sessions.filter(group__enrollments__student=request.user, group__enrollments__is_active=True).distinct()
-
-    if selected_teacher:
-        sessions = sessions.filter(group__teacher_id=selected_teacher)
-
-    if selected_group:
-        sessions = sessions.filter(group_id=selected_group)
 
     attendances = Attendance.objects.select_related(
         "session", "session__group", "student", "enrollment"
@@ -111,7 +85,6 @@ def attendance_dashboard(request):
     ).select_related("subject", "teacher").order_by("name")
 
     return render(request, "attendances/dashboard.html", {
-        "groups": groups,
         "attendances": attendances.order_by("-session__date", "-updated_at"),
         "students": students,
         "selected_student": selected_student,
@@ -127,6 +100,7 @@ def attendance_dashboard(request):
         "total_unknown": total_unknown,
         "attendance_percent": attendance_percent,
     })
+
 
 @login_required
 def attendance_group_detail(request, group_id):
@@ -196,7 +170,6 @@ def attendance_group_detail(request, group_id):
         "can_manage": can_manage_attendance(request.user, group),
         "selected_date": selected_date,
     })
-
 
 @login_required
 def attendance_session_detail(request, pk):

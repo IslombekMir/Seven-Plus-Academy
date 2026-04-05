@@ -9,23 +9,10 @@
     <h1 class="page-title">Attendances</h1>
   </div>
 
-  <div class="stats-grid">
-    {% for group in groups %}
-      <div class="stat-card">
-        <div class="stat-label">{{ group.subject }} · {{ group.teacher.get_full_name }}</div>
-        <div class="stat-value">
-          <a href="{% url 'attendances:group_detail' group.pk %}">{{ group.name }}</a>
-        </div>
-      </div>
-    {% empty %}
-      <div class="empty-state">No groups available.</div>
-    {% endfor %}
-  </div>
-
   <form method="get" id="attendance-filter-form">
     <div class="filter-bar">
       {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
-        <select name="teacher">
+        <select name="teacher" class="searchable-select">
           <option value="">All Teachers</option>
           {% for teacher in teachers %}
             <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
@@ -35,16 +22,16 @@
         </select>
       {% endif %}
 
-      <input type="date" name="date" value="{{ selected_date }}">
+      <input type="date" name="date" value="{{ selected_date }}" class="filter-date">
 
-      <select name="student">
-      <option value="">All Students</option>
-      {% for student in students %}
-        <option value="{{ student.id }}" {% if selected_student == student.id|stringformat:"s" %}selected{% endif %}>
-          {{ student.get_full_name|default:student.username }}
-        </option>
-      {% endfor %}
-    </select>
+      <select name="student" class="searchable-select">
+        <option value="">All Students</option>
+        {% for student in students %}
+          <option value="{{ student.id }}" {% if selected_student == student.id|stringformat:"s" %}selected{% endif %}>
+            {{ student.get_full_name|default:student.username }}
+          </option>
+        {% endfor %}
+      </select>
 
       <select name="group">
         <option value="">All Groups</option>
@@ -118,7 +105,11 @@
           <tr>
             <td>{{ attendance.session.date }}</td>
             <td>{{ attendance.student.get_full_name|default:attendance.student.username }}</td>
-            <td>{{ attendance.session.group.name }}</td>
+            <td>
+              <a href="{% url 'attendances:group_detail' attendance.session.group.pk %}">
+                {{ attendance.session.group.name }}
+              </a>
+            </td>
             <td>{{ attendance.session.group.subject }}</td>
             <td>{{ attendance.session.group.teacher.get_full_name|default:attendance.session.group.teacher.username }}</td>
             <td>{{ attendance.get_status_display }}</td>
@@ -131,8 +122,27 @@
 </div>
 
 <script>
-  document.querySelectorAll("#attendance-filter-form select, #attendance-filter-form input[type='date']").forEach(function (el) {
-    el.addEventListener("change", function () { this.form.submit(); });
+  document.querySelectorAll(".searchable-select").forEach(function (el) {
+    new TomSelect(el, {
+      create: false,
+      allowEmptyOption: true,
+      placeholder: el.name === "teacher" ? "Search teachers..." : "Search students...",
+      maxOptions: 50,
+      searchField: ["text"],
+      sortField: {
+        field: "text",
+        direction: "asc"
+      },
+      onChange: function () {
+        el.form.submit();
+      }
+    });
+  });
+
+  document.querySelectorAll("#attendance-filter-form select:not(.tomselected), #attendance-filter-form input[type='date']").forEach(function (el) {
+    el.addEventListener("change", function () {
+      this.form.submit();
+    });
   });
 </script>
 {% endblock %}

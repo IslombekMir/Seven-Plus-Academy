@@ -21,7 +21,7 @@
   <form method="get">
     <div class="filter-bar">
       <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search users…"
-        oninput="clearTimeout(this._t); this._t=setTimeout(() => this.form.submit(), 400);">
+        oninput="clearTimeout(this._t); this._t=setTimeout(() => this.form.submit(), 600);">
 
       {% if request.user.role == "ADMIN" %}
         <select name="role" onchange="this.form.submit()">

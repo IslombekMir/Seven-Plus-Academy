@@ -9,21 +9,18 @@
     <h1 class="page-title">Payments</h1>
   </div>
 
-  <div class="stats-grid">
-    {% for group in payment_groups %}
-      <div class="stat-card">
-        <div class="stat-label">{{ group.subject }} · {{ group.teacher.get_full_name|default:group.teacher.username }}</div>
-        <div class="stat-value" style="font-size:1.1rem;">
-          <a href="{% url 'payments:group_detail' group.pk %}">{{ group.name }}</a>
-        </div>
-      </div>
-    {% empty %}
-      <div class="empty-state">No groups available.</div>
-    {% endfor %}
-  </div>
-
   <form method="get" id="payments-filter-form">
     <div class="filter-bar">
+
+      <select name="payment_status">
+        <option value="">All Payment Statuses</option>
+        <option value="fully_paid" {% if selected_payment_status == "fully_paid" %}selected{% endif %}>
+          Fully Paid
+        </option>
+        <option value="not_fully_paid" {% if selected_payment_status == "not_fully_paid" %}selected{% endif %}>
+          Not Fully Paid
+        </option>
+      </select>
 
       <select name="month">
         <option value="">All Months</option>
@@ -35,7 +32,7 @@
       </select>
 
       {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
-        <select name="teacher">
+        <select name="teacher" class="searchable-select">
           <option value="">All Teachers</option>
           {% for teacher in teachers %}
             <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
@@ -46,7 +43,7 @@
       {% endif %}
 
       {% if request.user.role != "STUDENT" %}
-        <select name="student">
+        <select name="student" class="searchable-select">
           <option value="">All Students</option>
           {% for student in students %}
             <option value="{{ student.id }}" {% if selected_student == student.id|stringformat:"s" %}selected{% endif %}>
@@ -110,6 +107,9 @@
           <th>Paid</th>
           <th>Expected</th>
           <th>Created At</th>
+          {% if can_edit_rows %}
+            <th>Actions</th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -118,14 +118,25 @@
             <td>{{ payment.payment_year }}-{{ payment.payment_month|stringformat:"02d" }}</td>
             <td>{{ payment.student.get_full_name|default:payment.student.username }}</td>
             <td>{{ payment.group.teacher.get_full_name|default:payment.group.teacher.username }}</td>
-            <td>{{ payment.group.name }}</td>
+            <td>
+              <a href="{% url 'payments:group_detail' payment.group.pk %}">
+                {{ payment.group.name }}
+              </a>
+            </td>
             <td>{{ payment.paid_amount }}</td>
             <td>{{ payment.expected_amount }}</td>
             <td>{{ payment.created_at|date:"Y-m-d H:i" }}</td>
+            {% if can_edit_rows %}
+              <td>
+                <a href="{% url 'payments:payment_edit' payment.pk %}" class="button">
+                  Edit
+                </a>
+              </td>
+            {% endif %}
           </tr>
         {% empty %}
           <tr>
-            <td colspan="7">
+            <td colspan="{% if can_edit_rows %}8{% else %}7{% endif %}">
               <div class="empty-state">No payments found.</div>
             </td>
           </tr>
@@ -133,13 +144,39 @@
       </tbody>
     </table>
   </div>
-
 </div>
 
 <script>
-  document.querySelectorAll("#payments-filter-form select").forEach(function (el) {
-    el.addEventListener("change", function () { this.form.submit(); });
+  const teacherEl = document.querySelector('#payments-filter-form select[name="teacher"]');
+  if (teacherEl) {
+    new TomSelect(teacherEl, {
+      create: false,
+      allowEmptyOption: true,
+      placeholder: "Search teachers...",
+      onChange: function () {
+        teacherEl.form.submit();
+      }
+    });
+  }
+
+  const studentEl = document.querySelector('#payments-filter-form select[name="student"]');
+  if (studentEl) {
+    new TomSelect(studentEl, {
+      create: false,
+      allowEmptyOption: true,
+      placeholder: "Search students...",
+      onChange: function () {
+        studentEl.form.submit();
+      }
+    });
+  }
+
+  document.querySelectorAll("#payments-filter-form select:not(.tomselected)").forEach(function (el) {
+    el.addEventListener("change", function () {
+      this.form.submit();
+    });
   });
 </script>
+
 
 {% endblock %}
