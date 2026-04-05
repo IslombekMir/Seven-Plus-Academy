@@ -16,7 +16,6 @@
   {% block style %}{% endblock %}
 </head>
 <body class="theme-{{ request.user.settings.theme|default:'LIGHT'|lower }}">
-
   <header style="background: var(--surface); border-bottom: 1px solid var(--border); box-shadow: var(--shadow);">
     <nav style="max-width: var(--max-width); margin: 0 auto; padding: var(--space-3) var(--space-4);">
       <div class="inline-actions" style="justify-content: space-between;">
@@ -34,12 +33,53 @@
   </header>
 
   <main>
-    {% block content %}{% endblock content %}
+    <div class="page-wrap">
+      {% block content %}{% endblock content %}
+    </div>
   </main>
 
   <footer style="border-top: 1px solid var(--border); background: var(--surface); margin-top: var(--space-6);">
     <div style="max-width: var(--max-width); margin: 0 auto; padding: var(--space-4); color: var(--muted); text-align: center;">
-      Footer
+
+      <p class="site-footer__phone">
+        <a href="tel:+998901234567" class="footer-link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          +998 90 123 45 67
+        </a>
+      </p>
+
+      <nav class="site-footer__links" aria-label="Footer social links">
+        <a href="https://t.me/Sevenplus_academy" class="footer-link" target="_blank" rel="noopener noreferrer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21.2 5L2 12.5l7 1M21.2 5l-5.4 14-4.8-6.5M21.2 5L9 13.5m0 0v5l3.2-3"/>
+          </svg>
+          Almalyk
+        </a>
+        <a href="https://t.me/humosevenplus" class="footer-link" target="_blank" rel="noopener noreferrer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21.2 5L2 12.5l7 1M21.2 5l-5.4 14-4.8-6.5M21.2 5L9 13.5m0 0v5l3.2-3"/>
+          </svg>
+          Buka
+        </a>
+        <a href="https://www.instagram.com/sevenplus_lc?igsh=YnZ3YTZoZ2d4MDRq" class="footer-link" target="_blank" rel="noopener noreferrer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5"/>
+            <circle cx="12" cy="12" r="4.5"/>
+            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+          </svg>
+          Instagram
+        </a>
+        <a href="https://youtube.com/@sevenplusacademy?si=Ek8qY_T3dDIjPzfv" class="footer-link" target="_blank" rel="noopener noreferrer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="5" width="20" height="14" rx="4"/>
+            <polygon points="10,9 16,12 10,15" fill="currentColor" stroke="none"/>
+          </svg>
+          YouTube
+        </a>
+      </nav>
+
     </div>
   </footer>
 
