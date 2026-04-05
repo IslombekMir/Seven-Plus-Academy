@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Bulk Create Users{% endblock %}
+
+{% block content %}
+<div class="form-page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Bulk Create Users</h1>
+      <p class="page-subtitle">Create multiple users in one submit.</p>
+    </div>
+    <div class="inline-actions">
+      <a href="{% url 'users:users_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
+        Back
+      </a>
+    </div>
+  </div>
+
+  <form method="post" id="bulk-user-form" class="stack">
+    {% csrf_token %}
+
+    <div class="card">
+      {% if meta_form.non_field_errors %}
+        <div style="color:var(--danger); margin-bottom:var(--space-3);">
+          {{ meta_form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      {% if formset.non_form_errors %}
+        <div style="color:var(--danger); margin-bottom:var(--space-3);">
+          {{ formset.non_form_errors }}
+        </div>
+      {% endif %}
+
+      <div class="filter-bar" style="margin-bottom:0;">
+        <div>
+          {{ meta_form.role.label_tag }}
+          {{ meta_form.role }}
+        </div>
+
+        <div id="group-field-wrap" style="display:none;">
+          {{ meta_form.group.label_tag }}
+          <select name="{{ meta_form.group.html_name }}" id="{{ meta_form.group.id_for_label }}" class="searchable-select">
+            <option value="">No group</option>
+            {% for group in meta_form.fields.group.queryset %}
+              <option value="{{ group.id }}" {% if meta_form.group.value|stringformat:"s" == group.id|stringformat:"s" %}selected{% endif %}>
+                {{ group.name }} - {{ group.subject }}
+              </option>
+            {% endfor %}
+          </select>
+
+          {% if meta_form.group.errors %}
+            <div style="color:var(--danger); margin-top:var(--space-2);">
+              {{ meta_form.group.errors }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:var(--space-4); display:flex; gap:var(--space-3); flex-wrap:wrap;">
+        <button type="submit">Create Users</button>
+        <a href="{% url 'users:users_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
+            Cancel
+        </a>
+    </div>
+
+    <div class="card">
+      {{ formset.management_form }}
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:32%;">First Name</th>
+              <th style="width:32%;">Last Name</th>
+              <th style="width:36%;">Phone Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for form in formset %}
+              <tr>
+                <td>
+                  {{ form.first_name }}
+                  {% if form.first_name.errors %}
+                    <div style="color:var(--danger); margin-top:var(--space-2);">{{ form.first_name.errors }}</div>
+                  {% endif %}
+                </td>
+                <td>
+                  {{ form.last_name }}
+                  {% if form.last_name.errors %}
+                    <div style="color:var(--danger); margin-top:var(--space-2);">{{ form.last_name.errors }}</div>
+                  {% endif %}
+                </td>
+                <td>
+                  {{ form.phone_number }}
+                  {% if form.phone_number.errors %}
+                    <div style="color:var(--danger); margin-top:var(--space-2);">{{ form.phone_number.errors }}</div>
+                  {% endif %}
+                  {% if form.non_field_errors %}
+                    <div style="color:var(--danger); margin-top:var(--space-2);">{{ form.non_field_errors }}</div>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<script>
+  const roleEl = document.querySelector('#bulk-user-form [name="role"]');
+  const groupWrap = document.getElementById('group-field-wrap');
+  const groupEl = document.querySelector('#bulk-user-form select[name="group"]');
+
+  function toggleGroupField() {
+    const roleValue = roleEl ? roleEl.value : "STUDENT";
+    groupWrap.style.display = roleValue === "STUDENT" ? "" : "none";
+  }
+
+  if (groupEl) {
+    new TomSelect(groupEl, {
+      create: false,
+      allowEmptyOption: true,
+      placeholder: "Search groups..."
+    });
+  }
+
+  if (roleEl) {
+    roleEl.addEventListener("change", toggleGroupField);
+  }
+
+  toggleGroupField();
+</script>
+{% endblock %}

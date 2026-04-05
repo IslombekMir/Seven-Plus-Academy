@@ -1,6 +1,10 @@
 from django import forms
 from .models import User, TeacherProfile
 from django.contrib.auth.password_validation import validate_password
+from django.forms import formset_factory, BaseFormSet
+from django.core.exceptions import ValidationError
+from lessons.models import Group
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -68,3 +72,102 @@ class FirstLoginPasswordChangeForm(forms.Form):
         if commit:
             self.user.save()
         return self.user
+    
+### Bul create users
+class BulkUserMetaForm(forms.Form):
+    role = forms.ChoiceField(choices=User.Role.choices)
+    group = forms.ModelChoiceField(
+        queryset=Group.objects.none(),
+        required=False,
+        empty_label="Select group",
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.current_user = kwargs.pop("current_user", None)
+        super().__init__(*args, **kwargs)
+
+        groups_qs = Group.objects.filter(is_active=True).select_related("subject").order_by("name")
+        if self.current_user and self.current_user.role == User.Role.TEACHER:
+            groups_qs = groups_qs.filter(teacher=self.current_user)
+
+        self.fields["group"].queryset = groups_qs
+
+        if self.current_user and self.current_user.role == User.Role.TEACHER:
+            self.fields["role"].initial = User.Role.STUDENT
+            self.fields["role"].widget = forms.HiddenInput()
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if self.current_user and self.current_user.role == User.Role.TEACHER:
+            cleaned_data["role"] = User.Role.STUDENT
+
+        return cleaned_data
+
+class BulkUserRowForm(forms.Form):
+    first_name = forms.CharField(max_length=150, required=False)
+    last_name = forms.CharField(max_length=150, required=False)
+    phone_number = forms.CharField(max_length=15, required=False)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["first_name"] = (cleaned_data.get("first_name") or "").strip()
+        cleaned_data["last_name"] = (cleaned_data.get("last_name") or "").strip()
+        cleaned_data["phone_number"] = (cleaned_data.get("phone_number") or "").strip()
+        return cleaned_data
+
+
+class BaseBulkUserRowFormSet(BaseFormSet):
+    def clean(self):
+        super().clean()
+
+        if any(self.errors):
+            return
+
+        non_empty_rows = 0
+        seen_name_keys = set()
+
+        for form in self.forms:
+            first_name = (form.cleaned_data.get("first_name") or "").strip()
+            last_name = (form.cleaned_data.get("last_name") or "").strip()
+            phone_number = (form.cleaned_data.get("phone_number") or "").strip()
+
+            if not any([first_name, last_name, phone_number]):
+                continue
+
+            non_empty_rows += 1
+
+            name_key = (first_name.lower(), last_name.lower())
+            if name_key in seen_name_keys:
+                raise forms.ValidationError(
+                    "Duplicate first name + last name rows found in the bulk table."
+                )
+            seen_name_keys.add(name_key)
+
+        if non_empty_rows == 0:
+            raise forms.ValidationError("Add at least one user row.")
+
+    def validate_against_role(self, role):
+        for form in self.forms:
+            first_name = (form.cleaned_data.get("first_name") or "").strip()
+            last_name = (form.cleaned_data.get("last_name") or "").strip()
+            phone_number = (form.cleaned_data.get("phone_number") or "").strip()
+
+            if not any([first_name, last_name, phone_number]):
+                continue
+
+            if User.objects.filter(
+                first_name=first_name,
+                last_name=last_name,
+                role=role,
+            ).exists():
+                form.add_error(
+                    None,
+                    "A user with this first name, last name, and role already exists."
+                )
+
+BulkUserRowFormSet = formset_factory(
+    BulkUserRowForm,
+    formset=BaseBulkUserRowFormSet,
+    extra=10,
+)

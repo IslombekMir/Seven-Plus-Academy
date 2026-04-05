@@ -5,6 +5,7 @@ app_name = "users"
 
 urlpatterns = [
     path("create/", views.create_user, name="create_user"),
+    path("bulk-create/", views.bulk_create_users, name="bulk_create_users"),
     path("users_list/", views.users_list, name="users_list"),
     path("users_list/removed_users/", views.removed_users, name="removed_users"),
     path("edit/<int:user_id>/", views.edit_user, name="edit_user"),

@@ -42,37 +42,71 @@
 
     <div class="card">
       <h3 class="page-title" style="margin-bottom:var(--space-4);">Students</h3>
-      <div class="stack">
-        {% for enrollment in enrollments %}
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:var(--space-2) 0; border-bottom:1px solid var(--border);">
-            <div>
-              <span>{{ enrollment.student.get_full_name }}</span>
-              <span class="page-subtitle" style="display:inline; margin-left:var(--space-2);">({{ enrollment.student.username }})</span>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
               {% if not is_student %}
-                <span class="page-subtitle" style="display:inline; margin-left:var(--space-2);">· {{ enrollment.payment_amount }}</span>
+                <th>Payment</th>
               {% endif %}
-              <span class="page-subtitle" style="display:inline; margin-left:var(--space-2);">· from {{ enrollment.start_date }}</span>
-            </div>
-            <div class="inline-actions">
-              {% if enrollment_form is not None %}
-                <a href="{% url 'lessons:enrollment_edit' enrollment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Edit</a>
-                <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}" class="button" style="background:var(--danger);">Remove</a>
-              {% endif %}
-              {% if can_manage_payments %}
-                <a href="{% url 'payments:payment_create' enrollment.pk %}?month={{ selected_month }}&year={{ selected_year }}" class="button">Add payment</a>
-              {% endif %}
-            </div>
-          </div>
-        {% empty %}
-          <div class="empty-state">No students enrolled yet.</div>
-        {% endfor %}
+              <th>Start Date</th>
+              <th style="width:1%;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for enrollment in enrollments %}
+              <tr>
+                <td>
+                  <div style="font-weight:600;">
+                    {{ enrollment.student.get_full_name|default:enrollment.student.username }}
+                  </div>
+                  <div class="page-subtitle">
+                    {{ enrollment.student.username }}
+                  </div>
+                </td>
+
+                {% if not is_student %}
+                  <td>{{ enrollment.payment_amount }}</td>
+                {% endif %}
+
+                <td>{{ enrollment.start_date }}</td>
+
+                <td>
+                  <div class="inline-actions" style="justify-content:flex-end; flex-wrap:nowrap;">
+                    {% if enrollment_form is not None %}
+                      <a href="{% url 'lessons:enrollment_edit' enrollment.pk %}"
+                        class="button"
+                        style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
+                        Edit
+                      </a>
+                      <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}"
+                        class="button"
+                        style="background:var(--danger);">
+                        Remove
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="{% if not is_student %}4{% else %}3{% endif %}">
+                  <div class="empty-state">No students enrolled yet.</div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
+
 
     {% if enrollment_form %}
       <div class="card form-card">
         <h3 class="page-title" style="margin-bottom:var(--space-4);">Add Student</h3>
-        <form method="post" class="form-grid">
+        <form method="post" class="form-grid" id="add-student-form">
           {% csrf_token %}
           {{ enrollment_form.as_p }}
           <div>
@@ -81,8 +115,19 @@
         </form>
       </div>
     {% endif %}
-
   </div>
-
 </div>
+
+<script>
+  const studentEl = document.querySelector('#add-student-form select[name="student"]');
+
+  if (studentEl) {
+    new TomSelect(studentEl, {
+      create: false,
+      allowEmptyOption: true,
+      placeholder: "Search students..."
+    });
+  }
+</script>
+
 {% endblock %}

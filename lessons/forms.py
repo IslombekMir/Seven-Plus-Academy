@@ -51,6 +51,12 @@ class EnrollmentForm(forms.ModelForm):
         self.fields["student"].queryset = qs.distinct()
         self.fields["start_date"].required = False
 
+        self.fields["student"].empty_label = "Select student"
+        self.fields["student"].widget.attrs.update({
+            "class": "searchable-select",
+        })
+
+
     def clean_student(self):
         if self.instance and self.instance.pk:
             return self.instance.student

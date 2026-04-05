@@ -14,6 +14,9 @@
       <a href="{% url 'users:removed_users' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
         Removed Users
       </a>
+      <a href="{% url 'users:bulk_create_users' %}" class="button" style="background:green;color:var(--text);border-color:var(--border);">
+        Bulk Create
+      </a>
       <a href="{% url 'users:create_user' %}" class="button">New User</a>
     </div>
   </div>
@@ -72,7 +75,7 @@
                 <div class="inline-actions">
                   <a href="{% url 'users:edit_user' user.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Edit</a>
                   <a href="{% url 'users:remove_user' user.id %}" class="button" style="background:var(--danger);">Remove</a>
-                  <a href="{% url 'users:reset_password' user.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset Password</a>
+                  <a href="{% url 'users:reset_password' user.id %}" class="button" style="background:#e0bc19;color:var(--text);border-color:var(--border);">Reset Password</a>
                 </div>
               </td>
             {% endif %}

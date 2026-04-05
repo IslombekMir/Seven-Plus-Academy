@@ -14,6 +14,9 @@ from datetime import date
 from django.db.models.deletion import ProtectedError
 from payments.models import Payment
 from attendances.models import Attendance
+from django.core.exceptions import ValidationError
+from .forms import BulkUserMetaForm, BulkUserRowFormSet
+
 
 from .forms import (
     LoginForm,
@@ -91,9 +94,39 @@ def removed_users(request):
     else:
         users = User.objects.none()
 
+    total_user_count = users.count()
+
+    search_query = request.GET.get("q")
+    if search_query:
+        users = users.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+
+    role_filter = request.GET.get("role")
+    if role_filter:
+        users = users.filter(role=role_filter)
+
+    groups_qs = Group.objects.all()
+    if request.user.role == User.Role.TEACHER:
+        groups_qs = groups_qs.filter(teacher=request.user)
+
+    group_filter = request.GET.get("group")
+    if group_filter:
+        users = users.filter(
+            enrollments__group_id=group_filter,
+            enrollments__is_active=False,
+        ).distinct()
+
+    filtered_user_count = users.count()
+
     return render(request, "users/removed_users.html", {
         "users": users,
+        "filtered_user_count": filtered_user_count,
+        "total_user_count": total_user_count,
         "can_manage": request.user.role in [User.Role.ADMIN, User.Role.TEACHER],
+        "groups": groups_qs,
+        "selected_group": group_filter,
     })
 
 @login_required
@@ -181,6 +214,82 @@ def create_user(request):
         form = UserCreateForm(current_user=request.user)
 
     return render(request, "users/create_user.html", {"form": form})
+
+@login_required
+def bulk_create_users(request):
+    if request.user.role == User.Role.STUDENT:
+        return HttpResponseForbidden("Students cannot create users.")
+
+    if request.method == "POST":
+        meta_form = BulkUserMetaForm(request.POST, current_user=request.user)
+        formset = BulkUserRowFormSet(request.POST, prefix="rows")
+
+        if meta_form.is_valid() and formset.is_valid():
+            role = meta_form.cleaned_data["role"]
+            group = meta_form.cleaned_data["group"]
+
+            formset.validate_against_role(role)
+
+            has_row_errors = any(form.errors for form in formset.forms)
+            if has_row_errors or formset.non_form_errors():
+                return render(request, "users/bulk_create_users.html", {
+                    "meta_form": meta_form,
+                    "formset": formset,
+                })
+
+            created_count = 0
+
+            try:
+                with transaction.atomic():
+                    for row_form in formset:
+                        first_name = row_form.cleaned_data.get("first_name")
+                        last_name = row_form.cleaned_data.get("last_name")
+                        phone_number = row_form.cleaned_data.get("phone_number")
+
+                        if not any([first_name, last_name, phone_number]):
+                            continue
+
+                        user_obj = User(
+                            first_name=first_name,
+                            last_name=last_name,
+                            phone_number=phone_number,
+                            role=role,
+                        )
+                        user_obj.username = user_obj.generate_username()
+                        user_obj.set_password(user_obj.username)
+                        user_obj.full_clean()
+                        user_obj.save()
+
+                        if role == User.Role.STUDENT and group:
+                            Enrollment.objects.create(
+                                student=user_obj,
+                                group=group,
+                            )
+
+                        created_count += 1
+
+            except ValidationError as exc:
+                if hasattr(exc, "message_dict"):
+                    for field, errors in exc.message_dict.items():
+                        for error in errors:
+                            meta_form.add_error(None, f"{field}: {error}")
+                else:
+                    meta_form.add_error(None, "; ".join(exc.messages))
+            else:
+                messages.success(request, f"{created_count} user(s) created successfully.")
+                return redirect("users:users_list")
+    else:
+        initial_role = User.Role.STUDENT if request.user.role == User.Role.TEACHER else User.Role.STUDENT
+        meta_form = BulkUserMetaForm(
+            initial={"role": initial_role},
+            current_user=request.user,
+        )
+        formset = BulkUserRowFormSet(prefix="rows")
+
+    return render(request, "users/bulk_create_users.html", {
+        "meta_form": meta_form,
+        "formset": formset,
+    })
 
 @login_required
 def edit_user(request, user_id):

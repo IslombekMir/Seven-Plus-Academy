@@ -137,7 +137,6 @@ def remove_group(request, pk):
 
     return render(request, "lessons/group_confirm_remove.html", {"group": group})
 
-
 @login_required
 def restore_group(request, pk):
     if request.user.role == User.Role.STUDENT:
@@ -154,7 +153,6 @@ def restore_group(request, pk):
         return redirect("lessons:removed_groups")
 
     return render(request, "lessons/group_confirm_restore.html", {"group": group})
-
 
 @login_required
 def group_delete(request, pk):

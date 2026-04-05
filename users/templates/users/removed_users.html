@@ -7,11 +7,39 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">Removed Users</h1>
-      <p class="page-subtitle">Inactive users moved from the main users list</p>
+      <p class="page-subtitle">Showing {{ filtered_user_count }} of {{ total_user_count }} removed users</p>
     </div>
     <a href="{% url 'users:users_list' %}" class="button">Back to Users</a>
   </div>
 
+  <form method="get">
+    <div class="filter-bar">
+      <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search users…"
+        oninput="clearTimeout(this._t); this._t=setTimeout(() => this.form.submit(), 600);">
+
+      {% if request.user.role == "ADMIN" %}
+        <select name="role" onchange="this.form.submit()">
+          <option value="">All Roles</option>
+          <option value="ADMIN" {% if request.GET.role == "ADMIN" %}selected{% endif %}>Admin</option>
+          <option value="TEACHER" {% if request.GET.role == "TEACHER" %}selected{% endif %}>Teacher</option>
+          <option value="STUDENT" {% if request.GET.role == "STUDENT" %}selected{% endif %}>Student</option>
+        </select>
+      {% endif %}
+
+      <select name="group" onchange="this.form.submit()">
+        <option value="">All Groups</option>
+        {% for group in groups %}
+          <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
+            {{ group.name }} - {{ group.subject }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <div class="filter-bar__actions">
+        <button type="submit">Filter</button>
+      </div>
+    </div>
+  </form>
   <div class="table-wrap">
     <table>
       <thead>
