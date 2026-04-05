@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% if request.user.settings.theme == 'dark' %}
+    <meta name="theme-color" content="#1e293b">
+  {% else %}
+    <meta name="theme-color" content="#ffffff">
+  {% endif %}
   <title>{% block title %}Seven Plust{% endblock title %}</title>
   <link
     rel="stylesheet"
@@ -17,28 +22,68 @@
 </head>
 <body class="theme-{{ request.user.settings.theme|default:'LIGHT'|lower }}">
   <header style="background: var(--surface); border-bottom: 1px solid var(--border); box-shadow: var(--shadow);">
-    <nav style="max-width: var(--max-width); margin: 0 auto; padding: var(--space-3) var(--space-4);">
-      <div class="inline-actions" style="justify-content: space-between;">
-        <a href="{% url 'core:index' %}" style="font-weight: 700; font-size: 1.1rem; color: var(--text);">Seven Plus</a>
-        <div class="inline-actions">
-          {% if user.is_authenticated %}
-            <a href="{% url 'users:profile' %}">Profile</a>
-            <a href="{% url 'users:logout' %}" class="button">Logout</a>
-          {% else %}
-            <a href="{% url 'users:login' %}" class="button">Login</a>
-          {% endif %}
-        </div>
+    <nav style="
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 56px;
+    ">
+      <a href="{% url 'core:index' %}" class="site-brand" aria-label="Seven Plus home">
+        <svg class="site-brand__logo" viewBox="0 0 680 180" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <style>
+              .blue { stroke: #29ABE2; fill: none; stroke-width: 5; stroke-linecap: square; stroke-linejoin: miter; }
+              .black { stroke: #1a1a1a; fill: none; stroke-width: 5; stroke-linecap: square; stroke-linejoin: miter; }
+              .sub-blue { font-family: Arial, sans-serif; font-size: 18px; fill: #29ABE2; font-weight: 600; letter-spacing: 3px; }
+              .sub-black { font-family: Arial, sans-serif; font-size: 18px; fill: #1a1a1a; font-weight: 400; letter-spacing: 3px; }
+            </style>
+
+            <!-- S -->
+            <polyline class="blue" points="155,70 115,70 115,100 155,100 155,130 115,130"/>
+
+            <!-- E -->
+            <polyline class="blue" points="175,130 175,70 215,70"/>
+            <line class="blue" x1="175" y1="100" x2="210" y2="100"/>
+            <line class="blue" x1="175" y1="130" x2="215" y2="130"/>
+
+            <!-- V (stylized as a downward pointing triangle/chevron: the "7" shape) -->
+            <polyline class="black" points="230,70 270,70 250,130"/>
+
+            <!-- E -->
+            <polyline class="blue" points="285,130 285,70 325,70"/>
+            <line class="blue" x1="285" y1="100" x2="320" y2="100"/>
+            <line class="blue" x1="285" y1="130" x2="325" y2="130"/>
+
+            <!-- N -->
+            <polyline class="blue" points="345,130 345,70 385,130 385,70"/>
+
+            <!-- PLUS ACADEMY subtitle -->
+            <text x="272" y="165" text-anchor="middle" class="sub-blue">PLUS</text>
+            <text x="370" y="165" text-anchor="middle" class="sub-black">ACADEMY</text>
+          </svg>
+      </a>
+
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          <a href="{% url 'users:profile' %}" class="nav-link">Profile</a>
+          <a href="{% url 'users:logout' %}" class="button">Logout</a>
+        {% else %}
+          <a href="{% url 'users:login' %}" class="button">Login</a>
+        {% endif %}
       </div>
     </nav>
   </header>
 
-  <main>
+  <main style="backgroud-color:var(--bg)">
     <div class="page-wrap">
       {% block content %}{% endblock content %}
     </div>
   </main>
 
-  <footer style="border-top: 1px solid var(--border); background: var(--surface); margin-top: var(--space-6);">
+  <footer style="border-top: 1px solid var(--border); background: var(--surface);">
     <div style="max-width: var(--max-width); margin: 0 auto; padding: var(--space-4); color: var(--muted); text-align: center;">
 
       <p class="site-footer__phone">

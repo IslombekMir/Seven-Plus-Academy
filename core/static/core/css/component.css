@@ -333,3 +333,48 @@
   border-color: var(--muted);
   text-decoration: none;
 }
+
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text);
+  line-height: 0;
+  flex-shrink: 0;
+  max-width: 100%;
+}
+
+.site-brand__logo {
+  display: block;
+  height: 80px;
+  width: auto;
+  max-width: 260px;
+}
+
+@media (max-width: 480px) {
+  .site-brand__logo {
+    height: 44px;
+    max-width: 70vw;
+  }
+}
+
+.site-brand__logo {
+  display: block;
+  height: 44px;
+  width: auto;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.nav-link {
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: var(--color-muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
