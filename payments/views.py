@@ -283,6 +283,3 @@ def payment_dashboard(request):
         "can_edit_rows": request.user.role in [User.Role.ADMIN, User.Role.TEACHER],
         "selected_payment_status": selected_payment_status,
     })
-
-
-

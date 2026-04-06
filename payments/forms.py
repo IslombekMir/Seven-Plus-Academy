@@ -25,4 +25,3 @@ class PaymentForm(forms.ModelForm):
             "payment_month": forms.Select(choices=MONTH_CHOICES),
             "payment_year": forms.NumberInput(attrs={"min": 2000}),
         }
-

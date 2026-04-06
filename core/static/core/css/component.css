@@ -320,6 +320,11 @@
   color: var(--muted);
 }
 
+#add-student-form .ts-select,
+#add-student-form .ts-wrapper {
+  min-width: 0;
+}
+
 .site-footer__links {
   display: flex;
   flex-wrap: wrap;

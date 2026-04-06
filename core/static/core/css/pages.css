@@ -98,3 +98,21 @@
 .confirm-card {
   font-size: var(--text-base);
 }
+
+.group-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.group-detail-layout > * {
+  min-width: 0;
+}
+
+@media (min-width: 960px) {
+  .group-detail-layout {
+    grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+    gap: var(--space-5);
+  }
+}

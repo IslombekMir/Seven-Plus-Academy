@@ -452,14 +452,13 @@ def edit_teacher_profile(request, teacher_id):
 @login_required
 def force_password_change(request):
     user = request.user
-
     form = FirstLoginPasswordChangeForm(user, request.POST or None)
 
     if request.method == "POST" and form.is_valid():
         form.save()
         user.must_reset_password = False
-        user.save()
-        update_session_auth_hash(request, user)  # keep user logged in
+        user.save(update_fields=["must_reset_password"])
+        update_session_auth_hash(request, user)
         return redirect("core:index")
 
     return render(request, "users/force_password_change.html", {"form": form})

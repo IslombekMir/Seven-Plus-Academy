@@ -41,20 +41,31 @@ class TeacherProfileForm(forms.ModelForm):
         model = TeacherProfile
         fields = ["bio", "picture", "is_active_profile"]
 
+from django import forms
+from django.contrib.auth.password_validation import validate_password
+from .models import UserSettings
+
 class FirstLoginPasswordChangeForm(forms.Form):
     new_password1 = forms.CharField(
         label="New password",
         widget=forms.PasswordInput(attrs={"placeholder": "Enter new password"}),
-        validators=[validate_password],  # optional, Django’s validators
+        validators=[validate_password],
     )
     new_password2 = forms.CharField(
         label="Confirm password",
-        widget=forms.PasswordInput(attrs={"placeholder": "Confirm new password"})
+        widget=forms.PasswordInput(attrs={"placeholder": "Confirm new password"}),
+    )
+    language = forms.ChoiceField(
+        label="Language",
+        choices=UserSettings.Language.choices,
     )
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
+
+        if hasattr(user, "settings"):
+            self.fields["language"].initial = user.settings.language
 
     def clean(self):
         cleaned_data = super().clean()
@@ -68,10 +79,19 @@ class FirstLoginPasswordChangeForm(forms.Form):
 
     def save(self, commit=True):
         password = self.cleaned_data["new_password1"]
+        language = self.cleaned_data["language"]
+
         self.user.set_password(password)
+
         if commit:
             self.user.save()
+
+            settings_obj, _ = UserSettings.objects.get_or_create(user=self.user)
+            settings_obj.language = language
+            settings_obj.save(update_fields=["language"])
+
         return self.user
+
     
 ### Bul create users
 class BulkUserMetaForm(forms.Form):
@@ -115,7 +135,6 @@ class BulkUserRowForm(forms.Form):
         cleaned_data["last_name"] = (cleaned_data.get("last_name") or "").strip()
         cleaned_data["phone_number"] = (cleaned_data.get("phone_number") or "").strip()
         return cleaned_data
-
 
 class BaseBulkUserRowFormSet(BaseFormSet):
     def clean(self):
