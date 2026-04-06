@@ -12,11 +12,44 @@
     </div>
     <div class="inline-actions">
       {% if user.role != "STUDENT" %}
-        <a href="{% url 'lessons:removed_groups' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Removed Groups</a>
+        <a href="{% url 'lessons:removed_groups' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Removed groups">
+          <svg class="icon" width="20" height="20">
+            <use href="#icon-removed-users"></use>
+          </svg>
+        </a>
         <a href="{% url 'lessons:group_create' %}" class="button">New Group</a>
       {% endif %}
     </div>
   </div>
+
+  <form method="get" id="groups-filter-form">
+    <div class="filter-bar">
+      {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
+        <select name="teacher" class="searchable-select">
+          <option value="">All Teachers</option>
+          {% for teacher in teachers %}
+            <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
+              {{ teacher.get_full_name|default:teacher.username }}
+            </option>
+          {% endfor %}
+        </select>
+      {% endif %}
+
+      <select name="group">
+        <option value="">All Groups</option>
+        {% for group in group_options %}
+          <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
+            {{ group.name }} - {{ group.subject }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <div class="filter-bar__actions">
+        <button type="submit">Filter</button>
+        <a href="{% url 'lessons:group_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset</a>
+      </div>
+    </div>
+  </form>
 
   <div class="table-wrap">
     <table>
@@ -24,6 +57,7 @@
         <tr>
           <th>Name</th>
           <th>Subject</th>
+          <th>Teacher</th>
           {% if user.role != "STUDENT" %}
             <th>Actions</th>
           {% endif %}
@@ -34,26 +68,29 @@
           <tr>
             <td><a href="{% url 'lessons:group_detail' group.pk %}">{{ group.name }}</a></td>
             <td>{{ group.subject }}</td>
-            {% if user.role == "ADMIN" or user == group.teacher %}
+            <td>{{ group.teacher.get_full_name|default:group.teacher.username }}</td>
+            {% if user.role != "STUDENT" %}
               <td>
-                <div class="inline-actions">
-                  <a href="{% url 'lessons:group_edit' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit group">
-                    <svg width="20" height="20" stroke="currentColor">
-                      <use href="#icon-edit"/>
-                    </svg>
-                  </a>
-                  <a href="{% url 'lessons:remove_group' group.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Remove group">
-                    <svg width="20" height="20" stroke="white">
-                      <use href="#icon-trash"/>
-                    </svg>
-                  </a>
-                </div>
+                {% if user.role == "ADMIN" or user == group.teacher %}
+                  <div class="inline-actions">
+                    <a href="{% url 'lessons:group_edit' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit group">
+                      <svg width="20" height="20" stroke="currentColor">
+                        <use href="#icon-edit"/>
+                      </svg>
+                    </a>
+                    <a href="{% url 'lessons:remove_group' group.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Remove group">
+                      <svg width="20" height="20" stroke="white">
+                        <use href="#icon-trash"/>
+                      </svg>
+                    </a>
+                  </div>
+                {% endif %}
               </td>
             {% endif %}
           </tr>
         {% empty %}
           <tr>
-            <td colspan="{% if user.role != 'STUDENT' %}3{% else %}2{% endif %}">
+            <td colspan="{% if user.role != 'STUDENT' %}4{% else %}3{% endif %}">
               <div class="empty-state">No groups available.</div>
             </td>
           </tr>
@@ -63,4 +100,24 @@
   </div>
 
 </div>
+
+<script>
+  const teacherEl = document.querySelector('#groups-filter-form select[name="teacher"]');
+  if (teacherEl) {
+    new TomSelect(teacherEl, {
+      create: false,
+      allowEmptyOption: true,
+      placeholder: "Search teachers...",
+      onChange: function () {
+        teacherEl.form.submit();
+      }
+    });
+  }
+
+  document.querySelectorAll("#groups-filter-form select:not(.tomselected)").forEach(function (el) {
+    el.addEventListener("change", function () {
+      this.form.submit();
+    });
+  });
+</script>
 {% endblock %}

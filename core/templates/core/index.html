@@ -41,6 +41,11 @@
       <div class="stat-value" style="font-size:1.1rem;">Teachers</div>
     </a>
 
+    <a href="{% url 'lessons:mark_dashboard' %}" class="stat-card" style="text-decoration:none;">
+      <div class="stat-label">Assessment</div>
+      <div class="stat-value" style="font-size:1.1rem;">Marks</div>
+    </a>
+
     {% if user.is_authenticated %}
       <a href="{% url 'payments:dashboard' %}" class="stat-card" style="text-decoration:none;">
         <div class="stat-label">Finance</div>

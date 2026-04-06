@@ -4,11 +4,10 @@ from users.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from .forms import SubjectCreateForm, GroupForm, EnrollmentForm, ExamForm, MarkForm
-from django.db.models import RestrictedError
+from django.db.models import RestrictedError, Avg, Max, Min, Count, F, FloatField, ExpressionWrapper
 from django.contrib import messages
 from payments.models import Payment
 from django.utils import timezone
-from django.db.models import Avg
 from django.db import transaction
 
 
@@ -83,8 +82,33 @@ def _can_permanently_delete_group(group):
 
 @login_required
 def group_list(request):
-    groups = _group_queryset_for_user(request.user).filter(is_active=True)
-    return render(request, "lessons/group_list.html", {"groups": groups})
+    scoped_groups = _group_queryset_for_user(request.user).filter(is_active=True)
+
+    selected_teacher = request.GET.get("teacher", "")
+    selected_group = request.GET.get("group", "")
+
+    groups = scoped_groups
+
+    if selected_teacher:
+        groups = groups.filter(teacher_id=selected_teacher)
+
+    if selected_group:
+        groups = groups.filter(pk=selected_group)
+
+    teachers = User.objects.filter(
+        pk__in=scoped_groups.values_list("teacher_id", flat=True).distinct(),
+        role=User.Role.TEACHER,
+    ).order_by("first_name", "last_name", "username")
+
+    group_options = scoped_groups.order_by("name")
+
+    return render(request, "lessons/group_list.html", {
+        "groups": groups.order_by("name"),
+        "teachers": teachers,
+        "group_options": group_options,
+        "selected_teacher": selected_teacher,
+        "selected_group": selected_group,
+    })
 
 @login_required
 def removed_groups(request):
@@ -475,4 +499,103 @@ def mark_delete(request, pk):
     return render(request, "lessons/mark_confirm_delete.html", {
         "mark": mark,
         "group": group,
+    })
+
+@login_required
+def mark_dashboard(request):
+    selected_student = request.GET.get("student", "")
+    selected_teacher = request.GET.get("teacher", "")
+    selected_group = request.GET.get("group", "")
+    selected_exam = request.GET.get("exam", "")
+    selected_date = request.GET.get("date", "")
+
+    marks = Mark.objects.select_related(
+        "exam",
+        "exam__group",
+        "exam__group__teacher",
+        "exam__group__subject",
+        "enrollment",
+        "enrollment__student",
+    )
+
+    if request.user.role == User.Role.TEACHER:
+        marks = marks.filter(exam__group__teacher=request.user)
+    elif request.user.role == User.Role.STUDENT:
+        marks = marks.filter(enrollment__student=request.user)
+
+    if selected_teacher:
+        marks = marks.filter(exam__group__teacher_id=selected_teacher)
+
+    if selected_group:
+        marks = marks.filter(exam__group_id=selected_group)
+
+    if selected_exam:
+        marks = marks.filter(exam_id=selected_exam)
+
+    if selected_date:
+        marks = marks.filter(exam__date=selected_date)
+
+    if selected_student:
+        marks = marks.filter(enrollment__student_id=selected_student)
+
+    scored_marks = marks.annotate(
+        percent=ExpressionWrapper(
+            100.0 * F("mark") / F("exam__full_mark"),
+            output_field=FloatField(),
+        )
+    )
+
+    totals = scored_marks.aggregate(
+        total_records=Count("id"),
+        average_mark=Avg("mark"),
+        highest_mark=Max("mark"),
+        lowest_mark=Min("mark"),
+        average_percent=Avg("percent"),
+    )
+
+    total_records = totals["total_records"] or 0
+    average_mark = totals["average_mark"]
+    highest_mark = totals["highest_mark"]
+    lowest_mark = totals["lowest_mark"]
+    average_percent = round(totals["average_percent"] or 0, 1)
+
+    student_ids = marks.values_list("enrollment__student_id", flat=True).distinct()
+    teacher_ids = marks.values_list("exam__group__teacher_id", flat=True).distinct()
+    group_ids = marks.values_list("exam__group_id", flat=True).distinct()
+    exam_ids = marks.values_list("exam_id", flat=True).distinct()
+
+    students = User.objects.filter(
+        pk__in=student_ids,
+        role=User.Role.STUDENT,
+    ).order_by("first_name", "last_name", "username")
+
+    teachers = User.objects.filter(
+        pk__in=teacher_ids,
+        role=User.Role.TEACHER,
+    ).order_by("first_name", "last_name", "username")
+
+    groups = Group.objects.filter(
+        pk__in=group_ids,
+    ).select_related("subject", "teacher").order_by("name")
+
+    exams = Exam.objects.filter(
+        pk__in=exam_ids,
+    ).select_related("group").order_by("-date", "name")
+
+    return render(request, "lessons/mark_dashboard.html", {
+        "marks": marks.order_by("-exam__date", "-id"),
+        "students": students,
+        "teachers": teachers,
+        "groups": groups,
+        "exams": exams,
+        "selected_student": selected_student,
+        "selected_teacher": selected_teacher,
+        "selected_group": selected_group,
+        "selected_exam": selected_exam,
+        "selected_date": selected_date,
+        "total_records": total_records,
+        "average_mark": average_mark,
+        "highest_mark": highest_mark,
+        "lowest_mark": lowest_mark,
+        "average_percent": average_percent,
     })

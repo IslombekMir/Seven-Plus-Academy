@@ -1,0 +1,165 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Marks{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+
+  <div class="page-header">
+    <h1 class="page-title">Marks</h1>
+  </div>
+
+  <form method="get" id="marks-filter-form">
+    <div class="filter-bar">
+      {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
+        <select name="teacher" class="searchable-select">
+          <option value="">All Teachers</option>
+          {% for teacher in teachers %}
+            <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
+              {{ teacher.get_full_name|default:teacher.username }}
+            </option>
+          {% endfor %}
+        </select>
+      {% endif %}
+
+      {% if request.user.role != "STUDENT" %}
+        <select name="student" class="searchable-select">
+          <option value="">All Students</option>
+          {% for student in students %}
+            <option value="{{ student.id }}" {% if selected_student == student.id|stringformat:"s" %}selected{% endif %}>
+              {{ student.get_full_name|default:student.username }}
+            </option>
+          {% endfor %}
+        </select>
+      {% endif %}
+
+      <select name="group">
+        <option value="">All Groups</option>
+        {% for group in groups %}
+          <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
+            {{ group.name }} - {{ group.subject }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <select name="exam">
+        <option value="">All Exams</option>
+        {% for exam in exams %}
+          <option value="{{ exam.id }}" {% if selected_exam == exam.id|stringformat:"s" %}selected{% endif %}>
+            {{ exam.name }} - {{ exam.group.name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <input type="date" name="date" value="{{ selected_date }}" class="filter-date">
+
+      <div class="filter-bar__actions">
+        <button type="submit">Filter</button>
+        <a href="{% url 'lessons:mark_dashboard' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset</a>
+      </div>
+    </div>
+  </form>
+
+  <div class="card">
+    <h3 class="page-title">Mark Indicator</h3>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Records</div>
+        <div class="stat-value">{{ total_records }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Score</div>
+        <div class="stat-value">
+          {% if average_mark is not None %}{{ average_mark|floatformat:1 }}{% else %}-{% endif %}
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Highest Score</div>
+        <div class="stat-value">
+          {% if highest_mark is not None %}{{ highest_mark }}{% else %}-{% endif %}
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Lowest Score</div>
+        <div class="stat-value">
+          {% if lowest_mark is not None %}{{ lowest_mark }}{% else %}-{% endif %}
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Percent</div>
+        <div class="stat-value">{{ average_percent }}%</div>
+      </div>
+    </div>
+
+    <div style="margin-top: var(--space-4);">
+      <div class="progress">
+        <div class="progress__bar
+          {% if average_percent >= 80 %}progress__bar--success
+          {% elif average_percent >= 60 %}progress__bar--warning
+          {% else %}progress__bar--danger{% endif %}"
+          style="width: {{ average_percent }}%;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Student</th>
+          <th>Exam</th>
+          <th>Group</th>
+          <th>Subject</th>
+          <th>Teacher</th>
+          <th>Mark</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mark in marks %}
+          <tr>
+            <td>{{ mark.exam.date }}</td>
+            <td>{{ mark.enrollment.student.get_full_name|default:mark.enrollment.student.username }}</td>
+            <td>
+              <a href="{% url 'lessons:exam_detail' mark.exam.pk %}">
+                {{ mark.exam.name }}
+              </a>
+            </td>
+            <td>{{ mark.exam.group.name }}</td>
+            <td>{{ mark.exam.group.subject }}</td>
+            <td>{{ mark.exam.group.teacher.get_full_name|default:mark.exam.group.teacher.username }}</td>
+            <td>{{ mark.mark }} / {{ mark.exam.full_mark }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">No marks found.</div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll(".searchable-select").forEach(function (el) {
+    new TomSelect(el, {
+      create: false,
+      allowEmptyOption: true,
+      placeholder: el.name === "teacher" ? "Search teachers..." : "Search students...",
+      onChange: function () {
+        el.form.submit();
+      }
+    });
+  });
+
+  document.querySelectorAll("#marks-filter-form select:not(.tomselected), #marks-filter-form input[type='date']").forEach(function (el) {
+    el.addEventListener("change", function () {
+      this.form.submit();
+    });
+  });
+</script>
+{% endblock %}
