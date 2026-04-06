@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Confirm Delete</h1>
+      <p class="page-subtitle">
+        {{ section_title }} for {{ target_user.username }}
+      </p>
+    </div>
+  </div>
+
+  <div class="card" style="padding:var(--space-4); border:1px solid var(--danger);">
+    <p>
+      This will delete <strong>{{ items|length }}</strong> record{{ items|length|pluralize }}
+      from <strong>{{ section_title }}</strong>.
+    </p>
+
+    {% if items %}
+      <ul style="margin-top:12px;">
+        {% for item in items %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No records found.</p>
+    {% endif %}
+
+    <div class="inline-actions" style="margin-top:16px;">
+      <a href="{% url 'users:user_detail' target_user.username %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
+        Cancel
+      </a>
+
+      {% if items %}
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="button" style="background:var(--danger);color:white;">
+            Confirm Delete
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

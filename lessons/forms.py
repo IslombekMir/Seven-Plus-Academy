@@ -35,11 +35,24 @@ class EnrollmentForm(forms.ModelForm):
     class Meta:
         model = Enrollment
         fields = ["student", "start_date", "end_date", "payment_amount"]
+        widgets = {
+            "start_date": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={"class": "form-control", "type": "date"},
+            ),
+            "end_date": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={"class": "form-control", "type": "date"},
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         group = kwargs.pop("group", None)
         super().__init__(*args, **kwargs)
-        
+
+        self.fields["start_date"].input_formats = ["%Y-%m-%d"]
+        self.fields["end_date"].input_formats = ["%Y-%m-%d"]
+
         qs = User.objects.filter(role=User.Role.STUDENT, is_active=True)
         if group:
             qs = qs.exclude(enrollments__group=group, enrollments__is_active=True)
@@ -50,17 +63,9 @@ class EnrollmentForm(forms.ModelForm):
 
         self.fields["student"].queryset = qs.distinct()
         self.fields["start_date"].required = False
-
         self.fields["student"].empty_label = "Select student"
-        self.fields["student"].widget.attrs.update({
-            "class": "searchable-select",
-        })
+        self.fields["student"].widget.attrs.update({"class": "searchable-select"})
 
-
-    def clean_student(self):
-        if self.instance and self.instance.pk:
-            return self.instance.student
-        return self.cleaned_data["student"]
 
 class ExamForm(forms.ModelForm):
     class Meta:

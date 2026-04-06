@@ -6,16 +6,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.http import HttpResponse
 from django.db.models import Q
-from lessons.models import Group
-from lessons.models import Group, Enrollment
+from lessons.models import Group, Enrollment, Mark, Exam
 from django.views.decorators.http import require_POST
 from django.db import transaction
 from datetime import date
 from django.db.models.deletion import ProtectedError
 from payments.models import Payment
-from attendances.models import Attendance
+from attendances.models import Attendance, AttendanceSession
 from django.core.exceptions import ValidationError
 from .forms import BulkUserMetaForm, BulkUserRowFormSet
+
 
 
 from .forms import (
@@ -414,7 +414,6 @@ def toggle_theme(request):
     settings.save(update_fields=["theme"])
     return redirect("users:profile")
 
-
 ### Teacher Profiles
 def _can_edit_teacher_profile(user, teacher_user):
     return user.role == User.Role.ADMIN or user == teacher_user
@@ -464,3 +463,225 @@ def force_password_change(request):
         return redirect("core:index")
 
     return render(request, "users/force_password_change.html", {"form": form})
+
+#### User profile with full wipeout option
+def _can_delete_user_now(user_obj):
+    if user_obj.role == User.Role.STUDENT:
+        return not (
+            Mark.objects.filter(enrollment__student=user_obj).exists()
+            or Attendance.objects.filter(student=user_obj).exists()
+            or Payment.objects.filter(student=user_obj).exists()
+            or Enrollment.objects.filter(student=user_obj).exists()
+        )
+
+    if user_obj.role == User.Role.TEACHER:
+        groups = Group.objects.filter(teacher=user_obj)
+        return not (
+            AttendanceSession.objects.filter(created_by=user_obj).exists()
+            or Attendance.objects.filter(enrollment__group__in=groups).exists()
+            or Payment.objects.filter(group__in=groups).exists()
+            or Mark.objects.filter(enrollment__group__in=groups).exists()
+            or Exam.objects.filter(group__in=groups).exists()
+            or Enrollment.objects.filter(group__in=groups).exists()
+            or AttendanceSession.objects.filter(group__in=groups).exists()
+            or groups.exists()
+        )
+
+    if user_obj.role == User.Role.ADMIN:
+        return not AttendanceSession.objects.filter(created_by=user_obj).exists()
+
+    return False
+
+def _build_user_deletion_context(user_obj):
+    context = {
+        "target_user": user_obj,
+    }
+
+    if user_obj.role == User.Role.STUDENT:
+        enrollments = Enrollment.objects.filter(student=user_obj).select_related("group", "group__subject")
+        marks = Mark.objects.filter(enrollment__student=user_obj).select_related("exam", "enrollment", "exam__group")
+        attendances = Attendance.objects.filter(student=user_obj).select_related("session", "enrollment", "session__group")
+        payments = Payment.objects.filter(student=user_obj).select_related("group", "enrollment")
+
+        context.update({
+            "deletion_steps": [
+                ("Marks", "marks", marks),
+                ("Attendances", "attendances", attendances),
+                ("Payments", "payments", payments),
+                ("Enrollments", "enrollments", enrollments),
+            ],
+            "marks": marks,
+            "attendances": attendances,
+            "payments": payments,
+            "enrollments": enrollments,
+        })
+
+    elif user_obj.role == User.Role.TEACHER:
+        groups = Group.objects.filter(teacher=user_obj).select_related("subject")
+        attendance_sessions_by_creator = AttendanceSession.objects.filter(created_by=user_obj).select_related("group")
+
+        group_ids = groups.values_list("id", flat=True)
+        enrollments = Enrollment.objects.filter(group_id__in=group_ids).select_related("student", "group")
+        exams = Exam.objects.filter(group_id__in=group_ids).select_related("group")
+        marks = Mark.objects.filter(enrollment__group_id__in=group_ids).select_related("exam", "enrollment", "enrollment__student")
+        attendances = Attendance.objects.filter(enrollment__group_id__in=group_ids).select_related("session", "student", "enrollment")
+        group_sessions = AttendanceSession.objects.filter(group_id__in=group_ids).select_related("group", "created_by")
+        payments = Payment.objects.filter(group_id__in=group_ids).select_related("student", "group", "enrollment")
+
+        context.update({
+            "deletion_steps": [
+                ("Attendance Sessions Created By Teacher", "created_sessions", attendance_sessions_by_creator),
+                ("Attendances In Teacher Groups", "attendances", attendances),
+                ("Payments In Teacher Groups", "payments", payments),
+                ("Marks In Teacher Groups", "marks", marks),
+                ("Exams In Teacher Groups", "exams", exams),
+                ("Enrollments In Teacher Groups", "enrollments", enrollments),
+                ("Attendance Sessions For Teacher Groups", "group_sessions", group_sessions),
+                ("Groups", "groups", groups),
+            ],
+            "groups": groups,
+            "attendance_sessions_by_creator": attendance_sessions_by_creator,
+            "group_sessions": group_sessions,
+            "attendances": attendances,
+            "payments": payments,
+            "marks": marks,
+            "exams": exams,
+            "enrollments": enrollments,
+        })
+
+    else:  # ADMIN
+        attendance_sessions_by_creator = AttendanceSession.objects.filter(created_by=user_obj).select_related("group")
+
+        context.update({
+            "deletion_steps": [
+                ("Attendance Sessions Created By Admin", "created_sessions", attendance_sessions_by_creator),
+            ],
+            "attendance_sessions_by_creator": attendance_sessions_by_creator,
+        })
+
+    return context
+
+@login_required
+def user_detail(request, username):
+    user_obj = get_object_or_404(User, username=username)
+
+    if request.user.role != User.Role.ADMIN:
+        return HttpResponseForbidden("Only admins can view this page.")
+
+    context = _build_user_deletion_context(user_obj)
+    context["can_delete_user"] = all(not items for _, _, items in context["deletion_steps"])
+    return render(request, "users/user_detail.html", context)
+
+@login_required
+@require_POST
+def delete_user_related(request, username, section):
+    user_obj = get_object_or_404(User, username=username)
+
+    if request.user.role != User.Role.ADMIN:
+        return HttpResponseForbidden("Only admins can delete related data.")
+
+    with transaction.atomic():
+        if user_obj.role == User.Role.STUDENT:
+            enrollments = Enrollment.objects.filter(student=user_obj)
+
+            section_map = {
+                "marks": lambda: Mark.objects.filter(enrollment__in=enrollments).delete(),
+                "attendances": lambda: Attendance.objects.filter(student=user_obj).delete(),
+                "payments": lambda: Payment.objects.filter(student=user_obj).delete(),
+                "enrollments": lambda: enrollments.delete(),
+            }
+
+        elif user_obj.role == User.Role.TEACHER:
+            groups = Group.objects.filter(teacher=user_obj)
+            enrollments = Enrollment.objects.filter(group__in=groups)
+            exams = Exam.objects.filter(group__in=groups)
+            sessions = AttendanceSession.objects.filter(group__in=groups)
+
+            section_map = {
+                "created_sessions": lambda: AttendanceSession.objects.filter(created_by=user_obj).delete(),
+                "attendances": lambda: Attendance.objects.filter(enrollment__in=enrollments).delete(),
+                "payments": lambda: Payment.objects.filter(group__in=groups).delete(),
+                "marks": lambda: Mark.objects.filter(enrollment__in=enrollments).delete(),
+                "exams": lambda: exams.delete(),
+                "enrollments": lambda: enrollments.delete(),
+                "group_sessions": lambda: sessions.delete(),
+                "groups": lambda: groups.delete(),
+            }
+        
+        else:  # ADMIN
+            section_map = {
+                "created_sessions": lambda: AttendanceSession.objects.filter(created_by=user_obj).delete(),
+            }
+
+        action = section_map.get(section)
+        if not action:
+            messages.error(request, "Unknown delete section.")
+            return redirect("users:user_detail", username=user_obj.username)
+
+        try:
+            action()
+            messages.success(request, f"{section.replace('_', ' ').title()} deleted.")
+        except ProtectedError:
+            messages.error(request, "That section still has dependent records. Delete earlier steps first.")
+
+    return redirect("users:user_detail", username=user_obj.username)
+
+@login_required
+@require_POST
+def delete_user_only(request, username):
+    user_obj = get_object_or_404(User, username=username)
+
+    if request.user.role != User.Role.ADMIN:
+        return HttpResponseForbidden("Only admins can delete users.")
+
+    if not _can_delete_user_now(user_obj):
+        messages.error(request, "Delete blocking related data first.")
+        return redirect("users:user_detail", username=user_obj.username)
+
+    user_obj.delete()
+    messages.success(request, "User deleted successfully.")
+    return redirect("users:users_list")
+
+@login_required
+def confirm_delete_user_related(request, username, section):
+    user_obj = get_object_or_404(User, username=username)
+
+    if request.user.role != User.Role.ADMIN:
+        return HttpResponseForbidden("Only admins can manage this page.")
+
+    context = _build_user_deletion_context(user_obj)
+
+    step = next((step for step in context["deletion_steps"] if step[1] == section), None)
+    if not step:
+        messages.error(request, "Unknown delete section.")
+        return redirect("users:user_detail", username=user_obj.username)
+
+    title, slug, items = step
+
+    if request.method == "POST":
+        return delete_user_related(request, username, section)
+
+    return render(request, "users/confirm_delete_related.html", {
+        "target_user": user_obj,
+        "section_title": title,
+        "section_slug": slug,
+        "items": items,
+    })
+
+@login_required
+def confirm_delete_user_only(request, username):
+    user_obj = get_object_or_404(User, username=username)
+
+    if request.user.role != User.Role.ADMIN:
+        return HttpResponseForbidden("Only admins can manage this page.")
+
+    context = _build_user_deletion_context(user_obj)
+    can_delete_user = all(not items for _, _, items in context["deletion_steps"])
+
+    if request.method == "POST":
+        return delete_user_only(request, username)
+
+    return render(request, "users/confirm_delete_user.html", {
+        "target_user": user_obj,
+        "can_delete_user": can_delete_user,
+    })

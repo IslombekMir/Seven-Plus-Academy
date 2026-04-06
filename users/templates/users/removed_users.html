@@ -6,10 +6,10 @@
 <div class="list-page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Removed Users</h1>
-      <p class="page-subtitle">Showing {{ filtered_user_count }} of {{ total_user_count }} removed users</p>
+      <h1 class="page-title">Removed {% if request.user.role == 'ADMIN' %}Users{% else %}Students{% endif %}</h1>
+      <p class="page-subtitle">Showing {{ filtered_user_count }} of {{ total_user_count }} removed {% if request.user.role == 'ADMIN' %}users{% else %}students{% endif %}</p>
     </div>
-    <a href="{% url 'users:users_list' %}" class="button">Back to Users</a>
+    <a href="{% url 'users:users_list' %}" class="button">Back to {% if request.user.role == 'ADMIN' %}Users{% else %}Students{% endif %}</a>
   </div>
 
   <form method="get">
@@ -54,7 +54,13 @@
       <tbody>
         {% for user in users %}
           <tr>
-            <td>{{ user.username }}</td>
+            <td>
+              {% if request.user.role == "ADMIN" %}
+                <a href="{% url 'users:user_detail' user.username %}">{{ user.username }}</a>
+              {% else %}
+                {{ user.username }}
+              {% endif %}
+            </td>
             <td>{{ user.get_full_name }}</td>
             <td>{{ user.role }}</td>
             <td>{{ user.phone_number }}</td>
@@ -62,7 +68,15 @@
               <td>
                 <div class="inline-actions">
                   <a href="{% url 'users:restore_user' user.id %}" class="button">Restore</a>
-                  <a href="{% url 'users:delete_user' user.id %}" class="button" style="background:var(--danger);">Delete Permanently</a>
+                  {% if request.user.role == "ADMIN" %}
+                    <a
+                      href="{% url 'users:user_detail' user.username %}"
+                      class="button"
+                      style="background:var(--danger);color:white;border-color:transparent;"
+                    >
+                      Delete Permanently
+                    </a>
+                  {% endif %}
                 </div>
               </td>
             {% endif %}

@@ -7,7 +7,7 @@
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">Users</h1>
+      <h1 class="page-title">{% if request.user.role == 'ADMIN' %}Users{% else %}Students{% endif %}</h1>
       <p class="page-subtitle">Showing {{ filtered_user_count }} of {{ total_user_count }} users</p>
     </div>
     <div class="inline-actions">
@@ -19,13 +19,16 @@
       <a href="{% url 'users:bulk_create_users' %}" class="button" style="background:green;color:var(--text);border-color:var(--border);">
         Bulk Create
       </a>
-      <a href="{% url 'users:create_user' %}" class="button">New User</a>
+      <a href="{% url 'users:create_user' %}" class="button">
+        New {% if request.user.role == 'ADMIN' %}User{% else %}Student{% endif %}
+      </a>
+      
     </div>
   </div>
 
   <form method="get">
     <div class="filter-bar">
-      <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search users…"
+      <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search {% if request.user.role == 'ADMIN' %}users{% else %}students{% endif %}"
         oninput="clearTimeout(this._t); this._t=setTimeout(() => this.form.submit(), 600);">
 
       {% if request.user.role == "ADMIN" %}

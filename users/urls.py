@@ -24,4 +24,10 @@ urlpatterns = [
     path("teachers/<int:teacher_id>/edit/", views.edit_teacher_profile, name="edit_teacher_profile"),
 
     path("force-password-change/", views.force_password_change, name="force_password_change"),
+
+    path("detail/<str:username>/", views.user_detail, name="user_detail"),
+    path("detail/<str:username>/delete-related/<str:section>/", views.delete_user_related, name="delete_user_related"),
+    path("detail/<str:username>/delete-user/", views.delete_user_only, name="delete_user_only"),
+    path("detail/<str:username>/confirm-delete/<str:section>/", views.confirm_delete_user_related, name="confirm_delete_user_related"),
+    path("detail/<str:username>/confirm-delete-user/", views.confirm_delete_user_only, name="confirm_delete_user_only"),
 ]
