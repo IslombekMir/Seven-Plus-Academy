@@ -12,7 +12,9 @@
     </div>
     <div class="inline-actions">
       <a href="{% url 'users:removed_users' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
-        Removed Users
+        <svg class="icon" width="20" height="20">
+          <use href="#icon-removed-users"></use>
+        </svg>
       </a>
       <a href="{% url 'users:bulk_create_users' %}" class="button" style="background:green;color:var(--text);border-color:var(--border);">
         Bulk Create
@@ -73,8 +75,16 @@
             {% if can_manage %}
               <td>
                 <div class="inline-actions">
-                  <a href="{% url 'users:edit_user' user.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Edit</a>
-                  <a href="{% url 'users:remove_user' user.id %}" class="button" style="background:var(--danger);">Remove</a>
+                  <a href="{% url 'users:edit_user' user.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit user">
+                    <svg width="20" height="20" stroke="currentColor">
+                      <use href="#icon-edit"/>
+                    </svg>
+                  </a>
+                  <a href="{% url 'users:remove_user' user.id %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Remove user">
+                    <svg width="20" height="20" stroke="white">
+                      <use href="#icon-trash"/>
+                    </svg>
+                  </a>
                   <a href="{% url 'users:reset_password' user.id %}" class="button" style="background:#e0bc19;color:var(--text);border-color:var(--border);">Reset Password</a>
                 </div>
               </td>

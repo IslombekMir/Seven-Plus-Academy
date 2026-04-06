@@ -54,10 +54,16 @@
             <td>{{ mark.mark }} / {{ exam.full_mark }}</td>
             {% if form %}
               <td>
-                <form method="POST" action="{% url 'lessons:mark_delete' mark.pk %}">
-                  {% csrf_token %}
-                  <button type="submit" style="background:var(--danger);">Delete</button>
-                </form>
+                <div class="inline-actions" style="justify-content:flex-start; flex-wrap:nowrap;">
+                  <form method="POST" action="{% url 'lessons:mark_delete' mark.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Delete mark">
+                      <svg width="20" height="20" stroke="white">
+                        <use href="#icon-trash"/>
+                      </svg>
+                    </button>
+                  </form>
+                </div>
               </td>
             {% endif %}
           </tr>

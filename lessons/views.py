@@ -338,7 +338,6 @@ def enrollment_delete(request, pk):
         "group": group,
     })
 
-
 ### Exam
 def can_manage_exams(user, group):
     return user.role == User.Role.ADMIN or group.teacher == user

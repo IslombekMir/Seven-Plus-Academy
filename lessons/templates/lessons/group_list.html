@@ -37,8 +37,16 @@
             {% if user.role == "ADMIN" or user == group.teacher %}
               <td>
                 <div class="inline-actions">
-                  <a href="{% url 'lessons:group_edit' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Edit</a>
-                  <a href="{% url 'lessons:remove_group' group.pk %}" class="button" style="background:var(--danger);">Remove</a>
+                  <a href="{% url 'lessons:group_edit' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit group">
+                    <svg width="20" height="20" stroke="currentColor">
+                      <use href="#icon-edit"/>
+                    </svg>
+                  </a>
+                  <a href="{% url 'lessons:remove_group' group.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Remove group">
+                    <svg width="20" height="20" stroke="white">
+                      <use href="#icon-trash"/>
+                    </svg>
+                  </a>
                 </div>
               </td>
             {% endif %}

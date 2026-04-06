@@ -82,8 +82,16 @@
             {% if can_manage_payments %}
               <td>
                 <div class="inline-actions">
-                  <a href="{% url 'payments:payment_edit' payment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Edit</a>
-                  <a href="{% url 'payments:payment_delete' payment.pk %}" class="button" style="background:var(--danger);">Delete</a>
+                  <a href="{% url 'payments:payment_edit' payment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit payment">
+                    <svg width="20" height="20" stroke="currentColor">
+                      <use href="#icon-edit"/>
+                    </svg>
+                  </a>
+                  <a href="{% url 'payments:payment_delete' payment.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Delete payment">
+                    <svg width="20" height="20" stroke="white">
+                      <use href="#icon-trash"/>
+                    </svg>
+                  </a>
                 </div>
               </td>
             {% endif %}

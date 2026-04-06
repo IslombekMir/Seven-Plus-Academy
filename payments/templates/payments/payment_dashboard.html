@@ -128,8 +128,10 @@
             <td>{{ payment.created_at|date:"Y-m-d H:i" }}</td>
             {% if can_edit_rows %}
               <td>
-                <a href="{% url 'payments:payment_edit' payment.pk %}" class="button">
-                  Edit
+                <a href="{% url 'payments:payment_edit' payment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit payment">
+                  <svg width="20" height="20" stroke="currentColor">
+                    <use href="#icon-edit"/>
+                  </svg>
                 </a>
               </td>
             {% endif %}

@@ -76,15 +76,15 @@
                 <td>
                   <div class="inline-actions" style="justify-content:flex-end; flex-wrap:nowrap;">
                     {% if enrollment_form is not None %}
-                      <a href="{% url 'lessons:enrollment_edit' enrollment.pk %}"
-                        class="button"
-                        style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
-                        Edit
+                      <a href="{% url 'lessons:enrollment_edit' enrollment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit enrollment">
+                        <svg width="20" height="20" stroke="currentColor">
+                          <use href="#icon-edit"/>
+                        </svg>
                       </a>
-                      <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}"
-                        class="button"
-                        style="background:var(--danger);">
-                        Remove
+                      <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Remove enrollment">
+                        <svg width="20" height="20" stroke="white">
+                          <use href="#icon-trash"/>
+                        </svg>
                       </a>
                     {% endif %}
                   </div>
@@ -108,7 +108,22 @@
         <h3 class="page-title" style="margin-bottom:var(--space-4);">Add Student</h3>
         <form method="post" class="form-grid" id="add-student-form">
           {% csrf_token %}
-          {{ enrollment_form.as_p }}
+          <div class="ts-select">
+            <label for="{{ enrollment_form.student.id_for_label }}">Student</label>
+            {{ enrollment_form.student }}
+          </div>
+          <div>
+            <label for="{{ enrollment_form.start_date.id_for_label }}">Start date</label>
+            {{ enrollment_form.start_date }}
+          </div>
+          <div>
+            <label for="{{ enrollment_form.end_date.id_for_label }}">End date</label>
+            {{ enrollment_form.end_date }}
+          </div>
+          <div>
+            <label for="{{ enrollment_form.payment_amount.id_for_label }}">Payment amount</label>
+            {{ enrollment_form.payment_amount }}
+          </div>
           <div>
             <button type="submit">Add</button>
           </div>

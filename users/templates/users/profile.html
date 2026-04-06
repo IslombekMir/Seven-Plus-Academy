@@ -12,9 +12,38 @@
     </div>
     <form method="post" action="{% url 'users:toggle_theme' %}">
       {% csrf_token %}
-      <button type="submit" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
-        Switch to {% if request.user.settings.theme == "LIGHT" %}Dark{% else %}Light{% endif %} mode
-      </button>
+      <label class="theme-slider">
+        <input type="submit" hidden>
+
+        <div class="track">
+          <div class="thumb">
+            <!-- Sun/Moon Icon -->
+            <svg viewBox="0 0 24 24" class="icon">
+              <!-- Sun -->
+              <circle class="sun" cx="12" cy="12" r="5" />
+              <!-- Rays -->
+              <g class="rays">
+                <line x1="12" y1="1" x2="12" y2="4"/>
+                <line x1="12" y1="20" x2="12" y2="23"/>
+                <line x1="1" y1="12" x2="4" y2="12"/>
+                <line x1="20" y1="12" x2="23" y2="12"/>
+                <line x1="4.2" y1="4.2" x2="6.4" y2="6.4"/>
+                <line x1="17.6" y1="17.6" x2="19.8" y2="19.8"/>
+                <line x1="4.2" y1="19.8" x2="6.4" y2="17.6"/>
+                <line x1="17.6" y1="6.4" x2="19.8" y2="4.2"/>
+              </g>
+
+              <!-- Moon -->
+              <path class="moon"
+                d="M 16 12 A 6 6 0 1 1 8 4 A 5 5 0 1 0 16 12 Z">
+              </path>
+            </svg>
+          </div>
+        </div>
+        <span class="label">
+          Switch to {% if request.user.settings.theme == "LIGHT" %}Dark{% else %}Light{% endif %}
+        </span>
+      </label>
     </form>
   </div>
 
@@ -62,5 +91,62 @@
     </div>
   {% endif %}
 
+  <style>
+    .theme-slider {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .track {
+      width: 50px;
+      height: 26px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      position: relative;
+    }
+
+    .thumb {
+      width: 22px;
+      height: 22px;
+      background: var(--surface);
+      border-radius: 50%;
+      position: absolute;
+      top: 1.5px;
+      left: 1.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    {% if request.user.settings.theme == "DARK" %}
+    .thumb { transform: translateX(24px); }
+    {% endif %}
+
+    .icon {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .sun,
+    .rays line {
+      opacity: {% if request.user.settings.theme == "LIGHT" %}1{% else %}0{% endif %};
+      transition: opacity .3s ease;
+    }
+
+    .moon {
+      fill: var(--text);
+      opacity: {% if request.user.settings.theme == "DARK" %}1{% else %}0{% endif %};
+      transition: opacity .3s ease;
+    }
+  </style>
 </div>
 {% endblock %}
