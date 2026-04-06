@@ -35,16 +35,18 @@ class EnrollmentForm(forms.ModelForm):
     class Meta:
         model = Enrollment
         fields = ["student", "start_date", "end_date", "payment_amount"]
+        # lessons/forms.py
         widgets = {
             "start_date": forms.DateInput(
                 format="%Y-%m-%d",
-                attrs={"class": "form-control", "type": "date"},
+                attrs={"class": "form-control filter-date", "type": "date"},
             ),
             "end_date": forms.DateInput(
                 format="%Y-%m-%d",
-                attrs={"class": "form-control", "type": "date"},
+                attrs={"class": "form-control filter-date", "type": "date"},
             ),
         }
+
 
     def __init__(self, *args, **kwargs):
         group = kwargs.pop("group", None)

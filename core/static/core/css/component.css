@@ -408,3 +408,12 @@
 .nav-actions .button {
   width: auto !important;
 }
+
+.filter-date {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+}
