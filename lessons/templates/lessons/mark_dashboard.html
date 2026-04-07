@@ -1,19 +1,19 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Marks{% endblock %}
+{% block title %}{% trans "Marks" %}{% endblock %}
 
 {% block content %}
 <div class="dashboard-page">
 
   <div class="page-header">
-    <h1 class="page-title">Marks</h1>
+    <h1 class="page-title">{% trans "Marks" %}</h1>
   </div>
 
   <form method="get" id="marks-filter-form">
     <div class="filter-bar">
       {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
         <select name="teacher" class="searchable-select">
-          <option value="">All Teachers</option>
+          <option value="">{% trans "All Teachers" %}</option>
           {% for teacher in teachers %}
             <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
               {{ teacher.get_full_name|default:teacher.username }}
@@ -24,7 +24,7 @@
 
       {% if request.user.role != "STUDENT" %}
         <select name="student" class="searchable-select">
-          <option value="">All Students</option>
+          <option value="">{% trans "All Students" %}</option>
           {% for student in students %}
             <option value="{{ student.id }}" {% if selected_student == student.id|stringformat:"s" %}selected{% endif %}>
               {{ student.get_full_name|default:student.username }}
@@ -34,7 +34,7 @@
       {% endif %}
 
       <select name="group">
-        <option value="">All Groups</option>
+        <option value="">{% trans "All Groups" %}</option>
         {% for group in groups %}
           <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
             {{ group.name }} - {{ group.subject }}
@@ -43,7 +43,7 @@
       </select>
 
       <select name="exam">
-        <option value="">All Exams</option>
+        <option value="">{% trans "All Exams" %}</option>
         {% for exam in exams %}
           <option value="{{ exam.id }}" {% if selected_exam == exam.id|stringformat:"s" %}selected{% endif %}>
             {{ exam.name }} - {{ exam.group.name }}
@@ -54,50 +54,51 @@
       <input type="date" name="date" value="{{ selected_date }}" class="filter-date">
 
       <div class="filter-bar__actions">
-        <button type="submit">Filter</button>
-        <a href="{% url 'lessons:mark_dashboard' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset</a>
+        <button type="submit">{% trans "Filter" %}</button>
+        <a href="{% url 'lessons:mark_dashboard' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Reset" %}</a>
       </div>
     </div>
   </form>
 
   <div class="card">
-    <h3 class="page-title">Mark Indicator</h3>
+    <h3 class="page-title">{% trans "Mark Indicator" %}</h3>
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">Total Records</div>
+        <div class="stat-label">{% trans "Total Records" %}</div>
         <div class="stat-value">{{ total_records }}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Average Score</div>
+        <div class="stat-label">{% trans "Average Score" %}</div>
         <div class="stat-value">
           {% if average_mark is not None %}{{ average_mark|floatformat:1 }}{% else %}-{% endif %}
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Highest Score</div>
+        <div class="stat-label">{% trans "Highest Score" %}</div>
         <div class="stat-value">
           {% if highest_mark is not None %}{{ highest_mark }}{% else %}-{% endif %}
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Lowest Score</div>
+        <div class="stat-label">{% trans "Lowest Score" %}</div>
         <div class="stat-value">
           {% if lowest_mark is not None %}{{ lowest_mark }}{% else %}-{% endif %}
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Average Percent</div>
+        <div class="stat-label">{% trans "Average Percent" %}</div>
         <div class="stat-value">{{ average_percent }}%</div>
       </div>
     </div>
 
     <div style="margin-top: var(--space-4);">
       <div class="progress">
+        {% load l10n %}
         <div class="progress__bar
           {% if average_percent >= 80 %}progress__bar--success
           {% elif average_percent >= 60 %}progress__bar--warning
           {% else %}progress__bar--danger{% endif %}"
-          style="width: {{ average_percent }}%;">
+          style="width: {{ average_percent|unlocalize }}%;">
         </div>
       </div>
     </div>
@@ -107,13 +108,13 @@
     <table>
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Student</th>
-          <th>Exam</th>
-          <th>Group</th>
-          <th>Subject</th>
-          <th>Teacher</th>
-          <th>Mark</th>
+          <th>{% trans "Date" %}</th>
+          <th>{% trans "Student" %}</th>
+          <th>{% trans "Exam" %}</th>
+          <th>{% trans "Group" %}</th>
+          <th>{% trans "Subject" %}</th>
+          <th>{% trans "Teacher" %}</th>
+          <th>{% trans "Mark" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -134,7 +135,7 @@
         {% empty %}
           <tr>
             <td colspan="7">
-              <div class="empty-state">No marks found.</div>
+              <div class="empty-state">{% trans "No marks found." %}</div>
             </td>
           </tr>
         {% endfor %}
@@ -149,7 +150,7 @@
     new TomSelect(el, {
       create: false,
       allowEmptyOption: true,
-      placeholder: el.name === "teacher" ? "Search teachers..." : "Search students...",
+      placeholder: el.name === "teacher" ? "{% trans 'Search teachers...' %}" : "{% trans 'Search students...' %}",
       onChange: function () {
         el.form.submit();
       }

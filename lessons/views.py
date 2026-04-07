@@ -9,6 +9,7 @@ from django.contrib import messages
 from payments.models import Payment
 from django.utils import timezone
 from django.db import transaction
+from django.utils.translation import gettext as _
 
 
 ### Subject
@@ -113,7 +114,7 @@ def group_list(request):
 @login_required
 def removed_groups(request):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot view removed groups.")
+        return HttpResponseForbidden(_("Students cannot view removed groups."))
 
     groups = _group_queryset_for_user(request.user).filter(is_active=False)
     if request.user.role == User.Role.TEACHER:
@@ -123,7 +124,7 @@ def removed_groups(request):
 @login_required
 def group_create(request):
     if request.user.role == "STUDENT":
-        return HttpResponseForbidden("Students cannot create groups.")
+        return HttpResponseForbidden(_("Students cannot create groups."))
 
     if request.method == "POST":
         form = GroupForm(request.POST, current_user=request.user)
@@ -141,12 +142,12 @@ def group_create(request):
 @login_required
 def remove_group(request, pk):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot remove groups.")
+        return HttpResponseForbidden(_("Students cannot remove groups."))
 
     group = get_object_or_404(Group, pk=pk, is_active=True)
 
     if request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
-        return HttpResponseForbidden("Teachers can only remove their own groups.")
+        return HttpResponseForbidden(_("Teachers can only remove their own groups."))
 
     if request.method == "POST":
         with transaction.atomic():
@@ -164,12 +165,12 @@ def remove_group(request, pk):
 @login_required
 def restore_group(request, pk):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot restore groups.")
+        return HttpResponseForbidden(_("Students cannot restore groups."))
 
     group = get_object_or_404(Group, pk=pk, is_active=False)
 
     if request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
-        return HttpResponseForbidden("Teachers can only restore their own groups.")
+        return HttpResponseForbidden(_("Teachers can only restore their own groups."))
 
     if request.method == "POST":
         group.is_active = True
@@ -181,28 +182,28 @@ def restore_group(request, pk):
 @login_required
 def group_delete(request, pk):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot delete groups.")
+        return HttpResponseForbidden(_("Students cannot delete groups."))
 
     group = get_object_or_404(Group, pk=pk, is_active=False)
 
     if request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
-        return HttpResponseForbidden("Teachers can only delete their own groups.")
+        return HttpResponseForbidden(_("Teachers can only delete their own groups."))
 
     if request.method == "POST":
         if not _can_permanently_delete_group(group):
             messages.error(
                 request,
-                "This group has enrollment, exam, or payment history and cannot be permanently deleted."
+                _("This group has enrollment, exam, or payment history and cannot be permanently deleted.")
             )
             return redirect("lessons:removed_groups")
 
         try:
             group.delete()
-            messages.success(request, "Group was permanently deleted.")
+            messages.success(request, _("Group was permanently deleted."))
         except RestrictedError:
             messages.error(
                 request,
-                "This group still has related records that prevent permanent deletion."
+                _("This group still has related records that prevent permanent deletion.")
             )
 
         return redirect("lessons:removed_groups")
@@ -215,12 +216,12 @@ def group_delete(request, pk):
 @login_required
 def group_edit(request, pk):
     if request.user.role == "STUDENT":
-        return HttpResponseForbidden("Students cannot edit groups.")
+        return HttpResponseForbidden(_("Students cannot edit groups."))
     
     group = get_object_or_404(Group, pk=pk)
     
     if request.user.role == "TEACHER" and group.teacher_id != request.user.id:
-        return HttpResponseForbidden("Teachers can only edit their own groups.")
+        return HttpResponseForbidden(_("Teachers can only edit their own groups."))
     
     if request.method == "POST":
         form = GroupForm(request.POST, instance=group, current_user=request.user)
@@ -323,7 +324,7 @@ def enrollment_edit(request, pk):
     group = enrollment.group
 
     if not can_manage_enrollments(request.user, group):
-        return HttpResponseForbidden("You do not have permission to edit enrollments.")
+        return HttpResponseForbidden(_("You do not have permission to edit enrollments."))
 
     if request.method == "POST":
         form = EnrollmentForm(request.POST, instance=enrollment, group=group)
@@ -346,7 +347,7 @@ def enrollment_delete(request, pk):
     group = enrollment.group
 
     if not can_manage_enrollments(request.user, group):
-        return HttpResponseForbidden("You do not have permission to delete enrollments.")
+        return HttpResponseForbidden(_("You do not have permission to delete enrollments."))
 
     if request.method == "POST":
         enrollment.is_active = False
@@ -380,7 +381,7 @@ def exam_create(request, group_id):
     group = get_object_or_404(Group, pk=group_id)
 
     if not can_manage_exams(request.user, group):
-        return HttpResponseForbidden("You do not have permission to create exams.")
+        return HttpResponseForbidden(_("You do not have permission to create exams."))
 
     if request.method == "POST":
         form = ExamForm(request.POST)
@@ -402,7 +403,7 @@ def exam_list(request, group_id):
     group = get_object_or_404(Group, pk=group_id)
 
     if not can_view_exams(request.user, group):
-        return HttpResponseForbidden("You do not have permission to view exams.")
+        return HttpResponseForbidden(_("You do not have permission to view exams."))
 
     exams = group.exams.all().order_by("-date")
 
@@ -417,7 +418,7 @@ def exam_detail(request, pk):
     group = exam.group
 
     if not can_view_exams(request.user, group):
-        return HttpResponseForbidden("You do not have permission to view this exam.")
+        return HttpResponseForbidden(_("You do not have permission to view this exam."))
 
     marks = exam.marks.select_related("enrollment__student").all()
     average_mark = marks.aggregate(avg=Avg("mark"))["avg"]
@@ -447,7 +448,7 @@ def exam_edit(request, pk):
     group = exam.group
 
     if not can_manage_exams(request.user, group):
-        return HttpResponseForbidden("You do not have permission to edit exams.")
+        return HttpResponseForbidden(_("You do not have permission to edit exams."))
 
     if request.method == "POST":
         form = ExamForm(request.POST, instance=exam)
@@ -469,7 +470,7 @@ def exam_delete(request, pk):
     group = exam.group
 
     if not can_manage_exams(request.user, group):
-        return HttpResponseForbidden("You do not have permission to delete exams.")
+        return HttpResponseForbidden(_("You do not have permission to delete exams."))
 
     if request.method == "POST":
         exam.delete()
@@ -490,7 +491,7 @@ def mark_delete(request, pk):
     group = mark.exam.group
 
     if not can_manage_marks(request.user, group):
-        return HttpResponseForbidden("You do not have permission to delete marks.")
+        return HttpResponseForbidden(_("You do not have permission to delete marks."))
 
     if request.method == "POST":
         mark.delete()

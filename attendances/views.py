@@ -10,7 +10,7 @@ from .forms import AttendanceSessionForm, AttendanceBulkForm
 from django.db.models import Count, Q
 from .models import AttendanceSession, Attendance
 from django.core.exceptions import ValidationError
-
+from django.utils.translation import gettext_lazy as _
 
 
 def can_manage_attendance(user, group):
@@ -101,7 +101,6 @@ def attendance_dashboard(request):
         "attendance_percent": attendance_percent,
     })
 
-
 @login_required
 def attendance_group_detail(request, group_id):
     group = get_object_or_404(
@@ -111,9 +110,9 @@ def attendance_group_detail(request, group_id):
 
     if request.user.role == User.Role.STUDENT:
         if not group.enrollments.filter(student=request.user).exists():
-            return HttpResponseForbidden("You do not have permission to view this attendance page.")
+            return HttpResponseForbidden(_("You do not have permission to view this attendance page."))
     elif request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
-        return HttpResponseForbidden("Teachers can only view attendance for their own groups.")
+        return HttpResponseForbidden(_("Teachers can only view attendance for their own groups."))
 
     sessions = group.attendance_sessions.select_related("created_by").prefetch_related("attendances").order_by("-date", "-created_at")
 
@@ -124,10 +123,8 @@ def attendance_group_detail(request, group_id):
                 session = form.save(commit=False)
                 session.group = group
                 session.created_by = request.user
-                session.save()
 
                 try:
-                    session.full_clean()
                     session.save()
                 except ValidationError as exc:
                     form.add_error(None, exc)
@@ -181,9 +178,9 @@ def attendance_session_detail(request, pk):
 
     if request.user.role == User.Role.STUDENT:
         if not session.attendances.filter(student=request.user).exists():
-            return HttpResponseForbidden("You do not have permission to view this session.")
+            return HttpResponseForbidden(_("You do not have permission to view this session."))
     elif request.user.role == User.Role.TEACHER and group.teacher_id != request.user.id:
-        return HttpResponseForbidden("Teachers can only view attendance for their own groups.")
+        return HttpResponseForbidden(_("Teachers can only view attendance for their own groups."))
 
     attendances = session.attendances.select_related(
         "student", "enrollment"
@@ -206,7 +203,7 @@ def attendance_session_detail(request, pk):
 
     if request.method == "POST":
         if not can_manage_attendance(request.user, group):
-            return HttpResponseForbidden("You do not have permission to update attendance.")
+            return HttpResponseForbidden(_("You do not have permission to update attendance."))
 
         form = AttendanceBulkForm(
             request.POST,

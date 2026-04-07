@@ -1,12 +1,12 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}{% trans "Login" %}{% endblock %}
 
 {% block content %}
 <div class="form-page">
 
   <div class="page-header">
-    <h1 class="page-title">Login</h1>
+    <h1 class="page-title">{% trans "Login" %}</h1>
   </div>
 
   <div class="card form-card">
@@ -30,7 +30,7 @@
         {% endif %}
       </div>
       <div>
-        <button type="submit">Login</button>
+        <button type="submit">{% trans "Login" %}</button>
       </div>
     </form>
   </div>

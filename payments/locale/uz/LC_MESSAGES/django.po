@@ -1,0 +1,290 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-07 22:48+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: payments/forms.py:7
+msgid "January"
+msgstr "Yanvar"
+
+#: payments/forms.py:8
+msgid "February"
+msgstr "Fevral"
+
+#: payments/forms.py:9
+msgid "March"
+msgstr "Mart"
+
+#: payments/forms.py:10
+msgid "April"
+msgstr "Aprel"
+
+#: payments/forms.py:11
+msgid "May"
+msgstr "May"
+
+#: payments/forms.py:12
+msgid "June"
+msgstr "Iyun"
+
+#: payments/forms.py:13
+msgid "July"
+msgstr "Iyul"
+
+#: payments/forms.py:14
+msgid "August"
+msgstr "Avgust"
+
+#: payments/forms.py:15
+msgid "September"
+msgstr "Sentyabr"
+
+#: payments/forms.py:16
+msgid "October"
+msgstr "Oktyabr"
+
+#: payments/forms.py:17
+msgid "November"
+msgstr "Noyabr"
+
+#: payments/forms.py:18
+msgid "December"
+msgstr "Dekabr"
+
+#: payments/forms.py:26
+msgid "Paid amount"
+msgstr "To‘langan summa"
+
+#: payments/forms.py:27
+msgid "Payment month"
+msgstr "To‘lov oyi"
+
+#: payments/forms.py:28
+msgid "Payment year"
+msgstr "To‘lov yili"
+
+#: payments/templates/payments/group_detail.html:3
+#: payments/templates/payments/group_detail.html:10
+#, python-format
+msgid "%(group_name)s Payments"
+msgstr "%(group_name)s guruhi uchun to‘lovlar"
+
+#: payments/templates/payments/group_detail.html:13
+msgid "Back to group"
+msgstr "Guruhga qaytish"
+
+#: payments/templates/payments/group_detail.html:17
+msgid "Students"
+msgstr "O‘quvchilar"
+
+#: payments/templates/payments/group_detail.html:26
+msgid "Add payment"
+msgstr "To‘lov qo‘shish"
+
+#: payments/templates/payments/group_detail.html:30
+msgid "No students enrolled yet."
+msgstr "Hozircha hech qanday o‘quvchi ro‘yxatdan o‘tmagan."
+
+#: payments/templates/payments/group_detail.html:38
+#: payments/templates/payments/payment_dashboard.html:104
+msgid "Month"
+msgstr "Oy"
+
+#: payments/templates/payments/group_detail.html:48
+msgid "Year"
+msgstr "Yil"
+
+#: payments/templates/payments/group_detail.html:58
+#: payments/templates/payments/payment_dashboard.html:67
+msgid "Filter"
+msgstr "Filtrlash"
+
+#: payments/templates/payments/group_detail.html:59
+#: payments/templates/payments/payment_dashboard.html:68
+msgid "Reset"
+msgstr "Tiklash"
+
+#: payments/templates/payments/group_detail.html:68
+#: payments/templates/payments/payment_confirm_delete.html:15
+#: payments/templates/payments/payment_dashboard.html:105
+#: payments/templates/payments/payment_form.html:15
+msgid "Student"
+msgstr "O‘quvchi"
+
+#: payments/templates/payments/group_detail.html:69
+msgid "Period"
+msgstr "Davr"
+
+#: payments/templates/payments/group_detail.html:70
+msgid "Paid / Expected"
+msgstr "To‘langan / Kutilgan"
+
+#: payments/templates/payments/group_detail.html:71
+msgid "Date"
+msgstr "Sana"
+
+#: payments/templates/payments/group_detail.html:72
+#: payments/templates/payments/payment_dashboard.html:112
+msgid "Actions"
+msgstr "Amallar"
+
+#: payments/templates/payments/group_detail.html:85
+#: payments/templates/payments/payment_dashboard.html:132
+msgid "Edit payment"
+msgstr "To‘lovni tahrirlash"
+
+#: payments/templates/payments/group_detail.html:90
+msgid "Delete payment"
+msgstr "To‘lovni o‘chirish"
+
+#: payments/templates/payments/group_detail.html:102
+msgid "No payments found for this period."
+msgstr "Ushbu davr uchun to‘lovlar topilmadi."
+
+#: payments/templates/payments/payment_confirm_delete.html:3
+msgid "Delete Payment"
+msgstr "To‘lovni o‘chirish"
+
+#: payments/templates/payments/payment_confirm_delete.html:9
+msgid "Delete Payment?"
+msgstr "To‘lov o‘chirilsinmi?"
+
+#: payments/templates/payments/payment_confirm_delete.html:19
+#: payments/templates/payments/payment_dashboard.html:107
+#: payments/templates/payments/payment_form.html:19
+msgid "Group"
+msgstr "Guruh"
+
+#: payments/templates/payments/payment_confirm_delete.html:23
+msgid "Paid Amount"
+msgstr "To‘langan summa"
+
+#: payments/templates/payments/payment_confirm_delete.html:27
+#: payments/templates/payments/payment_form.html:23
+msgid "Expected Amount"
+msgstr "Kutilgan summa"
+
+#: payments/templates/payments/payment_confirm_delete.html:34
+msgid "Confirm delete"
+msgstr "O‘chirishni tasdiqlash"
+
+#: payments/templates/payments/payment_confirm_delete.html:35
+#: payments/templates/payments/payment_form.html:33
+msgid "Cancel"
+msgstr "Bekor qilish"
+
+#: payments/templates/payments/payment_dashboard.html:3
+#: payments/templates/payments/payment_dashboard.html:9
+msgid "Payments"
+msgstr "To‘lovlar"
+
+#: payments/templates/payments/payment_dashboard.html:17
+msgid "All Payment Statuses"
+msgstr "Barcha to‘lov holatlari"
+
+#: payments/templates/payments/payment_dashboard.html:19
+msgid "Fully Paid"
+msgstr "To‘liq to‘langan"
+
+#: payments/templates/payments/payment_dashboard.html:22
+msgid "Not Fully Paid"
+msgstr "To‘liq to‘lanmagan"
+
+#: payments/templates/payments/payment_dashboard.html:27
+msgid "All Months"
+msgstr "Barcha oylar"
+
+#: payments/templates/payments/payment_dashboard.html:37
+msgid "All Teachers"
+msgstr "Barcha o‘qituvchilar"
+
+#: payments/templates/payments/payment_dashboard.html:48
+msgid "All Students"
+msgstr "Barcha o‘quvchilar"
+
+#: payments/templates/payments/payment_dashboard.html:58
+msgid "All Groups"
+msgstr "Barcha guruhlar"
+
+#: payments/templates/payments/payment_dashboard.html:75
+msgid "Collection Indicator"
+msgstr "Yig‘im ko‘rsatkichi"
+
+#: payments/templates/payments/payment_dashboard.html:78
+#: payments/templates/payments/payment_dashboard.html:108
+msgid "Paid"
+msgstr "To‘langan"
+
+#: payments/templates/payments/payment_dashboard.html:82
+#: payments/templates/payments/payment_dashboard.html:109
+msgid "Expected"
+msgstr "Kutilgan"
+
+#: payments/templates/payments/payment_dashboard.html:86
+msgid "Collection Rate"
+msgstr "Yig‘im darajasi"
+
+#: payments/templates/payments/payment_dashboard.html:106
+msgid "Teacher"
+msgstr "O‘qituvchi"
+
+#: payments/templates/payments/payment_dashboard.html:110
+msgid "Created At"
+msgstr "Yaratilgan vaqt"
+
+#: payments/templates/payments/payment_dashboard.html:143
+msgid "No payments found."
+msgstr "To‘lovlar topilmadi."
+
+#: payments/templates/payments/payment_dashboard.html:158
+msgid "Search teachers..."
+msgstr "O‘qituvchilarni qidirish..."
+
+#: payments/templates/payments/payment_dashboard.html:170
+msgid "Search students..."
+msgstr "O‘quvchilarni qidirish..."
+
+#: payments/templates/payments/payment_form.html:3
+#: payments/templates/payments/payment_form.html:9
+msgid "Edit Payment"
+msgstr "To‘lovni tahrirlash"
+
+#: payments/templates/payments/payment_form.html:3
+#: payments/templates/payments/payment_form.html:9
+msgid "Create Payment"
+msgstr "To‘lov yaratish"
+
+#: payments/templates/payments/payment_form.html:32
+msgid "Save"
+msgstr "Saqlash"
+
+#: payments/views.py:42
+msgid "You do not have permission to view this payments page."
+msgstr "Ushbu to‘lovlar sahifasini ko‘rish uchun ruxsatingiz yo‘q."
+
+#: payments/views.py:98
+msgid "You do not have permission to create payments."
+msgstr "To‘lov yaratish uchun ruxsatingiz yo‘q."
+
+#: payments/views.py:136
+msgid "You do not have permission to edit payments."
+msgstr "To‘lovni tahrirlash uchun ruxsatingiz yo‘q."
+
+#: payments/views.py:164
+msgid "You do not have permission to delete payments."
+msgstr "To‘lovni o‘chirish uchun ruxsatingiz yo‘q."

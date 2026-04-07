@@ -11,28 +11,28 @@
       <p class="page-subtitle">{{ group.subject }} · {{ group.teacher.get_full_name }}</p>
     </div>
     <div class="inline-actions">
-      <a href="{% url 'lessons:exam_list' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Exams</a>
-      <a href="{% url 'attendances:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Attendances</a>
-      <a href="{% url 'payments:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Payments</a>
+      <a href="{% url 'lessons:exam_list' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Exams" %}</a>
+      <a href="{% url 'attendances:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Attendances" %}</a>
+      <a href="{% url 'payments:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Payments" %}</a>
     </div>
   </div>
 
   <div class="info-grid">
     <div class="card">
-      <div class="stat-label">Fee</div>
+      <div class="stat-label">{% trans "Fee" %}</div>
       <div class="stat-value" style="font-size:1.1rem;">{{ group.default_payment_amount }}</div>
     </div>
     <div class="card">
-      <div class="stat-label">Schedule</div>
+      <div class="stat-label">{% trans "Schedule" %}</div>
       <div class="stat-value" style="font-size:1.1rem;">{{ group.week_days }} · {{ group.start_time }}–{{ group.end_time }}</div>
     </div>
     <div class="card">
-      <div class="stat-label">Dates</div>
+      <div class="stat-label">{% trans "Dates" %}</div>
       <div class="stat-value" style="font-size:1.1rem;">{{ group.start_date }} → {{ group.end_date }}</div>
     </div>
     {% if group.homework_description %}
       <div class="card">
-        <div class="stat-label">Homework</div>
+        <div class="stat-label">{% trans "Homework" %}</div>
         <p style="margin-top:var(--space-2); margin-bottom:0;">{{ group.homework_description }}</p>
       </div>
     {% endif %}
@@ -41,18 +41,18 @@
   <div class="group-detail-layout">
 
     <div class="card">
-      <h3 class="page-title" style="margin-bottom:var(--space-4);">Students</h3>
+      <h3 class="page-title" style="margin-bottom:var(--space-4);">{% trans "Students" %}</h3>
 
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Student</th>
+              <th>{% trans "Student" %}</th>
               {% if not is_student %}
-                <th>Payment</th>
+                <th>{% trans "Payment" %}</th>
               {% endif %}
-              <th>Start Date</th>
-              <th style="width:1%;">Actions</th>
+              <th>{% trans "Start Date" %}</th>
+              <th style="width:1%;">{% trans "Actions" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -76,12 +76,12 @@
                 <td>
                   <div class="inline-actions" style="justify-content:flex-end; flex-wrap:nowrap;">
                     {% if enrollment_form is not None %}
-                      <a href="{% url 'lessons:enrollment_edit' enrollment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit enrollment">
+                      <a href="{% url 'lessons:enrollment_edit' enrollment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="{% trans 'Edit enrollment' %}">
                         <svg width="20" height="20" stroke="currentColor">
                           <use href="#icon-edit"/>
                         </svg>
                       </a>
-                      <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Remove enrollment">
+                      <a href="{% url 'lessons:enrollment_delete' enrollment.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="{% trans 'Remove enrollment' %}">
                         <svg width="20" height="20" stroke="white">
                           <use href="#icon-trash"/>
                         </svg>
@@ -93,7 +93,7 @@
             {% empty %}
               <tr>
                 <td colspan="{% if not is_student %}4{% else %}3{% endif %}">
-                  <div class="empty-state">No students enrolled yet.</div>
+                  <div class="empty-state">{% trans "No students enrolled yet." %}</div>
                 </td>
               </tr>
             {% endfor %}
@@ -105,27 +105,27 @@
 
     {% if enrollment_form %}
       <div class="card form-card">
-        <h3 class="page-title" style="margin-bottom:var(--space-4);">Add Student</h3>
+        <h3 class="page-title" style="margin-bottom:var(--space-4);">{% trans "Add Student" %}</h3>
         <form method="post" class="form-grid" id="add-student-form">
           {% csrf_token %}
           <div class="ts-select">
-            <label for="{{ enrollment_form.student.id_for_label }}">Student</label>
+            <label for="{{ enrollment_form.student.id_for_label }}">{% trans "Student" %}</label>
             {{ enrollment_form.student }}
           </div>
           <div>
-            <label for="{{ enrollment_form.start_date.id_for_label }}">Start date</label>
+            <label for="{{ enrollment_form.start_date.id_for_label }}">{% trans "Start date" %}</label>
             {{ enrollment_form.start_date }}
           </div>
           <div>
-            <label for="{{ enrollment_form.end_date.id_for_label }}">End date</label>
+            <label for="{{ enrollment_form.end_date.id_for_label }}">{% trans "End date" %}</label>
             {{ enrollment_form.end_date }}
           </div>
           <div>
-            <label for="{{ enrollment_form.payment_amount.id_for_label }}">Payment amount</label>
+            <label for="{{ enrollment_form.payment_amount.id_for_label }}">{% trans "Payment amount" %}</label>
             {{ enrollment_form.payment_amount }}
           </div>
           <div>
-            <button type="submit">Add</button>
+            <button type="submit">{% trans "Add" %}</button>
           </div>
         </form>
       </div>
@@ -140,7 +140,7 @@
     new TomSelect(studentEl, {
       create: false,
       allowEmptyOption: true,
-      placeholder: "Search students..."
+      placeholder: "{% trans 'Search students...' %}"
     });
   }
 </script>

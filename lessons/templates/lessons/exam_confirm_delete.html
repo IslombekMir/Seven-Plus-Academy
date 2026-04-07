@@ -1,21 +1,21 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Delete Exam{% endblock %}
+{% block title %}{% trans "Delete Exam" %}{% endblock %}
 
 {% block content %}
 <div class="confirm-page">
 
   <div class="page-header">
-    <h1 class="page-title">Delete Exam</h1>
+    <h1 class="page-title">{% trans "Delete Exam" %}</h1>
   </div>
 
   <div class="card confirm-card">
-    <p>Are you sure you want to delete <span class="danger-text">{{ exam.name }}</span> from <strong>{{ group.name }}</strong>?</p>
+    <p>{% blocktrans with exam_name=exam.name group_name=group.name %}Are you sure you want to delete <span class="danger-text">{{ exam_name }}</span> from <strong>{{ group_name }}</strong>?{% endblocktrans %}</p>
     <form method="post">
       {% csrf_token %}
       <div class="inline-actions">
-        <button type="submit">Yes, delete</button>
-        <a href="{% url 'lessons:exam_list' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+        <button type="submit">{% trans "Yes, delete" %}</button>
+        <a href="{% url 'lessons:exam_list' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Cancel" %}</a>
       </div>
     </form>
   </div>

@@ -1,0 +1,132 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-08 02:59+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: templates/core/base.html:6
+msgid "Seven Plus"
+msgstr "Seven Plus"
+
+#: templates/core/base.html:22
+msgid "Removed users"
+msgstr "O‘chirilgan foydalanuvchilar"
+
+#: templates/core/base.html:58
+msgid "Seven Plus home"
+msgstr "Seven Plus bosh sahifasi"
+
+#: templates/core/base.html:94
+msgid "Profile"
+msgstr "Profil"
+
+#: templates/core/base.html:95
+msgid "Logout"
+msgstr "Chiqish"
+
+#: templates/core/base.html:97
+msgid "Login"
+msgstr "Kirish"
+
+#: templates/core/base.html:121
+msgid "Footer social links"
+msgstr "Pastki qismdagi ijtimoiy tarmoq havolalari"
+
+#: templates/core/index.html:3
+msgid "Home"
+msgstr "Bosh sahifa"
+
+#: templates/core/index.html:16
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "        Welcome, %(name)s!\n"
+#| "      "
+msgid ""
+"\n"
+"          Welcome, %(name)s!\n"
+"        "
+msgstr ""
+"\n"
+"        Xush kelibsiz, %(name)s!\n"
+"      "
+
+#: templates/core/index.html:26
+msgid "Directory"
+msgstr "Ma’lumotnoma"
+
+#: templates/core/index.html:28
+msgid "Users"
+msgstr "Foydalanuvchilar"
+
+#: templates/core/index.html:28
+msgid "Students"
+msgstr "Talabalar"
+
+#: templates/core/index.html:34
+msgid "Curriculum"
+msgstr "O‘quv dasturi"
+
+#: templates/core/index.html:35
+msgid "Subjects"
+msgstr "Fanlar"
+
+#: templates/core/index.html:39
+msgid "Classes"
+msgstr "Sinf"
+
+#: templates/core/index.html:40
+msgid "Groups"
+msgstr "Guruhlar"
+
+#: templates/core/index.html:44
+msgid "Staff"
+msgstr "Xodimlar"
+
+#: templates/core/index.html:45
+msgid "Teachers"
+msgstr "O‘qituvchilar"
+
+#: templates/core/index.html:49
+msgid "Assessment"
+msgstr "Baholash"
+
+#: templates/core/index.html:50
+msgid "Marks"
+msgstr "Baho"
+
+#: templates/core/index.html:55
+msgid "Finance"
+msgstr "Moliya"
+
+#: templates/core/index.html:56
+msgid "Payments"
+msgstr "To‘lovlar"
+
+#: templates/core/index.html:62
+msgid "Tracking"
+msgstr "Kuzatuv"
+
+#: templates/core/index.html:63
+msgid "Attendances"
+msgstr "Davomat"
+
+#: templates/core/index.html:70
+#, fuzzy
+#| msgid "Seven Plus"
+msgid "Welcome to Seven Plus"
+msgstr "Seven Plusga hush kelibsiz"

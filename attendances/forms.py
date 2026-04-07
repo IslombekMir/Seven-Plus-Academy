@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from lessons.models import Enrollment
 from .models import Attendance, AttendanceSession
@@ -7,6 +8,9 @@ class AttendanceSessionForm(forms.ModelForm):
     class Meta:
         model = AttendanceSession
         fields = ["date"]
+        labels = {
+            "date": _("Date"),
+        }
         widgets = {
             "date": forms.DateInput(attrs={
                 "type": "date",

@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Exam Details{% endblock %}
+{% block title %}{% trans "Exam Details" %}{% endblock %}
 
 {% block content %}
 <div class="detail-page">
@@ -11,7 +11,7 @@
       <p class="page-subtitle">{{ group.name }} · {{ exam.date }}</p>
     </div>
     {% if form %}
-      <button onclick="document.getElementById('mark-modal').style.display='flex'">Add Mark</button>
+      <button onclick="document.getElementById('mark-modal').style.display='flex'">{% trans "Add Mark" %}</button>
     {% endif %}
   </div>
 
@@ -23,16 +23,16 @@
 
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-label">Full Mark</div>
+      <div class="stat-label">{% trans "Full Mark" %}</div>
       <div class="stat-value">{{ exam.full_mark }}</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Average Score</div>
+      <div class="stat-label">{% trans "Average Score" %}</div>
       <div class="stat-value">
         {% if average_mark is not None %}
           {{ average_mark|floatformat:1 }} / {{ exam.full_mark }}
         {% else %}
-          <span style="color:var(--muted); font-size:1rem;">No records yet</span>
+          <span style="color:var(--muted); font-size:1rem;">{% trans "No records yet" %}</span>
         {% endif %}
       </div>
     </div>
@@ -42,9 +42,9 @@
     <table>
       <thead>
         <tr>
-          <th>Student</th>
-          <th>Mark</th>
-          {% if form %}<th>Actions</th>{% endif %}
+          <th>{% trans "Student" %}</th>
+          <th>{% trans "Mark" %}</th>
+          {% if form %}<th>{% trans "Actions" %}</th>{% endif %}
         </tr>
       </thead>
       <tbody>
@@ -57,7 +57,7 @@
                 <div class="inline-actions" style="justify-content:flex-start; flex-wrap:nowrap;">
                   <form method="POST" action="{% url 'lessons:mark_delete' mark.pk %}">
                     {% csrf_token %}
-                    <button type="submit" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Delete mark">
+                    <button type="submit" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="{% trans 'Delete mark' %}">
                       <svg width="20" height="20" stroke="white">
                         <use href="#icon-trash"/>
                       </svg>
@@ -70,7 +70,7 @@
         {% empty %}
           <tr>
             <td colspan="{% if form %}3{% else %}2{% endif %}">
-              <div class="empty-state">No marks yet.</div>
+              <div class="empty-state">{% trans "No marks yet." %}</div>
             </td>
           </tr>
         {% endfor %}
@@ -83,14 +83,14 @@
 {% if form %}
   <div id="mark-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); justify-content:center; align-items:center; z-index:100;">
     <div class="card form-card" style="min-width:320px;">
-      <h2 class="page-title" style="margin-bottom:var(--space-4);">Add Mark</h2>
+      <h2 class="page-title" style="margin-bottom:var(--space-4);">{% trans "Add Mark" %}</h2>
       <form method="POST" class="form-grid">
         {% csrf_token %}
         {{ form.as_p }}
         <div class="inline-actions">
-          <button type="submit">Save</button>
+          <button type="submit">{% trans "Save" %}</button>
           <button type="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);"
-            onclick="document.getElementById('mark-modal').style.display='none'">Cancel</button>
+            onclick="document.getElementById('mark-modal').style.display='none'">{% trans "Cancel" %}</button>
         </div>
       </form>
     </div>

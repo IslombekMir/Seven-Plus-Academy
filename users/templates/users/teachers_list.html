@@ -1,12 +1,12 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Teachers{% endblock %}
+{% block title %}{% trans "Teachers" %}{% endblock %}
 
 {% block content %}
 <div class="list-page">
 
   <div class="page-header">
-    <h1 class="page-title">Teachers</h1>
+    <h1 class="page-title">{% trans "Teachers" %}</h1>
   </div>
 
   {% if teachers %}
@@ -33,18 +33,18 @@
           {% if teacher.teacher_profile and teacher.teacher_profile.bio %}
             <p style="color:var(--muted); font-size:0.9rem; margin:0 0 var(--space-3);">{{ teacher.teacher_profile.bio }}</p>
           {% else %}
-            <p style="color:var(--muted); font-size:0.9rem; font-style:italic; margin:0 0 var(--space-3);">No bio yet.</p>
+            <p style="color:var(--muted); font-size:0.9rem; font-style:italic; margin:0 0 var(--space-3);">{% trans "No bio yet." %}</p>
           {% endif %}
 
           {% if request.user.role == "ADMIN" or request.user == teacher %}
-            <a href="{% url 'users:edit_teacher_profile' teacher.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border); width:100%;">Edit Profile</a>
+            <a href="{% url 'users:edit_teacher_profile' teacher.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border); width:100%;">{% trans "Edit Profile" %}</a>
           {% endif %}
 
         </div>
       {% endfor %}
     </div>
   {% else %}
-    <div class="empty-state">No teachers found.</div>
+    <div class="empty-state">{% trans "No teachers found." %}</div>
   {% endif %}
 
 </div>

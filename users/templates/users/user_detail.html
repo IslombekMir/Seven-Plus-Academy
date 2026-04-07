@@ -13,21 +13,21 @@
 
   <div class="info-grid">
     <div class="card">
-      <div class="stat-label">Username</div>
+      <div class="stat-label">{% trans "Username" %}</div>
       <div>{{ target_user.username }}</div>
     </div>
     <div class="card">
-      <div class="stat-label">Phone</div>
+      <div class="stat-label">{% trans "Phone" %}</div>
       <div>{{ target_user.phone_number|default:"—" }}</div>
     </div>
     <div class="card">
-      <div class="stat-label">Status</div>
-      <div>{% if target_user.is_active %}Active{% else %}Removed{% endif %}</div>
+      <div class="stat-label">{% trans "Status" %}</div>
+      <div>{% if target_user.is_active %}{% trans "Active" %}{% else %}{% trans "Removed" %}{% endif %}</div>
     </div>
   </div>
 
   <div class="stack">
-    <h2 class="page-title">Deletion Order</h2>
+    <h2 class="page-title">{% trans "Deletion Order" %}</h2>
 
     {% for title, slug, items in deletion_steps %}
       <div class="card" style="padding:var(--space-4); margin-bottom:var(--space-3);">
@@ -43,15 +43,15 @@
                 href="{% url 'users:confirm_delete_user_related' target_user.username slug %}"
                 class="button"
                 style="background:var(--danger);color:white;border-color:transparent;"
-                aria-label="Delete {{ title }}"
-                title="Delete {{ title }}"
+                aria-label="{% trans 'Delete' %} {{ title }}"
+                title="{% trans 'Delete' %} {{ title }}"
                 >
                 <svg width="20" height="20" stroke="white">
                     <use href="#icon-trash"/>
                 </svg>
                 </a>
             {% else %}
-              <span>No records</span>
+              <span>{% trans "No records" %}</span>
             {% endif %}
           {% endif %}
         </div>
@@ -77,12 +77,12 @@
       <div class="card" style="padding:var(--space-4); border: 2px solid var(--danger);">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-                <strong>Final Step: Delete User Account</strong>
+                <strong>{% trans "Final Step: Delete User Account" %}</strong>
                 <div class="page-subtitle">
                     {% if can_delete_user %}
-                    All blocking related data has been removed.
+                    {% trans "All blocking related data has been removed." %}
                     {% else %}
-                    Disabled - clear all related data above first.
+                    {% trans "Disabled - clear all related data above first." %}
                     {% endif %}
                 </div>
                 </div>
@@ -92,15 +92,15 @@
                         href="{% url 'users:confirm_delete_user_only' target_user.username %}"
                         class="button"
                         style="background:var(--danger);color:white;border-color:transparent;"
-                        aria-label="Delete User Account"
-                        title="Delete User Account"
+                        aria-label="{% trans 'Delete User Account' %}"
+                        title="{% trans 'Delete User Account' %}"
                         >
                         <svg width="20" height="20" stroke="white">
                             <use href="#icon-trash"/>
                         </svg>
                         </a>
                     {% else %}
-                    <button type="button" class="button" disabled>Delete User Account</button>
+                    <button type="button" class="button" disabled>{% trans "Delete User Account" %}</button>
                 {% endif %}
             </div>
         </div>

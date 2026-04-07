@@ -1,13 +1,17 @@
 {% extends 'core/base.html' %}
 
-{% block title %}{% if exam %}Edit Exam{% else %}Create Exam{% endif %}{% endblock %}
+{% block title %}{% if exam %}{% trans "Edit Exam" %}{% else %}{% trans "Create Exam" %}{% endif %}{% endblock %}
 
 {% block content %}
 <div class="form-page">
 
   <div class="page-header">
     <h1 class="page-title">
-      {% if exam %}Edit Exam for {{ group.name }}{% else %}Create Exam for {{ group.name }}{% endif %}
+      {% if exam %}
+        {% blocktrans with group_name=group.name %}Edit Exam for {{ group_name }}{% endblocktrans %}
+      {% else %}
+        {% blocktrans with group_name=group.name %}Create Exam for {{ group_name }}{% endblocktrans %}
+      {% endif %}
     </h1>
   </div>
 
@@ -16,7 +20,7 @@
       {% csrf_token %}
       {{ form.as_p }}
       <div>
-        <button type="submit">Save</button>
+        <button type="submit">{% trans "Save" %}</button>
       </div>
     </form>
   </div>

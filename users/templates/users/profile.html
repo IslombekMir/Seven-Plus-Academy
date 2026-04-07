@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}{% trans "Profile" %}{% endblock %}
 
 {% block content %}
 <div class="detail-page">
@@ -10,57 +10,64 @@
       <h1 class="page-title">{{ profile_user.first_name }} {{ profile_user.last_name }}</h1>
       <p class="page-subtitle">{{ profile_user.role }}</p>
     </div>
-    <form method="post" action="{% url 'users:toggle_theme' %}">
-      {% csrf_token %}
-      <label class="theme-slider">
-        <input type="submit" hidden>
 
-        <div class="track">
-          <div class="thumb">
-            <!-- Sun/Moon Icon -->
-            <svg viewBox="0 0 24 24" class="icon">
-              <!-- Sun -->
-              <circle class="sun" cx="12" cy="12" r="5" />
-              <!-- Rays -->
-              <g class="rays">
-                <line x1="12" y1="1" x2="12" y2="4"/>
-                <line x1="12" y1="20" x2="12" y2="23"/>
-                <line x1="1" y1="12" x2="4" y2="12"/>
-                <line x1="20" y1="12" x2="23" y2="12"/>
-                <line x1="4.2" y1="4.2" x2="6.4" y2="6.4"/>
-                <line x1="17.6" y1="17.6" x2="19.8" y2="19.8"/>
-                <line x1="4.2" y1="19.8" x2="6.4" y2="17.6"/>
-                <line x1="17.6" y1="6.4" x2="19.8" y2="4.2"/>
-              </g>
+    <div class="page-actions">
+      <form method="post" action="{% url 'users:toggle_language' %}">
+        {% csrf_token %}
+        <button type="submit" class="lang-switch" aria-label="{% trans 'Switch language' %}">
+          <span class="lang-chip {% if request.user.settings.language == 'UZBEK' %}is-active{% endif %}">UZ</span>
+          <span class="lang-chip {% if request.user.settings.language == 'ENGLISH' %}is-active{% endif %}">EN</span>
+        </button>
+      </form>
 
-              <!-- Moon -->
-              <path class="moon"
-                d="M 16 12 A 6 6 0 1 1 8 4 A 5 5 0 1 0 16 12 Z">
-              </path>
-            </svg>
+      <form method="post" action="{% url 'users:toggle_theme' %}">
+        {% csrf_token %}
+        <button type="submit" class="theme-slider" aria-label="{% trans 'Toggle theme' %}">
+          <div class="track">
+            <div class="thumb">
+              <svg viewBox="0 0 24 24" class="icon">
+                <circle class="sun" cx="12" cy="12" r="5" />
+                <g class="rays">
+                  <line x1="12" y1="1" x2="12" y2="4"/>
+                  <line x1="12" y1="20" x2="12" y2="23"/>
+                  <line x1="1" y1="12" x2="4" y2="12"/>
+                  <line x1="20" y1="12" x2="23" y2="12"/>
+                  <line x1="4.2" y1="4.2" x2="6.4" y2="6.4"/>
+                  <line x1="17.6" y1="17.6" x2="19.8" y2="19.8"/>
+                  <line x1="4.2" y1="19.8" x2="6.4" y2="17.6"/>
+                  <line x1="17.6" y1="6.4" x2="19.8" y2="4.2"/>
+                </g>
+                <path class="moon" d="M 16 12 A 6 6 0 1 1 8 4 A 5 5 0 1 0 16 12 Z"></path>
+              </svg>
+            </div>
           </div>
-        </div>
-        <span class="label">
-          Switch to {% if request.user.settings.theme == "LIGHT" %}Dark{% else %}Light{% endif %}
-        </span>
-      </label>
-    </form>
+
+          <span class="label">
+            {% if request.user.settings.theme == "LIGHT" %}
+              {% trans "Switch to Dark" %}
+            {% else %}
+              {% trans "Switch to Light" %}
+            {% endif %}
+          </span>
+        </button>
+      </form>
+    </div>
   </div>
 
   <div class="info-grid">
     <div class="card">
-      <div class="stat-label">Username</div>
+      <div class="stat-label">{% trans "Username" %}</div>
       <div style="font-weight:600; margin-top:var(--space-1);">{{ profile_user.username }}</div>
     </div>
     <div class="card">
-      <div class="stat-label">Phone Number</div>
+      <div class="stat-label">{% trans "Phone Number" %}</div>
       <div style="font-weight:600; margin-top:var(--space-1);">{{ profile_user.phone_number|default:"—" }}</div>
     </div>
   </div>
 
   {% if profile_user.role == "TEACHER" %}
     <div class="stack">
-      <h3 class="page-title">Your Groups</h3>
+      <h3 class="page-title">{% trans "Your Groups" %}</h3>
       {% for group in groups %}
         <div class="card" style="padding:var(--space-3) var(--space-5);">
           <a href="{% url 'lessons:group_detail' group.id %}">
@@ -69,13 +76,13 @@
           </a>
         </div>
       {% empty %}
-        <div class="empty-state">No groups assigned.</div>
+        <div class="empty-state">{% trans "No groups assigned." %}</div>
       {% endfor %}
     </div>
 
   {% elif profile_user.role == "STUDENT" %}
     <div class="stack">
-      <h3 class="page-title">Your Enrolled Groups</h3>
+      <h3 class="page-title">{% trans "Your Enrolled Groups" %}</h3>
       {% for enrollment in enrollments %}
         <div class="card" style="padding:var(--space-3) var(--space-5);">
           <a href="{% url 'lessons:group_detail' enrollment.group.id %}">
@@ -86,7 +93,7 @@
           </a>
         </div>
       {% empty %}
-        <div class="empty-state">No enrollments yet.</div>
+        <div class="empty-state">{% trans "No enrollments yet." %}</div>
       {% endfor %}
     </div>
   {% endif %}
@@ -98,6 +105,10 @@
       gap: 12px;
       cursor: pointer;
       color: var(--text);
+      background: transparent;
+      border: 0;
+      padding: 0;
+      font: inherit;
     }
 
     .track {
@@ -147,6 +158,47 @@
       opacity: {% if request.user.settings.theme == "DARK" %}1{% else %}0{% endif %};
       transition: opacity .3s ease;
     }
+
+    .page-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface-alt);
+      cursor: pointer;
+      transition: border-color .2s ease, transform .2s ease;
+    }
+
+    .lang-switch:hover {
+      border-color: var(--accent);
+    }
+
+    .lang-chip {
+      min-width: 40px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--muted);
+      transition: background .2s ease, color .2s ease, box-shadow .2s ease;
+    }
+
+    .lang-chip.is-active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
   </style>
 </div>
 {% endblock %}

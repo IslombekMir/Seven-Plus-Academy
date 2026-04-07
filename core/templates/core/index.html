@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}{% trans "Home" %}{% endblock %}
 
 {% block style %}
   {% load static %}
@@ -10,56 +10,65 @@
 
 {% block content %}
 <div class="dashboard-page">
+  {% if user.is_authenticated %}
+    <div class="page-header">
+      <h1 class="page-title">
+        {% blocktrans with name=request.user.get_full_name %}
+          Welcome, {{ name }}!
+        {% endblocktrans %}
+      </h1>
+    </div>
 
-  <div class="page-header">
-    <h1 class="page-title">Welcome, {{request.user.get_full_name}}!</h1>
-  </div>
+    <div class="stats-grid">
+    
+      {% if user.is_authenticated and user.role != 'STUDENT' %}
+        <a href="{% url 'users:users_list' %}" class="stat-card" style="text-decoration:none;">
+          <div class="stat-label">{% trans "Directory" %}</div>
+          <div class="stat-value" style="font-size:1.1rem;">
+            {% if request.user.role == 'ADMIN' %}{% trans "Users" %}{% else %}{% trans "Students" %}{% endif %}
+          </div>
+        </a>
+      {% endif %}
 
-  <div class="stats-grid">
-
-    {% if user.is_authenticated and user.role != 'STUDENT' %}
-      <a href="{% url 'users:users_list' %}" class="stat-card" style="text-decoration:none;">
-        <div class="stat-label">Directory</div>
-        <div class="stat-value" style="font-size:1.1rem;">
-          {% if request.user.role == 'ADMIN' %}Users{% else %}Students{% endif %}
-        </div>
+      <a href="{% url 'lessons:subjects_list' %}" class="stat-card" style="text-decoration:none;">
+        <div class="stat-label">{% trans "Curriculum" %}</div>
+        <div class="stat-value" style="font-size:1.1rem;">{% trans "Subjects" %}</div>
       </a>
-    {% endif %}
 
-    <a href="{% url 'lessons:subjects_list' %}" class="stat-card" style="text-decoration:none;">
-      <div class="stat-label">Curriculum</div>
-      <div class="stat-value" style="font-size:1.1rem;">Subjects</div>
-    </a>
-
-    <a href="{% url 'lessons:group_list' %}" class="stat-card" style="text-decoration:none;">
-      <div class="stat-label">Classes</div>
-      <div class="stat-value" style="font-size:1.1rem;">Groups</div>
-    </a>
-
-    <a href="{% url 'users:teachers_list' %}" class="stat-card" style="text-decoration:none;">
-      <div class="stat-label">Staff</div>
-      <div class="stat-value" style="font-size:1.1rem;">Teachers</div>
-    </a>
-
-    <a href="{% url 'lessons:mark_dashboard' %}" class="stat-card" style="text-decoration:none;">
-      <div class="stat-label">Assessment</div>
-      <div class="stat-value" style="font-size:1.1rem;">Marks</div>
-    </a>
-
-    {% if user.is_authenticated %}
-      <a href="{% url 'payments:dashboard' %}" class="stat-card" style="text-decoration:none;">
-        <div class="stat-label">Finance</div>
-        <div class="stat-value" style="font-size:1.1rem;">Payments</div>
+      <a href="{% url 'lessons:group_list' %}" class="stat-card" style="text-decoration:none;">
+        <div class="stat-label">{% trans "Classes" %}</div>
+        <div class="stat-value" style="font-size:1.1rem;">{% trans "Groups" %}</div>
       </a>
-    {% endif %}
 
-    {% if user.is_authenticated %}
-      <a href="{% url 'attendances:dashboard' %}" class="stat-card" style="text-decoration:none;">
-        <div class="stat-label">Tracking</div>
-        <div class="stat-value" style="font-size:1.1rem;">Attendances</div>
+      <a href="{% url 'users:teachers_list' %}" class="stat-card" style="text-decoration:none;">
+        <div class="stat-label">{% trans "Staff" %}</div>
+        <div class="stat-value" style="font-size:1.1rem;">{% trans "Teachers" %}</div>
       </a>
-    {% endif %}
 
-  </div>
+      <a href="{% url 'lessons:mark_dashboard' %}" class="stat-card" style="text-decoration:none;">
+        <div class="stat-label">{% trans "Assessment" %}</div>
+        <div class="stat-value" style="font-size:1.1rem;">{% trans "Marks" %}</div>
+      </a>
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'payments:dashboard' %}" class="stat-card" style="text-decoration:none;">
+          <div class="stat-label">{% trans "Finance" %}</div>
+          <div class="stat-value" style="font-size:1.1rem;">{% trans "Payments" %}</div>
+        </a>
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        <a href="{% url 'attendances:dashboard' %}" class="stat-card" style="text-decoration:none;">
+          <div class="stat-label">{% trans "Tracking" %}</div>
+          <div class="stat-value" style="font-size:1.1rem;">{% trans "Attendances" %}</div>
+        </a>
+      {% endif %}
+    
+    </div>
+  {% else %}
+      <div class="stat-card">
+        Welcome to Seven Plus | Xush kelibsiz Seven Plusga!
+      </div>
+  {% endif %}
 </div>
 {% endblock %}

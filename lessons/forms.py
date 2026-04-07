@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from .models import Subject, Group, Enrollment, Exam, Mark
 from users.models import User
 
@@ -7,11 +8,14 @@ class SubjectCreateForm(forms.ModelForm):
     class Meta:
         model = Subject
         fields = ["name"]
+        labels = {
+            "name": _("Name"),
+        }
 
         widgets = {
             "name": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Enter subject name"
+                "placeholder": _("Enter subject name")
             })
         }
 
@@ -23,6 +27,18 @@ class GroupForm(forms.ModelForm):
             "default_payment_amount", "week_days",
             "start_time", "end_time", "start_date", "end_date"
         ]
+        labels = {
+            "name": _("Name"),
+            "subject": _("Subject"),
+            "teacher": _("Teacher"),
+            "homework_description": _("Homework description"),
+            "default_payment_amount": _("Default payment amount"),
+            "week_days": _("Week days"),
+            "start_time": _("Start time"),
+            "end_time": _("End time"),
+            "start_date": _("Start date"),
+            "end_date": _("End date"),
+        }
 
     def __init__(self, *args, **kwargs):
         current_user = kwargs.pop("current_user", None)
@@ -35,7 +51,12 @@ class EnrollmentForm(forms.ModelForm):
     class Meta:
         model = Enrollment
         fields = ["student", "start_date", "end_date", "payment_amount"]
-        # lessons/forms.py
+        labels = {
+            "student": _("Student"),
+            "start_date": _("Start date"),
+            "end_date": _("End date"),
+            "payment_amount": _("Payment amount"),
+        }
         widgets = {
             "start_date": forms.DateInput(
                 format="%Y-%m-%d",
@@ -65,7 +86,7 @@ class EnrollmentForm(forms.ModelForm):
 
         self.fields["student"].queryset = qs.distinct()
         self.fields["start_date"].required = False
-        self.fields["student"].empty_label = "Select student"
+        self.fields["student"].empty_label = _("Select student")
         self.fields["student"].widget.attrs.update({"class": "searchable-select"})
 
 
@@ -73,14 +94,20 @@ class ExamForm(forms.ModelForm):
     class Meta:
         model = Exam
         fields = ["name", "description", "date", "full_mark"]
+        labels = {
+            "name": _("Name"),
+            "description": _("Description"),
+            "date": _("Date"),
+            "full_mark": _("Full mark"),
+        }
         widgets = {
             "name": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Enter exam name",
+                "placeholder": _("Enter exam name"),
             }),
             "description": forms.Textarea(attrs={
                 "class": "form-control",
-                "placeholder": "Enter exam description",
+                "placeholder": _("Enter exam description"),
                 "rows": 4,
             }),
             "date": forms.DateInput(attrs={
@@ -89,7 +116,7 @@ class ExamForm(forms.ModelForm):
             }),
             "full_mark": forms.NumberInput(attrs={
                 "class": "form-control",
-                "placeholder": "Enter full mark",
+                "placeholder": _("Enter full mark"),
                 "min": 1,
             }),
         }
@@ -99,6 +126,10 @@ class MarkForm(forms.ModelForm):
     class Meta:
         model = Mark
         fields = ["enrollment", "mark"]
+        labels = {
+            "enrollment": _("Student"),
+            "mark": _("Mark"),
+        }
 
     def __init__(self, *args, exam=None, **kwargs):
         super().__init__(*args, **kwargs)

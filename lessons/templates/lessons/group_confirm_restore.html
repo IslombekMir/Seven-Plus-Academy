@@ -1,21 +1,21 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Restore Group{% endblock %}
+{% block title %}{% trans "Restore Group" %}{% endblock %}
 
 {% block content %}
 <div class="confirm-page">
 
   <div class="page-header">
-    <h1 class="page-title">Restore Group</h1>
+    <h1 class="page-title">{% trans "Restore Group" %}</h1>
   </div>
 
   <div class="card confirm-card">
-    <p>Are you sure you want to restore <span class="danger-text">{{ group.name }}</span>?</p>
+    <p>{% blocktrans with group_name=group.name %}Are you sure you want to restore <span class="danger-text">{{ group_name }}</span>?{% endblocktrans %}</p>
     <form method="post">
       {% csrf_token %}
       <div class="inline-actions">
-        <button type="submit">Yes, restore</button>
-        <a href="{% url 'lessons:removed_groups' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+        <button type="submit">{% trans "Yes, restore" %}</button>
+        <a href="{% url 'lessons:removed_groups' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Cancel" %}</a>
       </div>
     </form>
   </div>

@@ -1,12 +1,12 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Edit Profile — {{ teacher.get_full_name|default:teacher.username }}{% endblock %}
+{% block title %}{% blocktrans with name=teacher.get_full_name|default:teacher.username %}Edit Profile - {{ name }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="form-page">
 
   <div class="page-header">
-    <h1 class="page-title">Edit Profile</h1>
+    <h1 class="page-title">{% trans "Edit Profile" %}</h1>
     <p class="page-subtitle">{{ teacher.get_full_name|default:teacher.username }}</p>
   </div>
 
@@ -15,8 +15,8 @@
       {% csrf_token %}
       {{ form.as_p }}
       <div class="inline-actions">
-        <button type="submit">Save</button>
-        <a href="{% url 'users:teachers_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+        <button type="submit">{% trans "Save" %}</button>
+        <a href="{% url 'users:teachers_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Cancel" %}</a>
       </div>
     </form>
   </div>

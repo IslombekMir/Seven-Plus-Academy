@@ -1,0 +1,716 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-08 01:41+0500\n"
+"PO-Revision-Date: 2026-04-08 01:45+0500\n"
+"Last-Translator: Gemini\n"
+"Language-Team: Uzbek\n"
+"Language: uz\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: forms.py:14 templates/users/profile.html:59
+#: templates/users/removed_users.html:47 templates/users/user_detail.html:16
+#: templates/users/users_list.html:62
+msgid "Username"
+msgstr "Foydalanuvchi nomi"
+
+#: forms.py:15
+msgid "Enter username"
+msgstr "Foydalanuvchi nomini kiriting"
+
+#: forms.py:19
+msgid "Password"
+msgstr "Parol"
+
+#: forms.py:20
+msgid "Enter password"
+msgstr "Parolni kiriting"
+
+#: forms.py:28 forms.py:48 forms.py:145
+msgid "First name"
+msgstr "Ism"
+
+#: forms.py:29 forms.py:49 forms.py:146
+msgid "Last name"
+msgstr "Familiya"
+
+#: forms.py:30 forms.py:114 templates/users/removed_users.html:49
+#: templates/users/users_list.html:64
+msgid "Role"
+msgstr "Rol"
+
+#: forms.py:31 forms.py:50 forms.py:147
+msgid "Phone number"
+msgstr "Telefon raqami"
+
+#: forms.py:58
+msgid "Bio"
+msgstr "Biografiya"
+
+#: forms.py:59
+msgid "Picture"
+msgstr "Rasm"
+
+#: forms.py:60
+msgid "Active profile"
+msgstr "Faol profil"
+
+#: forms.py:66
+msgid "New password"
+msgstr "Yangi parol"
+
+#: forms.py:67
+msgid "Enter new password"
+msgstr "Yangi parolni kiriting"
+
+#: forms.py:71
+msgid "Confirm password"
+msgstr "Parolni tasdiqlang"
+
+#: forms.py:72
+msgid "Confirm new password"
+msgstr "Yangi parolni tasdiqlang"
+
+#: forms.py:75
+msgid "Language"
+msgstr "Til"
+
+#: forms.py:92
+msgid "Passwords do not match"
+msgstr "Parollar mos kelmadi"
+
+#: forms.py:118
+msgid "Group"
+msgstr "Guruh"
+
+#: forms.py:119
+msgid "Select group"
+msgstr "Guruhni tanlang"
+
+#: forms.py:179
+msgid "Duplicate first name + last name rows found in the bulk table."
+msgstr "Ommaviy jadvalda takroriy ism + familiya qatorlari aniqlandi."
+
+#: forms.py:184
+msgid "Add at least one user row."
+msgstr "Kamida bitta foydalanuvchi qatorini qoʻshing."
+
+#: forms.py:202
+msgid "A user with this first name, last name, and role already exists."
+msgstr "Bu ism, familiya va rolga ega foydalanuvchi allaqachon mavjud."
+
+#: models.py:22 templates/users/removed_users.html:23
+#: templates/users/users_list.html:37
+msgid "Admin"
+msgstr "Administrator"
+
+#: models.py:23 templates/users/removed_users.html:24
+#: templates/users/users_list.html:38
+msgid "Teacher"
+msgstr "Oʻqituvchi"
+
+#: models.py:24 templates/users/removed_users.html:25
+#: templates/users/users_list.html:39
+msgid "Student"
+msgstr "Talaba"
+
+#: models.py:69
+msgid "Light"
+msgstr "Yorugʻ"
+
+#: models.py:70
+msgid "Dark"
+msgstr "Qorongʻi"
+
+#: models.py:73
+msgid "Uzbek"
+msgstr "Oʻzbekcha"
+
+#: models.py:74
+msgid "English"
+msgstr "Inglizcha"
+
+#: templates/users/bulk_create_users.html:3
+#: templates/users/bulk_create_users.html:10
+msgid "Bulk Create Users"
+msgstr "Foydalanuvchilarni ommaviy yaratish"
+
+#: templates/users/bulk_create_users.html:11
+msgid "Create multiple users in one submit."
+msgstr "Bir marta yuborish orqali bir nechta foydalanuvchi yarating."
+
+#: templates/users/bulk_create_users.html:15
+#: templates/users/confirm_delete_user.html:32
+msgid "Back"
+msgstr "Orqaga"
+
+#: templates/users/bulk_create_users.html:45
+msgid "No group"
+msgstr "Guruh yoʻq"
+
+#: templates/users/bulk_create_users.html:63
+msgid "Create Users"
+msgstr "Foydalanuvchilarni yaratish"
+
+#: templates/users/bulk_create_users.html:65
+#: templates/users/confirm_delete.html:25
+#: templates/users/confirm_delete_related.html:33
+#: templates/users/confirm_delete_user.html:20
+#: templates/users/confirm_remove.html:22
+#: templates/users/confirm_restore.html:18
+#: templates/users/edit_teacher_profile.html:19
+msgid "Cancel"
+msgstr "Bekor qilish"
+
+#: templates/users/bulk_create_users.html:76
+msgid "First Name"
+msgstr "Ism"
+
+#: templates/users/bulk_create_users.html:77
+msgid "Last Name"
+msgstr "Familiya"
+
+#: templates/users/bulk_create_users.html:78 templates/users/profile.html:63
+msgid "Phone Number"
+msgstr "Telefon raqami"
+
+#: templates/users/bulk_create_users.html:129
+msgid "Search groups..."
+msgstr "Guruhlarni qidirish..."
+
+#: templates/users/confirm_delete.html:3 templates/users/confirm_delete.html:9
+msgid "Delete User"
+msgstr "Foydalanuvchini oʻchirish"
+
+#: templates/users/confirm_delete.html:13
+#, python-format
+msgid ""
+"Are you sure you want to delete <span class=\"danger-text\">%(name)s</span> "
+"(%(username)s)?"
+msgstr ""
+"<span class=\"danger-text\">%(name)s</span> (%(username)s) foydalanuvchisini "
+"oʻchirib tashlashga ishonchingiz komilmi?"
+
+#: templates/users/confirm_delete.html:16 views.py:341
+msgid ""
+"This user has attendance or payment history and cannot be permanently "
+"deleted."
+msgstr ""
+"Bu foydalanuvchi davomat yoki toʻlov tarixiga ega, shuning uchun uni "
+"butunlay oʻchirib bo'lmaydi."
+
+#: templates/users/confirm_delete.html:23
+msgid "Yes, delete"
+msgstr "Ha, oʻchirilsin"
+
+#: templates/users/confirm_delete_related.html:3
+#: templates/users/confirm_delete_related.html:9
+#: templates/users/confirm_delete_related.html:40
+msgid "Confirm Delete"
+msgstr "Oʻchirishni tasdiqlang"
+
+#: templates/users/confirm_delete_related.html:11
+#, python-format
+msgid "%(section_title)s for %(username)s"
+msgstr "%(username)s uchun %(section_title)s"
+
+#: templates/users/confirm_delete_related.html:18
+#, python-format
+msgid ""
+"This will delete <strong>%(count)s</strong> record from "
+"<strong>%(section_title)s</strong>."
+msgid_plural ""
+"This will delete <strong>%(count)s</strong> records from "
+"<strong>%(section_title)s</strong>."
+msgstr[0] ""
+"Bu <strong>%(section_title)s</strong> boʻlimidan <strong>%(count)s</strong> "
+"ta yozuvni oʻchirib yuboradi."
+
+#: templates/users/confirm_delete_related.html:28
+msgid "No records found."
+msgstr "Hech qanday yozuv topilmadi."
+
+#: templates/users/confirm_delete_user.html:3
+msgid "Confirm User Delete"
+msgstr "Foydalanuvchini oʻchirishni tasdiqlash"
+
+#: templates/users/confirm_delete_user.html:9
+#: templates/users/user_detail.html:96 templates/users/user_detail.html:97
+#: templates/users/user_detail.html:104
+msgid "Delete User Account"
+msgstr "Foydalanuvchi hisobini oʻchirish"
+
+#: templates/users/confirm_delete_user.html:16
+msgid "This will permanently delete the user account."
+msgstr "Bu amal foydalanuvchi hisobini butunlay oʻchirib yuboradi."
+
+#: templates/users/confirm_delete_user.html:25
+msgid "Confirm Delete User"
+msgstr "Foydalanuvchi oʻchirilishini tasdiqlang"
+
+#: templates/users/confirm_delete_user.html:30
+msgid "Related blocking data still exists. Delete those first."
+msgstr "Bogʻlangan toʻsiq maʼlumotlari hali mavjud. Avval ularni oʻchiring."
+
+#: templates/users/confirm_remove.html:3 templates/users/confirm_remove.html:8
+msgid "Remove User"
+msgstr "Foydalanuvchini olib tashlash"
+
+#: templates/users/confirm_remove.html:13
+#, python-format
+msgid ""
+"Are you sure you want to remove\n"
+"      <span class=\"danger-text\">%(name)s</span> (%(username)s)?"
+msgstr ""
+"<span class=\"danger-text\">%(name)s</span> (%(username)s) foydalanuvchisini "
+"olib tashlashga ishonchingiz komilmi?"
+
+#: templates/users/confirm_remove.html:16
+msgid "This will set the account as inactive and move it to Removed Users."
+msgstr ""
+"Bu hisobni nofaol holatga oʻtkazadi va \"Olib tashlangan foydalanuvchilar\" "
+"roʻyxatiga koʻchiradi."
+
+#: templates/users/confirm_remove.html:21
+msgid "Yes, remove"
+msgstr "Ha, olib tashlansin"
+
+#: templates/users/confirm_restore.html:3
+#: templates/users/confirm_restore.html:8
+msgid "Restore User"
+msgstr "Foydalanuvchini tiklash"
+
+#: templates/users/confirm_restore.html:12
+#, python-format
+msgid ""
+"Restore <span class=\"danger-text\">%(name)s</span> (%(username)s) to the "
+"active users list?"
+msgstr ""
+"<span class=\"danger-text\">%(name)s</span> (%(username)s) foydalanuvchisini "
+"faol foydalanuvchilar roʻyxatiga qayta tiklamoqchimisiz?"
+
+#: templates/users/confirm_restore.html:17
+msgid "Yes, restore"
+msgstr "Ha, tiklansin"
+
+#: templates/users/create_user.html:3 templates/users/create_user.html:9
+msgid "Edit User"
+msgstr "Foydalanuvchini tahrirlash"
+
+#: templates/users/create_user.html:3 templates/users/create_user.html:9
+msgid "Create User"
+msgstr "Foydalanuvchi yaratish"
+
+#: templates/users/create_user.html:23
+#: templates/users/edit_teacher_profile.html:18
+#: templates/users/force_password_change.html:34
+msgid "Save"
+msgstr "Saqlash"
+
+#: templates/users/create_user.html:23
+msgid "Submit"
+msgstr "Yuborish"
+
+#: templates/users/edit_teacher_profile.html:3
+#, python-format
+msgid "Edit Profile - %(name)s"
+msgstr "Profilni tahrirlash - %(name)s"
+
+#: templates/users/edit_teacher_profile.html:9
+#: templates/users/teachers_list.html:40
+msgid "Edit Profile"
+msgstr "Profilni tahrirlash"
+
+#: templates/users/force_password_change.html:3
+msgid "Change Password"
+msgstr "Parolni oʻzgartirish"
+
+#: templates/users/force_password_change.html:9
+msgid "Set a New Password"
+msgstr "Yangi parol oʻrnatish"
+
+#: templates/users/login.html:3 templates/users/login.html:9
+#: templates/users/login.html:33
+msgid "Login"
+msgstr "Kirish"
+
+#: templates/users/profile.html:3
+msgid "Profile"
+msgstr "Profil"
+
+#: templates/users/profile.html:17
+msgid "Switch language"
+msgstr "Tilni oʻzgartirish"
+
+#: templates/users/profile.html:25
+msgid "Toggle theme"
+msgstr "Mavzuni oʻzgartirish"
+
+#: templates/users/profile.html:47
+msgid "Switch to Dark"
+msgstr "Tungi rejimga oʻtish"
+
+#: templates/users/profile.html:49
+msgid "Switch to Light"
+msgstr "Kunduzgi rejimga oʻtish"
+
+#: templates/users/profile.html:70
+msgid "Your Groups"
+msgstr "Guruhlaringiz"
+
+#: templates/users/profile.html:79
+msgid "No groups assigned."
+msgstr "Hech qanday guruh biriktirilmagan."
+
+#: templates/users/profile.html:85
+msgid "Your Enrolled Groups"
+msgstr "Aʼzo boʻlgan guruhlaringiz"
+
+#: templates/users/profile.html:96
+msgid "No enrollments yet."
+msgstr "Hozircha aʼzoliklar mavjud emas."
+
+#: templates/users/removed_users.html:3 templates/users/removed_users.html:9
+msgid "Removed Users"
+msgstr "Olib tashlangan foydalanuvchilar"
+
+#: templates/users/removed_users.html:9
+msgid "Removed Students"
+msgstr "Olib tashlangan talabalar"
+
+#: templates/users/removed_users.html:10
+#, python-format
+msgid "Showing %(filtered)s of %(total)s removed users"
+msgstr ""
+"Olib tashlangan foydalanuvchilarning %(total)s tadan %(filtered)s tasi "
+"koʻrsatilmoqda"
+
+#: templates/users/removed_users.html:10
+#, python-format
+msgid "Showing %(filtered)s of %(total)s removed students"
+msgstr ""
+"Olib tashlangan talabalarning %(total)s tadan %(filtered)s tasi "
+"koʻrsatilmoqda"
+
+#: templates/users/removed_users.html:12
+msgid "Back to Users"
+msgstr "Foydalanuvchilarga qaytish"
+
+#: templates/users/removed_users.html:12
+msgid "Back to Students"
+msgstr "Talabalarga qaytish"
+
+#: templates/users/removed_users.html:17 templates/users/users_list.html:31
+msgid "Search users..."
+msgstr "Foydalanuvchilarni qidirish..."
+
+#: templates/users/removed_users.html:22 templates/users/users_list.html:36
+msgid "All Roles"
+msgstr "Barcha rollar"
+
+#: templates/users/removed_users.html:30 templates/users/users_list.html:44
+msgid "All Groups"
+msgstr "Barcha guruhlar"
+
+#: templates/users/removed_users.html:39 templates/users/users_list.html:53
+msgid "Filter"
+msgstr "Saralash"
+
+#: templates/users/removed_users.html:48 templates/users/users_list.html:63
+msgid "Full Name"
+msgstr "Toʻliq ism"
+
+#: templates/users/removed_users.html:50 templates/users/user_detail.html:20
+#: templates/users/users_list.html:65
+msgid "Phone"
+msgstr "Telefon"
+
+#: templates/users/removed_users.html:51 templates/users/users_list.html:67
+msgid "Actions"
+msgstr "Amallar"
+
+#: templates/users/removed_users.html:70
+msgid "Restore"
+msgstr "Tiklash"
+
+#: templates/users/removed_users.html:77
+msgid "Delete Permanently"
+msgstr "Butunlay oʻchirib yuborish"
+
+#: templates/users/removed_users.html:87
+msgid "No removed users found."
+msgstr "Olib tashlangan foydalanuvchilar topilmadi."
+
+#: templates/users/teachers_list.html:3 templates/users/teachers_list.html:9
+msgid "Teachers"
+msgstr "Oʻqituvchilar"
+
+#: templates/users/teachers_list.html:36
+msgid "No bio yet."
+msgstr "Biografiya kiritilmagan."
+
+#: templates/users/teachers_list.html:47
+msgid "No teachers found."
+msgstr "Oʻqituvchilar topilmadi."
+
+#: templates/users/user_detail.html:24
+msgid "Status"
+msgstr "Holat"
+
+#: templates/users/user_detail.html:25
+msgid "Active"
+msgstr "Faol"
+
+#: templates/users/user_detail.html:25
+msgid "Removed"
+msgstr "Olib tashlangan"
+
+#: templates/users/user_detail.html:30
+msgid "Deletion Order"
+msgstr "Oʻchirish tartibi"
+
+#: templates/users/user_detail.html:46 templates/users/user_detail.html:47
+msgid "Delete"
+msgstr "Oʻchirish"
+
+#: templates/users/user_detail.html:54
+msgid "No records"
+msgstr "Yozuvlar mavjud emas"
+
+#: templates/users/user_detail.html:81
+msgid "Final Step: Delete User Account"
+msgstr "Yakuniy qadam: Foydalanuvchi hisobini oʻchirish"
+
+#: templates/users/user_detail.html:84
+msgid "All blocking related data has been removed."
+msgstr "Barcha bogʻlangan toʻsiq maʼlumotlari olib tashlandi."
+
+#: templates/users/user_detail.html:86
+msgid "Disabled - clear all related data above first."
+msgstr "Nofaol - avval yuqoridagi barcha bogʻlangan maʼlumotlarni tozalang."
+
+#: templates/users/users_list.html:3
+msgid "User List"
+msgstr "Foydalanuvchilar roʻyxati"
+
+#: templates/users/users_list.html:10
+msgid "Users"
+msgstr "Foydalanuvchilar"
+
+#: templates/users/users_list.html:10
+msgid "Students"
+msgstr "Talabalar"
+
+#: templates/users/users_list.html:11
+#, python-format
+msgid "Showing %(filtered)s of %(total)s users"
+msgstr "%(total)s tadan %(filtered)s ta foydalanuvchi koʻrsatilmoqda"
+
+#: templates/users/users_list.html:20
+msgid "Bulk Create"
+msgstr "Ommaviy yaratish"
+
+#: templates/users/users_list.html:23
+msgid "New User"
+msgstr "Yangi foydalanuvchi"
+
+#: templates/users/users_list.html:23
+msgid "New Student"
+msgstr "Yangi talaba"
+
+#: templates/users/users_list.html:31
+msgid "Search students..."
+msgstr "Talabalarni qidirish..."
+
+#: templates/users/users_list.html:66
+msgid "Last Login"
+msgstr "Oxirgi kirish"
+
+#: templates/users/users_list.html:81
+msgid "Edit user"
+msgstr "Foydalanuvchini tahrirlash"
+
+#: templates/users/users_list.html:86
+msgid "Remove user"
+msgstr "Foydalanuvchini olib tashlash"
+
+#: templates/users/users_list.html:91
+msgid "Reset Password"
+msgstr "Parolni tiklash"
+
+#: templates/users/users_list.html:99
+msgid "No users found."
+msgstr "Foydalanuvchilar topilmadi."
+
+#: views.py:36 views.py:86
+msgid "Students cannot view this page."
+msgstr "Talabalar bu sahifani koʻra olmaydilar."
+
+#: views.py:136
+msgid "Students cannot remove users."
+msgstr "Talabalar foydalanuvchilarni olib tashlay olmaydilar."
+
+#: views.py:141
+msgid "Teachers can only remove student users."
+msgstr "Oʻqituvchilar faqat talaba foydalanuvchilarni olib tashlashi mumkin."
+
+#: views.py:160
+msgid "Students cannot restore users."
+msgstr "Talabalar foydalanuvchilarni tiklay olmaydilar."
+
+#: views.py:165
+msgid "Teachers can only restore student users."
+msgstr "Oʻqituvchilar faqat talaba foydalanuvchilarni tiklashi mumkin."
+
+#: views.py:189
+msgid "Invalid username or password"
+msgstr "Foydalanuvchi nomi yoki parol notoʻgʻri"
+
+#: views.py:202 views.py:222
+msgid "Students cannot create users."
+msgstr "Talabalar foydalanuvchi yarata olmaydilar."
+
+#: views.py:280
+#, python-format
+msgid "%(count)s user(s) created successfully."
+msgstr "%(count)s ta foydalanuvchi muvaffaqiyatli yaratildi."
+
+#: views.py:298
+msgid "Students cannot edit users."
+msgstr "Talabalar foydalanuvchilarni tahrirlay olmaydilar."
+
+#: views.py:303
+msgid "Teachers can only edit student users."
+msgstr "Oʻqituvchilar faqat talaba foydalanuvchilarni tahrirlashi mumkin."
+
+#: views.py:330
+msgid "Students cannot delete users."
+msgstr "Talabalar foydalanuvchilarni oʻchira olmaydilar."
+
+#: views.py:335
+msgid "Teachers can only delete student users."
+msgstr "Oʻqituvchilar faqat talaba foydalanuvchilarni oʻchirishi mumkin."
+
+#: views.py:347
+msgid "User was permanently deleted."
+msgstr "Foydalanuvchi butunlay oʻchirib yuborildi."
+
+#: views.py:351
+msgid "This user still has related records that prevent permanent deletion."
+msgstr ""
+"Bu foydalanuvchida butunlay oʻchirishga toʻsqinlik qiluvchi bogʻlangan "
+"yozuvlar mavjud."
+
+#: views.py:365
+msgid "Students cannot reset passwords."
+msgstr "Talabalar parollarni tiklay olmaydilar."
+
+#: views.py:370
+msgid "Teachers can only reset student passwords."
+msgstr "Oʻqituvchilar faqat talabalar parollarini tiklashi mumkin."
+
+#: views.py:438
+msgid "You can only edit your own profile."
+msgstr "Siz faqat oʻz profilingizni tahrirlashingiz mumkin."
+
+#: views.py:508
+msgid "Marks"
+msgstr "Baholar"
+
+#: views.py:509
+msgid "Attendances"
+msgstr "Davomatlar"
+
+#: views.py:510
+msgid "Payments"
+msgstr "Toʻlovlar"
+
+#: views.py:511
+msgid "Enrollments"
+msgstr "Roʻyxatdan oʻtishlar"
+
+#: views.py:533
+msgid "Attendance Sessions Created By Teacher"
+msgstr "Oʻqituvchi tomonidan yaratilgan davomat darslari"
+
+#: views.py:534
+msgid "Attendances In Teacher Groups"
+msgstr "Oʻqituvchi guruhlaridagi davomatlar"
+
+#: views.py:535
+msgid "Payments In Teacher Groups"
+msgstr "Oʻqituvchi guruhlaridagi toʻlovlar"
+
+#: views.py:536
+msgid "Marks In Teacher Groups"
+msgstr "Oʻqituvchi guruhlaridagi baholar"
+
+#: views.py:537
+msgid "Exams In Teacher Groups"
+msgstr "Oʻqituvchi guruhlaridagi imtihonlar"
+
+#: views.py:538
+msgid "Enrollments In Teacher Groups"
+msgstr "Oʻqituvchi guruhlariga aʼzoliklar"
+
+#: views.py:539
+msgid "Attendance Sessions For Teacher Groups"
+msgstr "Oʻqituvchi guruhlari uchun davomat darslari"
+
+#: views.py:540
+msgid "Groups"
+msgstr "Guruhlar"
+
+#: views.py:557
+msgid "Attendance Sessions Created By Admin"
+msgstr "Admin tomonidan yaratilgan davomat darslari"
+
+#: views.py:569
+msgid "Only admins can view this page."
+msgstr "Bu sahifani faqat administratorlar koʻra oladi."
+
+#: views.py:581
+msgid "Only admins can delete related data."
+msgstr "Faqat administratorlar bogʻlangan maʼlumotlarni oʻchirishi mumkin."
+
+#: views.py:618 views.py:661
+msgid "Unknown delete section."
+msgstr "Nomaʼlum oʻchirish boʻlimi."
+
+#: views.py:627
+#, python-format
+msgid "%(section)s deleted."
+msgstr "%(section)s oʻchirildi."
+
+#: views.py:630
+msgid "That section still has dependent records. Delete earlier steps first."
+msgstr ""
+"Ushbu boʻlimda hali bogʻliq yozuvlar mavjud. Avvalgi qadamlarni oʻchiring."
+
+#: views.py:640
+msgid "Only admins can delete users."
+msgstr "Faqat administratorlar foydalanuvchilarni oʻchirishi mumkin."
+
+#: views.py:643
+msgid "Delete blocking related data first."
+msgstr "Avval toʻsiq boʻlayotgan bogʻlangan maʼlumotlarni oʻchiring."
+
+#: views.py:647
+msgid "User deleted successfully."
+msgstr "Foydalanuvchi muvaffaqiyatli oʻchirildi."
+
+#: views.py:655 views.py:681
+msgid "Only admins can manage this page."
+msgstr "Bu sahifani faqat administratorlar boshqarishi mumkin."
+
+#~ msgid "Final Step..."
+#~ msgstr "Yakuniy qadam..."

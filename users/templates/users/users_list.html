@@ -1,14 +1,14 @@
 {% extends 'core/base.html' %}
 
-{% block title %}User List{% endblock %}
+{% block title %}{% trans "User List" %}{% endblock %}
 
 {% block content %}
 <div class="list-page">
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">{% if request.user.role == 'ADMIN' %}Users{% else %}Students{% endif %}</h1>
-      <p class="page-subtitle">Showing {{ filtered_user_count }} of {{ total_user_count }} users</p>
+      <h1 class="page-title">{% if request.user.role == 'ADMIN' %}{% trans "Users" %}{% else %}{% trans "Students" %}{% endif %}</h1>
+      <p class="page-subtitle">{% blocktrans with filtered=filtered_user_count total=total_user_count %}Showing {{ filtered }} of {{ total }} users{% endblocktrans %}</p>
     </div>
     <div class="inline-actions">
       <a href="{% url 'users:removed_users' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
@@ -17,10 +17,10 @@
         </svg>
       </a>
       <a href="{% url 'users:bulk_create_users' %}" class="button" style="background:green;color:var(--text);border-color:var(--border);">
-        Bulk Create
+        {% trans "Bulk Create" %}
       </a>
       <a href="{% url 'users:create_user' %}" class="button">
-        New {% if request.user.role == 'ADMIN' %}User{% else %}Student{% endif %}
+        {% if request.user.role == 'ADMIN' %}{% trans "New User" %}{% else %}{% trans "New Student" %}{% endif %}
       </a>
       
     </div>
@@ -28,20 +28,20 @@
 
   <form method="get">
     <div class="filter-bar">
-      <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search {% if request.user.role == 'ADMIN' %}users{% else %}students{% endif %}"
+      <input type="text" name="q" value="{{ request.GET.q }}" placeholder="{% if request.user.role == 'ADMIN' %}{% trans 'Search users...' %}{% else %}{% trans 'Search students...' %}{% endif %}"
         oninput="clearTimeout(this._t); this._t=setTimeout(() => this.form.submit(), 600);">
 
       {% if request.user.role == "ADMIN" %}
         <select name="role" onchange="this.form.submit()">
-          <option value="">All Roles</option>
-          <option value="ADMIN"   {% if request.GET.role == "ADMIN"   %}selected{% endif %}>Admin</option>
-          <option value="TEACHER" {% if request.GET.role == "TEACHER" %}selected{% endif %}>Teacher</option>
-          <option value="STUDENT" {% if request.GET.role == "STUDENT" %}selected{% endif %}>Student</option>
+          <option value="">{% trans "All Roles" %}</option>
+          <option value="ADMIN"   {% if request.GET.role == "ADMIN"   %}selected{% endif %}>{% trans "Admin" %}</option>
+          <option value="TEACHER" {% if request.GET.role == "TEACHER" %}selected{% endif %}>{% trans "Teacher" %}</option>
+          <option value="STUDENT" {% if request.GET.role == "STUDENT" %}selected{% endif %}>{% trans "Student" %}</option>
         </select>
       {% endif %}
 
       <select name="group" onchange="this.form.submit()">
-        <option value="">All Groups</option>
+        <option value="">{% trans "All Groups" %}</option>
         {% for group in groups %}
           <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
             {{ group.name }} - {{ group.subject }}
@@ -50,7 +50,7 @@
       </select>
 
       <div class="filter-bar__actions">
-        <button type="submit">Filter</button>
+        <button type="submit">{% trans "Filter" %}</button>
       </div>
     </div>
   </form>
@@ -59,12 +59,12 @@
     <table>
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Full Name</th>
-          <th>Role</th>
-          <th>Phone</th>
-          <th>Last Login</th>
-          {% if can_manage %}<th>Actions</th>{% endif %}
+          <th>{% trans "Username" %}</th>
+          <th>{% trans "Full Name" %}</th>
+          <th>{% trans "Role" %}</th>
+          <th>{% trans "Phone" %}</th>
+          <th>{% trans "Last Login" %}</th>
+          {% if can_manage %}<th>{% trans "Actions" %}</th>{% endif %}
         </tr>
       </thead>
       <tbody>
@@ -78,17 +78,17 @@
             {% if can_manage %}
               <td>
                 <div class="inline-actions">
-                  <a href="{% url 'users:edit_user' user.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit user">
+                  <a href="{% url 'users:edit_user' user.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="{% trans 'Edit user' %}">
                     <svg width="20" height="20" stroke="currentColor">
                       <use href="#icon-edit"/>
                     </svg>
                   </a>
-                  <a href="{% url 'users:remove_user' user.id %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Remove user">
+                  <a href="{% url 'users:remove_user' user.id %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="{% trans 'Remove user' %}">
                     <svg width="20" height="20" stroke="white">
                       <use href="#icon-trash"/>
                     </svg>
                   </a>
-                  <a href="{% url 'users:reset_password' user.id %}" class="button" style="background:#e0bc19;color:var(--text);border-color:var(--border);">Reset Password</a>
+                  <a href="{% url 'users:reset_password' user.id %}" class="button" style="background:#e0bc19;color:var(--text);border-color:var(--border);">{% trans "Reset Password" %}</a>
                 </div>
               </td>
             {% endif %}
@@ -96,7 +96,7 @@
         {% empty %}
           <tr>
             <td colspan="{% if can_manage %}6{% else %}5{% endif %}">
-              <div class="empty-state">No users found.</div>
+              <div class="empty-state">{% trans "No users found." %}</div>
             </td>
           </tr>
         {% endfor %}

@@ -5,7 +5,7 @@ from django.db import models
 
 from lessons.models import Enrollment, Group
 from users.models import User
-
+from django.utils.translation import gettext_lazy as _
 
 class AttendanceSession(models.Model):
     group = models.ForeignKey(
@@ -32,7 +32,7 @@ class AttendanceSession(models.Model):
 
     def clean(self):
         if self.created_by_id and self.created_by.role == User.Role.STUDENT:
-            raise ValidationError("Students cannot create attendance sessions.")
+            raise ValidationError(_("Students cannot create attendance sessions."))
 
         if (
             self.group_id
@@ -40,7 +40,7 @@ class AttendanceSession(models.Model):
             and self.created_by.role == User.Role.TEACHER
             and self.group.teacher_id != self.created_by_id
         ):
-            raise ValidationError("Teachers can only create sessions for their own groups.")
+            raise ValidationError(_("Teachers can only create sessions for their own groups."))
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -52,9 +52,9 @@ class AttendanceSession(models.Model):
 
 class Attendance(models.Model):
     class Status(models.TextChoices):
-        PRESENT = "PRESENT", "Present"
-        ABSENT = "ABSENT", "Absent"
-        UNKNOWN = "UNKNOWN", "Unknown"
+        PRESENT = "PRESENT", _("Present")
+        ABSENT = "ABSENT", _("Absent")
+        UNKNOWN = "UNKNOWN", _("Unknown")
 
     session = models.ForeignKey(
         AttendanceSession,
@@ -95,11 +95,11 @@ class Attendance(models.Model):
     def clean(self):
         if self.enrollment_id and self.student_id:
             if self.enrollment.student_id != self.student_id:
-                raise ValidationError("Student must match the enrollment student.")
+                raise ValidationError(_("Student must match the enrollment student."))
 
         if self.session_id and self.enrollment_id:
             if self.session.group_id != self.enrollment.group_id:
-                raise ValidationError("Enrollment must belong to the session group.")
+                raise ValidationError(_("Enrollment must belong to the session group."))
 
     def save(self, *args, **kwargs):
         if self.enrollment_id and not self.student_id:

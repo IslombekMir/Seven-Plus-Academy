@@ -1,17 +1,17 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Exam List{% endblock %}
+{% block title %}{% trans "Exam List" %}{% endblock %}
 
 {% block content %}
 <div class="list-page">
 
   <div class="page-header">
-    <h1 class="page-title">Exams for {{ group.name }}</h1>
+    <h1 class="page-title">{% blocktrans with group_name=group.name %}Exams for {{ group_name }}{% endblocktrans %}</h1>
     <div class="inline-actions">
       {% if request.user == group.teacher or request.user.role == 'ADMIN' %}
-        <a href="{% url 'lessons:exam_create' group.pk %}" class="button">Create Exam</a>
+        <a href="{% url 'lessons:exam_create' group.pk %}" class="button">{% trans "Create Exam" %}</a>
       {% endif %}
-      <a href="{% url 'lessons:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Back to Group</a>
+      <a href="{% url 'lessons:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Back to Group" %}</a>
     </div>
   </div>
 
@@ -19,11 +19,11 @@
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Date</th>
-          <th>Full Mark</th>
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Date" %}</th>
+          <th>{% trans "Full Mark" %}</th>
           {% if request.user.role == 'ADMIN' or request.user == group.teacher %}
-            <th>Actions</th>
+            <th>{% trans "Actions" %}</th>
           {% endif %}
         </tr>
       </thead>
@@ -36,12 +36,12 @@
             {% if request.user.role == 'ADMIN' or request.user == group.teacher %}
               <td>
                 <div class="inline-actions">
-                  <a href="{% url 'lessons:exam_edit' exam.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit exam">
+                  <a href="{% url 'lessons:exam_edit' exam.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="{% trans 'Edit exam' %}">
                     <svg width="20" height="20" stroke="currentColor">
                       <use href="#icon-edit"/>
                     </svg>
                   </a>
-                  <a href="{% url 'lessons:exam_delete' exam.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Delete exam">
+                  <a href="{% url 'lessons:exam_delete' exam.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="{% trans 'Delete exam' %}">
                     <svg width="20" height="20" stroke="white">
                       <use href="#icon-trash"/>
                     </svg>
@@ -53,7 +53,7 @@
         {% empty %}
           <tr>
             <td colspan="{% if request.user.role == 'ADMIN' or request.user == group.teacher %}4{% else %}3{% endif %}">
-              <div class="empty-state">No exams yet.</div>
+              <div class="empty-state">{% trans "No exams yet." %}</div>
             </td>
           </tr>
         {% endfor %}

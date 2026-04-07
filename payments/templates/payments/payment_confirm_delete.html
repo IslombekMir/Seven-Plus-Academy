@@ -1,38 +1,38 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Delete Payment{% endblock %}
+{% block title %}{% trans "Delete Payment" %}{% endblock %}
 
 {% block content %}
 <div class="confirm-page">
 
   <div class="page-header">
-    <h1 class="page-title">Delete Payment?</h1>
+    <h1 class="page-title">{% trans "Delete Payment?" %}</h1>
   </div>
 
   <div class="card confirm-card">
     <div class="info-grid" style="margin-bottom:var(--space-4);">
       <div>
-        <div class="stat-label">Student</div>
+        <div class="stat-label">{% trans "Student" %}</div>
         <div style="font-weight:600;">{{ payment.student.get_full_name }}</div>
       </div>
       <div>
-        <div class="stat-label">Group</div>
+        <div class="stat-label">{% trans "Group" %}</div>
         <div style="font-weight:600;">{{ payment.group.name }}</div>
       </div>
       <div>
-        <div class="stat-label">Paid Amount</div>
+        <div class="stat-label">{% trans "Paid Amount" %}</div>
         <div style="font-weight:600;">{{ payment.paid_amount }}</div>
       </div>
       <div>
-        <div class="stat-label">Expected Amount</div>
+        <div class="stat-label">{% trans "Expected Amount" %}</div>
         <div style="font-weight:600;">{{ payment.expected_amount }}</div>
       </div>
     </div>
     <form method="post">
       {% csrf_token %}
       <div class="inline-actions">
-        <button type="submit" style="background:var(--danger);">Confirm delete</button>
-        <a href="{% url 'lessons:group_detail' payment.group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+        <button type="submit" style="background:var(--danger);">{% trans "Confirm delete" %}</button>
+        <a href="{% url 'lessons:group_detail' payment.group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Cancel" %}</a>
       </div>
     </form>
   </div>

@@ -1,18 +1,18 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Bulk Create Users{% endblock %}
+{% block title %}{% trans "Bulk Create Users" %}{% endblock %}
 
 {% block content %}
 <div class="form-page">
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">Bulk Create Users</h1>
-      <p class="page-subtitle">Create multiple users in one submit.</p>
+      <h1 class="page-title">{% trans "Bulk Create Users" %}</h1>
+      <p class="page-subtitle">{% trans "Create multiple users in one submit." %}</p>
     </div>
     <div class="inline-actions">
       <a href="{% url 'users:users_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
-        Back
+        {% trans "Back" %}
       </a>
     </div>
   </div>
@@ -42,7 +42,7 @@
         <div id="group-field-wrap" style="display:none;">
           {{ meta_form.group.label_tag }}
           <select name="{{ meta_form.group.html_name }}" id="{{ meta_form.group.id_for_label }}" class="searchable-select">
-            <option value="">No group</option>
+            <option value="">{% trans "No group" %}</option>
             {% for group in meta_form.fields.group.queryset %}
               <option value="{{ group.id }}" {% if meta_form.group.value|stringformat:"s" == group.id|stringformat:"s" %}selected{% endif %}>
                 {{ group.name }} - {{ group.subject }}
@@ -60,9 +60,9 @@
     </div>
 
     <div style="margin-top:var(--space-4); display:flex; gap:var(--space-3); flex-wrap:wrap;">
-        <button type="submit">Create Users</button>
+        <button type="submit">{% trans "Create Users" %}</button>
         <a href="{% url 'users:users_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
-            Cancel
+            {% trans "Cancel" %}
         </a>
     </div>
 
@@ -73,9 +73,9 @@
         <table>
           <thead>
             <tr>
-              <th style="width:32%;">First Name</th>
-              <th style="width:32%;">Last Name</th>
-              <th style="width:36%;">Phone Number</th>
+              <th style="width:32%;">{% trans "First Name" %}</th>
+              <th style="width:32%;">{% trans "Last Name" %}</th>
+              <th style="width:36%;">{% trans "Phone Number" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -126,7 +126,7 @@
     new TomSelect(groupEl, {
       create: false,
       allowEmptyOption: true,
-      placeholder: "Search groups..."
+      placeholder: "{% trans 'Search groups...' %}"
     });
   }
 

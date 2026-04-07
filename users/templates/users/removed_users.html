@@ -1,33 +1,33 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Removed Users{% endblock %}
+{% block title %}{% trans "Removed Users" %}{% endblock %}
 
 {% block content %}
 <div class="list-page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Removed {% if request.user.role == 'ADMIN' %}Users{% else %}Students{% endif %}</h1>
-      <p class="page-subtitle">Showing {{ filtered_user_count }} of {{ total_user_count }} removed {% if request.user.role == 'ADMIN' %}users{% else %}students{% endif %}</p>
+      <h1 class="page-title">{% if request.user.role == 'ADMIN' %}{% trans "Removed Users" %}{% else %}{% trans "Removed Students" %}{% endif %}</h1>
+      <p class="page-subtitle">{% if request.user.role == 'ADMIN' %}{% blocktrans with filtered=filtered_user_count total=total_user_count %}Showing {{ filtered }} of {{ total }} removed users{% endblocktrans %}{% else %}{% blocktrans with filtered=filtered_user_count total=total_user_count %}Showing {{ filtered }} of {{ total }} removed students{% endblocktrans %}{% endif %}</p>
     </div>
-    <a href="{% url 'users:users_list' %}" class="button">Back to {% if request.user.role == 'ADMIN' %}Users{% else %}Students{% endif %}</a>
+    <a href="{% url 'users:users_list' %}" class="button">{% if request.user.role == 'ADMIN' %}{% trans "Back to Users" %}{% else %}{% trans "Back to Students" %}{% endif %}</a>
   </div>
 
   <form method="get">
     <div class="filter-bar">
-      <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search users…"
+      <input type="text" name="q" value="{{ request.GET.q }}" placeholder="{% trans 'Search users...' %}"
         oninput="clearTimeout(this._t); this._t=setTimeout(() => this.form.submit(), 600);">
 
       {% if request.user.role == "ADMIN" %}
         <select name="role" onchange="this.form.submit()">
-          <option value="">All Roles</option>
-          <option value="ADMIN" {% if request.GET.role == "ADMIN" %}selected{% endif %}>Admin</option>
-          <option value="TEACHER" {% if request.GET.role == "TEACHER" %}selected{% endif %}>Teacher</option>
-          <option value="STUDENT" {% if request.GET.role == "STUDENT" %}selected{% endif %}>Student</option>
+          <option value="">{% trans "All Roles" %}</option>
+          <option value="ADMIN" {% if request.GET.role == "ADMIN" %}selected{% endif %}>{% trans "Admin" %}</option>
+          <option value="TEACHER" {% if request.GET.role == "TEACHER" %}selected{% endif %}>{% trans "Teacher" %}</option>
+          <option value="STUDENT" {% if request.GET.role == "STUDENT" %}selected{% endif %}>{% trans "Student" %}</option>
         </select>
       {% endif %}
 
       <select name="group" onchange="this.form.submit()">
-        <option value="">All Groups</option>
+        <option value="">{% trans "All Groups" %}</option>
         {% for group in groups %}
           <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
             {{ group.name }} - {{ group.subject }}
@@ -36,7 +36,7 @@
       </select>
 
       <div class="filter-bar__actions">
-        <button type="submit">Filter</button>
+        <button type="submit">{% trans "Filter" %}</button>
       </div>
     </div>
   </form>
@@ -44,11 +44,11 @@
     <table>
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Full Name</th>
-          <th>Role</th>
-          <th>Phone</th>
-          {% if can_manage %}<th>Actions</th>{% endif %}
+          <th>{% trans "Username" %}</th>
+          <th>{% trans "Full Name" %}</th>
+          <th>{% trans "Role" %}</th>
+          <th>{% trans "Phone" %}</th>
+          {% if can_manage %}<th>{% trans "Actions" %}</th>{% endif %}
         </tr>
       </thead>
       <tbody>
@@ -67,14 +67,14 @@
             {% if can_manage %}
               <td>
                 <div class="inline-actions">
-                  <a href="{% url 'users:restore_user' user.id %}" class="button">Restore</a>
+                  <a href="{% url 'users:restore_user' user.id %}" class="button">{% trans "Restore" %}</a>
                   {% if request.user.role == "ADMIN" %}
                     <a
                       href="{% url 'users:user_detail' user.username %}"
                       class="button"
                       style="background:var(--danger);color:white;border-color:transparent;"
                     >
-                      Delete Permanently
+                      {% trans "Delete Permanently" %}
                     </a>
                   {% endif %}
                 </div>
@@ -84,7 +84,7 @@
         {% empty %}
           <tr>
             <td colspan="{% if can_manage %}5{% else %}4{% endif %}">
-              <div class="empty-state">No removed users found.</div>
+              <div class="empty-state">{% trans "No removed users found." %}</div>
             </td>
           </tr>
         {% endfor %}

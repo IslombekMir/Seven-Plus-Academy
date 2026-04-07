@@ -1,20 +1,20 @@
 {% extends 'core/base.html' %}
 
-{% block title %}{{ group.name }} Payments{% endblock %}
+{% block title %}{% blocktrans with group_name=group.name %}{{ group_name }} Payments{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="detail-page">
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">{{ group.name }} Payments</h1>
+      <h1 class="page-title">{% blocktrans with group_name=group.name %}{{ group_name }} Payments{% endblocktrans %}</h1>
       <p class="page-subtitle">{{ group.subject }} · {{ group.teacher.get_full_name }}</p>
     </div>
-    <a href="{% url 'lessons:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Back to group</a>
+    <a href="{% url 'lessons:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Back to group" %}</a>
   </div>
 
   <div class="card">
-    <h3 class="page-title" style="margin-bottom:var(--space-4);">Students</h3>
+    <h3 class="page-title" style="margin-bottom:var(--space-4);">{% trans "Students" %}</h3>
     <div class="stack">
       {% for enrollment in enrollments %}
         <div style="display:flex; justify-content:space-between; align-items:center; padding:var(--space-2) 0; border-bottom:1px solid var(--border);">
@@ -23,11 +23,11 @@
             <span class="page-subtitle" style="display:inline; margin-left:var(--space-2);">({{ enrollment.student.username }})</span>
           </span>
           {% if can_manage_payments %}
-            <a href="{% url 'payments:payment_create' enrollment.pk %}?month={{ selected_month }}&year={{ selected_year }}" class="button">Add payment</a>
+            <a href="{% url 'payments:payment_create' enrollment.pk %}?month={{ selected_month }}&year={{ selected_year }}" class="button">{% trans "Add payment" %}</a>
           {% endif %}
         </div>
       {% empty %}
-        <div class="empty-state">No students enrolled yet.</div>
+        <div class="empty-state">{% trans "No students enrolled yet." %}</div>
       {% endfor %}
     </div>
   </div>
@@ -35,7 +35,7 @@
   <form method="get">
     <div class="filter-bar">
       <div>
-        <label for="payment-month" style="display:block; font-size:0.875rem; color:var(--muted); margin-bottom:var(--space-1);">Month</label>
+        <label for="payment-month" style="display:block; font-size:0.875rem; color:var(--muted); margin-bottom:var(--space-1);">{% trans "Month" %}</label>
         <select name="month" id="payment-month">
           {% for month_value, month_label in months %}
             <option value="{{ month_value }}" {% if selected_month == month_value|stringformat:"s" %}selected{% endif %}>
@@ -45,7 +45,7 @@
         </select>
       </div>
       <div>
-        <label for="payment-year" style="display:block; font-size:0.875rem; color:var(--muted); margin-bottom:var(--space-1);">Year</label>
+        <label for="payment-year" style="display:block; font-size:0.875rem; color:var(--muted); margin-bottom:var(--space-1);">{% trans "Year" %}</label>
         <select name="year" id="payment-year">
           {% for year in years %}
             <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
@@ -55,8 +55,8 @@
         </select>
       </div>
       <div class="filter-bar__actions">
-        <button type="submit">Filter</button>
-        <a href="{% url 'payments:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset</a>
+        <button type="submit">{% trans "Filter" %}</button>
+        <a href="{% url 'payments:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Reset" %}</a>
       </div>
     </div>
   </form>
@@ -65,11 +65,11 @@
     <table>
       <thead>
         <tr>
-          <th>Student</th>
-          <th>Period</th>
-          <th>Paid / Expected</th>
-          <th>Date</th>
-          {% if can_manage_payments %}<th>Actions</th>{% endif %}
+          <th>{% trans "Student" %}</th>
+          <th>{% trans "Period" %}</th>
+          <th>{% trans "Paid / Expected" %}</th>
+          <th>{% trans "Date" %}</th>
+          {% if can_manage_payments %}<th>{% trans "Actions" %}</th>{% endif %}
         </tr>
       </thead>
       <tbody>
@@ -82,12 +82,12 @@
             {% if can_manage_payments %}
               <td>
                 <div class="inline-actions">
-                  <a href="{% url 'payments:payment_edit' payment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit payment">
+                  <a href="{% url 'payments:payment_edit' payment.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="{% trans 'Edit payment' %}">
                     <svg width="20" height="20" stroke="currentColor">
                       <use href="#icon-edit"/>
                     </svg>
                   </a>
-                  <a href="{% url 'payments:payment_delete' payment.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Delete payment">
+                  <a href="{% url 'payments:payment_delete' payment.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="{% trans 'Delete payment' %}">
                     <svg width="20" height="20" stroke="white">
                       <use href="#icon-trash"/>
                     </svg>
@@ -99,7 +99,7 @@
         {% empty %}
           <tr>
             <td colspan="{% if can_manage_payments %}5{% else %}4{% endif %}">
-              <div class="empty-state">No payments found for this period.</div>
+              <div class="empty-state">{% trans "No payments found for this period." %}</div>
             </td>
           </tr>
         {% endfor %}

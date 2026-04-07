@@ -30,4 +30,6 @@ urlpatterns = [
     path("detail/<str:username>/delete-user/", views.delete_user_only, name="delete_user_only"),
     path("detail/<str:username>/confirm-delete/<str:section>/", views.confirm_delete_user_related, name="confirm_delete_user_related"),
     path("detail/<str:username>/confirm-delete-user/", views.confirm_delete_user_only, name="confirm_delete_user_only"),
+
+    path("toggle-language/", views.toggle_language, name="toggle_language"),
 ]

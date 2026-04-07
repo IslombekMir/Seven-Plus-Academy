@@ -1,0 +1,197 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-07 22:48+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Uzbek <uz@li.org>\n"
+"Language: uz\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: attendances/forms.py:12 attendances/templates/attendances/dashboard.html:95
+msgid "Date"
+msgstr "Sana"
+
+#: attendances/models.py:35
+msgid "Students cannot create attendance sessions."
+msgstr "O'quvchilar davomat sessiyalarini yarata olmaydi."
+
+#: attendances/models.py:43
+msgid "Teachers can only create sessions for their own groups."
+msgstr "O'qituvchilar faqat o'z guruhlari uchun sessiya yarata oladi."
+
+#: attendances/models.py:55 attendances/templates/attendances/dashboard.html:47
+#: attendances/templates/attendances/dashboard.html:63
+msgid "Present"
+msgstr "Kelgan"
+
+#: attendances/models.py:56 attendances/templates/attendances/dashboard.html:48
+#: attendances/templates/attendances/dashboard.html:67
+msgid "Absent"
+msgstr "Kelmagan"
+
+#: attendances/models.py:57 attendances/templates/attendances/dashboard.html:49
+#: attendances/templates/attendances/dashboard.html:71
+msgid "Unknown"
+msgstr "Noma'lum"
+
+#: attendances/models.py:98
+msgid "Student must match the enrollment student."
+msgstr "O'quvchi ro'yxatga olingan o'quvchi bilan mos kelishi kerak."
+
+#: attendances/models.py:102
+msgid "Enrollment must belong to the session group."
+msgstr "Ro'yxatga olish sessiya guruhiga tegishli bo'lishi kerak."
+
+#: attendances/templates/attendances/dashboard.html:3
+#: attendances/templates/attendances/dashboard.html:9
+#: attendances/templates/attendances/group_detail.html:3
+#: attendances/templates/attendances/group_detail.html:10
+msgid "Attendances"
+msgstr "Davomat"
+
+#: attendances/templates/attendances/dashboard.html:16
+msgid "All Teachers"
+msgstr "Barcha o'qituvchilar"
+
+#: attendances/templates/attendances/dashboard.html:28
+msgid "All Students"
+msgstr "Barcha o'quvchilar"
+
+#: attendances/templates/attendances/dashboard.html:37
+msgid "All Groups"
+msgstr "Barcha guruhlar"
+
+#: attendances/templates/attendances/dashboard.html:46
+msgid "All Statuses"
+msgstr "Barcha holatlar"
+
+#: attendances/templates/attendances/dashboard.html:53
+#: attendances/templates/attendances/group_detail.html:34
+msgid "Filter"
+msgstr "Filtrlash"
+
+#: attendances/templates/attendances/dashboard.html:54
+#: attendances/templates/attendances/group_detail.html:35
+msgid "Reset"
+msgstr "Tiklash"
+
+#: attendances/templates/attendances/dashboard.html:60
+msgid "Attendance Indicator"
+msgstr "Davomat ko'rsatkichi"
+
+#: attendances/templates/attendances/dashboard.html:75
+msgid "Attendance Rate"
+msgstr "Davomat foizi"
+
+#: attendances/templates/attendances/dashboard.html:96
+#: attendances/templates/attendances/session_detail.html:27
+msgid "Student"
+msgstr "O'quvchi"
+
+#: attendances/templates/attendances/dashboard.html:97
+msgid "Group"
+msgstr "Guruh"
+
+#: attendances/templates/attendances/dashboard.html:98
+msgid "Subject"
+msgstr "Fan"
+
+#: attendances/templates/attendances/dashboard.html:99
+#: attendances/templates/attendances/session_detail.html:12
+msgid "Teacher"
+msgstr "O'qituvchi"
+
+#: attendances/templates/attendances/dashboard.html:100
+#: attendances/templates/attendances/session_detail.html:28
+msgid "Status"
+msgstr "Holat"
+
+#: attendances/templates/attendances/dashboard.html:129
+msgid "Search teachers..."
+msgstr "O'qituvchilarni qidirish..."
+
+#: attendances/templates/attendances/dashboard.html:129
+msgid "Search students..."
+msgstr "O'quvchilarni qidirish..."
+
+#: attendances/templates/attendances/group_detail.html:13
+msgid "Back to group"
+msgstr "Guruhga qaytish"
+
+#: attendances/templates/attendances/group_detail.html:18
+msgid "Create Attendance Session"
+msgstr "Davomat sessiyasi yaratish"
+
+#: attendances/templates/attendances/group_detail.html:23
+msgid "Create session"
+msgstr "Sessiya yaratish"
+
+#: attendances/templates/attendances/group_detail.html:29
+msgid "Attendance Sessions"
+msgstr "Davomat sessiyalari"
+
+#: attendances/templates/attendances/group_detail.html:45
+#, python-format
+msgid ""
+"\n"
+"                %(record_count)s record · created by %(user)s\n"
+"              "
+msgid_plural ""
+"\n"
+"                %(record_count)s records · created by %(user)s\n"
+"              "
+msgstr[0] ""
+"\n"
+"                %(record_count)s yozuv · %(user)s tomonidan yaratilgan\n"
+"              "
+
+#: attendances/templates/attendances/group_detail.html:55
+msgid "No attendance sessions yet."
+msgstr "Hali davomat sessiyalari mavjud emas."
+
+#: attendances/templates/attendances/session_detail.html:3
+msgid "Attendance Session"
+msgstr "Davomat sessiyasi"
+
+#: attendances/templates/attendances/session_detail.html:13
+msgid "Created by"
+msgstr "Yaratuvchi"
+
+#: attendances/templates/attendances/session_detail.html:16
+msgid "Back to group attendance"
+msgstr "Guruh davomatiga qaytish"
+
+#: attendances/templates/attendances/session_detail.html:42
+msgid "Save"
+msgstr "Saqlash"
+
+#: attendances/templates/attendances/session_detail.html:60
+msgid "No attendance records yet."
+msgstr "Hali davomat yozuvlari mavjud emas."
+
+#: attendances/views.py:113
+msgid "You do not have permission to view this attendance page."
+msgstr "Sizda bu davomat sahifasini ko'rish huquqi yo'q."
+
+#: attendances/views.py:115 attendances/views.py:185
+msgid "Teachers can only view attendance for their own groups."
+msgstr "O'qituvchilar faqat o'z guruhlarining davomatini ko'ra oladi."
+
+#: attendances/views.py:183
+msgid "You do not have permission to view this session."
+msgstr "Sizda bu sessiyani ko'rish huquqi yo'q."
+
+#: attendances/views.py:208
+msgid "You do not have permission to update attendance."
+msgstr "Sizda davomatni yangilash huquqi yo'q."

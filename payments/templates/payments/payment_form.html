@@ -1,26 +1,26 @@
 {% extends 'core/base.html' %}
 
-{% block title %}{% if payment %}Edit Payment{% else %}Create Payment{% endif %}{% endblock %}
+{% block title %}{% if payment %}{% trans "Edit Payment" %}{% else %}{% trans "Create Payment" %}{% endif %}{% endblock %}
 
 {% block content %}
 <div class="form-page">
 
   <div class="page-header">
-    <h1 class="page-title">{% if payment %}Edit Payment{% else %}Create Payment{% endif %}</h1>
+    <h1 class="page-title">{% if payment %}{% trans "Edit Payment" %}{% else %}{% trans "Create Payment" %}{% endif %}</h1>
   </div>
 
   <div class="card form-card">
     <div class="info-grid" style="margin-bottom:var(--space-5);">
       <div>
-        <div class="stat-label">Student</div>
+        <div class="stat-label">{% trans "Student" %}</div>
         <div style="font-weight:600;">{{ enrollment.student.get_full_name }} <span style="color:var(--muted);">({{ enrollment.student.username }})</span></div>
       </div>
       <div>
-        <div class="stat-label">Group</div>
+        <div class="stat-label">{% trans "Group" %}</div>
         <div style="font-weight:600;">{{ enrollment.group.name }}</div>
       </div>
       <div>
-        <div class="stat-label">Expected Amount</div>
+        <div class="stat-label">{% trans "Expected Amount" %}</div>
         <div style="font-weight:600;">{{ enrollment.payment_amount }}</div>
       </div>
     </div>
@@ -29,8 +29,8 @@
       {% csrf_token %}
       {{ form.as_p }}
       <div class="inline-actions">
-        <button type="submit">Save</button>
-        <a href="{% url 'lessons:group_detail' enrollment.group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+        <button type="submit">{% trans "Save" %}</button>
+        <a href="{% url 'lessons:group_detail' enrollment.group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Cancel" %}</a>
       </div>
     </form>
   </div>

@@ -1,22 +1,21 @@
 {% extends "core/base.html" %}
 
-{% block title %}Confirm Delete{% endblock %}
+{% block title %}{% trans "Confirm Delete" %}{% endblock %}
 
 {% block content %}
 <div class="detail-page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Confirm Delete</h1>
+      <h1 class="page-title">{% trans "Confirm Delete" %}</h1>
       <p class="page-subtitle">
-        {{ section_title }} for {{ target_user.username }}
+        {% blocktrans with section_title=section_title username=target_user.username %}{{ section_title }} for {{ username }}{% endblocktrans %}
       </p>
     </div>
   </div>
 
   <div class="card" style="padding:var(--space-4); border:1px solid var(--danger);">
     <p>
-      This will delete <strong>{{ items|length }}</strong> record{{ items|length|pluralize }}
-      from <strong>{{ section_title }}</strong>.
+      {% blocktrans count count=items|length with section_title=section_title %}This will delete <strong>{{ count }}</strong> record from <strong>{{ section_title }}</strong>.{% plural %}This will delete <strong>{{ count }}</strong> records from <strong>{{ section_title }}</strong>.{% endblocktrans %}
     </p>
 
     {% if items %}
@@ -26,19 +25,19 @@
         {% endfor %}
       </ul>
     {% else %}
-      <p>No records found.</p>
+      <p>{% trans "No records found." %}</p>
     {% endif %}
 
     <div class="inline-actions" style="margin-top:16px;">
       <a href="{% url 'users:user_detail' target_user.username %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
-        Cancel
+        {% trans "Cancel" %}
       </a>
 
       {% if items %}
         <form method="post">
           {% csrf_token %}
           <button type="submit" class="button" style="background:var(--danger);color:white;">
-            Confirm Delete
+            {% trans "Confirm Delete" %}
           </button>
         </form>
       {% endif %}

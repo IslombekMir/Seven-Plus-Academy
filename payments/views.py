@@ -16,6 +16,7 @@ from django.urls import reverse
 
 from django.utils import timezone
 from django.db.models import DecimalField, F, Sum, Value
+from django.utils.translation import gettext as _
 
 def can_manage_payments(user, enrollment):
     return user.role == User.Role.ADMIN or enrollment.group.teacher == user
@@ -38,7 +39,7 @@ def payment_group_detail(request, group_id):
     )
 
     if not can_view_group_payments(request.user, group):
-        return HttpResponseForbidden("You do not have permission to view this payments page.")
+        return HttpResponseForbidden(_("You do not have permission to view this payments page."))
 
     enrollments = group.enrollments.filter(is_active=True).select_related("student")
     if request.user.role == User.Role.STUDENT:
@@ -94,7 +95,7 @@ def payment_create(request, enrollment_id):
     )
 
     if not can_manage_payments(request.user, enrollment):
-        return HttpResponseForbidden("You do not have permission to create payments.")
+        return HttpResponseForbidden(_("You do not have permission to create payments."))
 
     initial = {}
     selected_month = request.GET.get("month")
@@ -132,7 +133,7 @@ def payment_edit(request, pk):
     )
 
     if not can_manage_payments(request.user, payment.enrollment):
-        return HttpResponseForbidden("You do not have permission to edit payments.")
+        return HttpResponseForbidden(_("You do not have permission to edit payments."))
 
     if request.method == "POST":
         form = PaymentForm(request.POST, instance=payment)
@@ -160,7 +161,7 @@ def payment_delete(request, pk):
     )
 
     if not can_manage_payments(request.user, payment.enrollment):
-        return HttpResponseForbidden("You do not have permission to delete payments.")
+        return HttpResponseForbidden(_("You do not have permission to delete payments."))
 
     if request.method == "POST":
         group_pk = payment.group.pk
@@ -259,10 +260,11 @@ def payment_dashboard(request):
         .distinct()
         .order_by("-payment_year", "-payment_month")
     )
+    month_labels = dict(MONTH_CHOICES)
     month_choices = [
         {
             "value": f"{row['payment_year']}-{row['payment_month']:02d}",
-            "label": date(row["payment_year"], row["payment_month"], 1).strftime("%B %Y"),
+            "label": f"{month_labels[row['payment_month']]} {row['payment_year']}",
         }
         for row in month_rows
     ]

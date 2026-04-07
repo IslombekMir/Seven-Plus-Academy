@@ -1,19 +1,19 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Attendances{% endblock %}
+{% block title %}{% trans "Attendances" %}{% endblock %}
 
 {% block content %}
 <div class="dashboard-page">
 
   <div class="page-header">
-    <h1 class="page-title">Attendances</h1>
+    <h1 class="page-title">{% trans "Attendances" %}</h1>
   </div>
 
   <form method="get" id="attendance-filter-form">
     <div class="filter-bar">
       {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
         <select name="teacher" class="searchable-select">
-          <option value="">All Teachers</option>
+          <option value="">{% trans "All Teachers" %}</option>
           {% for teacher in teachers %}
             <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
               {{ teacher.get_full_name|default:teacher.username }}
@@ -25,7 +25,7 @@
       <input type="date" name="date" value="{{ selected_date }}" class="filter-date">
 
       <select name="student" class="searchable-select">
-        <option value="">All Students</option>
+        <option value="">{% trans "All Students" %}</option>
         {% for student in students %}
           <option value="{{ student.id }}" {% if selected_student == student.id|stringformat:"s" %}selected{% endif %}>
             {{ student.get_full_name|default:student.username }}
@@ -34,7 +34,7 @@
       </select>
 
       <select name="group">
-        <option value="">All Groups</option>
+        <option value="">{% trans "All Groups" %}</option>
         {% for group in dashboard_groups %}
           <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
             {{ group.name }} - {{ group.subject }}
@@ -43,46 +43,47 @@
       </select>
 
       <select name="status">
-        <option value="">All Statuses</option>
-        <option value="PRESENT" {% if selected_status == "PRESENT" %}selected{% endif %}>Present</option>
-        <option value="ABSENT"  {% if selected_status == "ABSENT"  %}selected{% endif %}>Absent</option>
-        <option value="UNKNOWN" {% if selected_status == "UNKNOWN" %}selected{% endif %}>Unknown</option>
+        <option value="">{% trans "All Statuses" %}</option>
+        <option value="PRESENT" {% if selected_status == "PRESENT" %}selected{% endif %}>{% trans "Present" %}</option>
+        <option value="ABSENT"  {% if selected_status == "ABSENT"  %}selected{% endif %}>{% trans "Absent" %}</option>
+        <option value="UNKNOWN" {% if selected_status == "UNKNOWN" %}selected{% endif %}>{% trans "Unknown" %}</option>
       </select>
 
       <div class="filter-bar__actions">
-        <button type="submit">Filter</button>
-        <a href="{% url 'attendances:dashboard' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset</a>
+        <button type="submit">{% trans "Filter" %}</button>
+        <a href="{% url 'attendances:dashboard' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Reset" %}</a>
       </div>
     </div>
   </form>
 
   <div class="card">
-    <h3 class="page-title">Attendance Indicator</h3>
+    <h3 class="page-title">{% trans "Attendance Indicator" %}</h3>
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">Present</div>
+        <div class="stat-label">{% trans "Present" %}</div>
         <div class="stat-value" style="color:var(--success);">{{ total_present }}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Absent</div>
+        <div class="stat-label">{% trans "Absent" %}</div>
         <div class="stat-value" style="color:var(--danger);">{{ total_absent }}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Unknown</div>
+        <div class="stat-label">{% trans "Unknown" %}</div>
         <div class="stat-value" style="color:var(--warning);">{{ total_unknown }}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Attendance Rate</div>
+        <div class="stat-label">{% trans "Attendance Rate" %}</div>
         <div class="stat-value">{{ attendance_percent }}%</div>
       </div>
     </div>
     <div style="margin-top: var(--space-4);">
       <div class="progress">
+        {% load l10n %}
         <div class="progress__bar
           {% if attendance_percent >= 80 %}progress__bar--success
           {% elif attendance_percent >= 60 %}progress__bar--warning
           {% else %}progress__bar--danger{% endif %}"
-          style="width: {{ attendance_percent }}%;">
+          style="width: {{ attendance_percent|unlocalize }}%;">
         </div>
       </div>
     </div>
@@ -92,12 +93,12 @@
     <table>
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Student</th>
-          <th>Group</th>
-          <th>Subject</th>
-          <th>Teacher</th>
-          <th>Status</th>
+          <th>{% trans "Date" %}</th>
+          <th>{% trans "Student" %}</th>
+          <th>{% trans "Group" %}</th>
+          <th>{% trans "Subject" %}</th>
+          <th>{% trans "Teacher" %}</th>
+          <th>{% trans "Status" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -126,7 +127,7 @@
     new TomSelect(el, {
       create: false,
       allowEmptyOption: true,
-      placeholder: el.name === "teacher" ? "Search teachers..." : "Search students...",
+      placeholder: el.name === "teacher" ? "{% trans 'Search teachers...' %}" : "{% trans 'Search students...' %}",
       maxOptions: 50,
       searchField: ["text"],
       sortField: {

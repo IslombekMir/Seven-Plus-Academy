@@ -1,28 +1,28 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Delete Group{% endblock %}
+{% block title %}{% trans "Delete Group" %}{% endblock %}
 
 {% block content %}
 <div class="confirm-page">
 
   <div class="page-header">
-    <h1 class="page-title">Delete Group</h1>
+    <h1 class="page-title">{% trans "Delete Group" %}</h1>
   </div>
 
   <div class="card confirm-card">
-    <p>Are you sure you want to delete <span class="danger-text">{{ group.name }}</span>?</p>
+    <p>{% blocktrans with group_name=group.name %}Are you sure you want to delete <span class="danger-text">{{ group_name }}</span>?{% endblocktrans %}</p>
     {% if not can_delete %}
       <p style="color:var(--danger);">
-        This group has enrollment, exam, or payment history and cannot be permanently deleted.
+        {% trans "This group has enrollment, exam, or payment history and cannot be permanently deleted." %}
       </p>
     {% endif %}
     <form method="post">
       {% csrf_token %}
       <div class="inline-actions">
         {% if can_delete %}
-          <button type="submit" style="background:var(--danger);">Yes, delete</button>
+          <button type="submit" style="background:var(--danger);">{% trans "Yes, delete" %}</button>
         {% endif %}
-        <a href="{% url 'lessons:removed_groups' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Cancel</a>
+        <a href="{% url 'lessons:removed_groups' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Cancel" %}</a>
       </div>
     </form>
   </div>

@@ -1,23 +1,23 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Groups{% endblock %}
+{% block title %}{% trans "Groups" %}{% endblock %}
 
 {% block content %}
 <div class="list-page">
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">Groups</h1>
-      <p class="page-subtitle">Active groups currently shown in the main list</p>
+      <h1 class="page-title">{% trans "Groups" %}</h1>
+      <p class="page-subtitle">{% trans "Active groups currently shown in the main list" %}</p>
     </div>
     <div class="inline-actions">
       {% if user.role != "STUDENT" %}
-        <a href="{% url 'lessons:removed_groups' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Removed groups">
+        <a href="{% url 'lessons:removed_groups' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="{% trans 'Removed groups' %}">
           <svg class="icon" width="20" height="20">
             <use href="#icon-removed-users"></use>
           </svg>
         </a>
-        <a href="{% url 'lessons:group_create' %}" class="button">New Group</a>
+        <a href="{% url 'lessons:group_create' %}" class="button">{% trans "New Group" %}</a>
       {% endif %}
     </div>
   </div>
@@ -26,7 +26,7 @@
     <div class="filter-bar">
       {% if request.user.role == "ADMIN" or request.user.role == "STUDENT" %}
         <select name="teacher" class="searchable-select">
-          <option value="">All Teachers</option>
+          <option value="">{% trans "All Teachers" %}</option>
           {% for teacher in teachers %}
             <option value="{{ teacher.id }}" {% if selected_teacher == teacher.id|stringformat:"s" %}selected{% endif %}>
               {{ teacher.get_full_name|default:teacher.username }}
@@ -36,7 +36,7 @@
       {% endif %}
 
       <select name="group">
-        <option value="">All Groups</option>
+        <option value="">{% trans "All Groups" %}</option>
         {% for group in group_options %}
           <option value="{{ group.id }}" {% if selected_group == group.id|stringformat:"s" %}selected{% endif %}>
             {{ group.name }} - {{ group.subject }}
@@ -45,8 +45,8 @@
       </select>
 
       <div class="filter-bar__actions">
-        <button type="submit">Filter</button>
-        <a href="{% url 'lessons:group_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Reset</a>
+        <button type="submit">{% trans "Filter" %}</button>
+        <a href="{% url 'lessons:group_list' %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Reset" %}</a>
       </div>
     </div>
   </form>
@@ -55,11 +55,11 @@
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Subject</th>
-          <th>Teacher</th>
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Subject" %}</th>
+          <th>{% trans "Teacher" %}</th>
           {% if user.role != "STUDENT" %}
-            <th>Actions</th>
+            <th>{% trans "Actions" %}</th>
           {% endif %}
         </tr>
       </thead>
@@ -73,12 +73,12 @@
               <td>
                 {% if user.role == "ADMIN" or user == group.teacher %}
                   <div class="inline-actions">
-                    <a href="{% url 'lessons:group_edit' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="Edit group">
+                    <a href="{% url 'lessons:group_edit' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);" aria-label="{% trans 'Edit group' %}">
                       <svg width="20" height="20" stroke="currentColor">
                         <use href="#icon-edit"/>
                       </svg>
                     </a>
-                    <a href="{% url 'lessons:remove_group' group.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="Remove group">
+                    <a href="{% url 'lessons:remove_group' group.pk %}" class="button" style="background:var(--danger);color:white;border-color:transparent;" aria-label="{% trans 'Remove group' %}">
                       <svg width="20" height="20" stroke="white">
                         <use href="#icon-trash"/>
                       </svg>
@@ -91,7 +91,7 @@
         {% empty %}
           <tr>
             <td colspan="{% if user.role != 'STUDENT' %}4{% else %}3{% endif %}">
-              <div class="empty-state">No groups available.</div>
+              <div class="empty-state">{% trans "No groups available." %}</div>
             </td>
           </tr>
         {% endfor %}
@@ -107,7 +107,7 @@
     new TomSelect(teacherEl, {
       create: false,
       allowEmptyOption: true,
-      placeholder: "Search teachers...",
+      placeholder: "{% trans 'Search teachers...' %}",
       onChange: function () {
         teacherEl.form.submit();
       }

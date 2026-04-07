@@ -4,23 +4,32 @@ from django.contrib.auth.password_validation import validate_password
 from django.forms import formset_factory, BaseFormSet
 from django.core.exceptions import ValidationError
 from lessons.models import Group
+from django.utils.translation import gettext_lazy as _
 
 
 class LoginForm(forms.Form):
     username = forms.CharField(
         max_length=150,
         required=True,
-        widget=forms.TextInput(attrs={"placeholder": "Enter username"})
+        label=_("Username"),
+        widget=forms.TextInput(attrs={"placeholder": _("Enter username")})
     )
     password = forms.CharField(
         required=True,
-        widget=forms.PasswordInput(attrs={"placeholder": "Enter password"})
+        label=_("Password"),
+        widget=forms.PasswordInput(attrs={"placeholder": _("Enter password")})
     )
 
 class UserCreateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["first_name", "last_name", "role", "phone_number"]
+        labels = {
+            "first_name": _("First name"),
+            "last_name": _("Last name"),
+            "role": _("Role"),
+            "phone_number": _("Phone number"),
+        }
 
     def __init__(self, *args, **kwargs):
         self.current_user = kwargs.pop("current_user", None)
@@ -35,28 +44,35 @@ class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["first_name", "last_name", "phone_number"]
+        labels = {
+            "first_name": _("First name"),
+            "last_name": _("Last name"),
+            "phone_number": _("Phone number"),
+        }
 
 class TeacherProfileForm(forms.ModelForm):
     class Meta:
         model = TeacherProfile
         fields = ["bio", "picture", "is_active_profile"]
-
-from django import forms
-from django.contrib.auth.password_validation import validate_password
+        labels = {
+            "bio": _("Bio"),
+            "picture": _("Picture"),
+            "is_active_profile": _("Active profile"),
+        }
 from .models import UserSettings
 
 class FirstLoginPasswordChangeForm(forms.Form):
     new_password1 = forms.CharField(
-        label="New password",
-        widget=forms.PasswordInput(attrs={"placeholder": "Enter new password"}),
+        label=_("New password"),
+        widget=forms.PasswordInput(attrs={"placeholder": _("Enter new password")}),
         validators=[validate_password],
     )
     new_password2 = forms.CharField(
-        label="Confirm password",
-        widget=forms.PasswordInput(attrs={"placeholder": "Confirm new password"}),
+        label=_("Confirm password"),
+        widget=forms.PasswordInput(attrs={"placeholder": _("Confirm new password")}),
     )
     language = forms.ChoiceField(
-        label="Language",
+        label=_("Language"),
         choices=UserSettings.Language.choices,
     )
 
@@ -73,7 +89,7 @@ class FirstLoginPasswordChangeForm(forms.Form):
         pw2 = cleaned_data.get("new_password2")
 
         if pw1 and pw2 and pw1 != pw2:
-            raise forms.ValidationError("Passwords do not match")
+            raise forms.ValidationError(_("Passwords do not match"))
 
         return cleaned_data
 
@@ -95,11 +111,12 @@ class FirstLoginPasswordChangeForm(forms.Form):
     
 ### Bul create users
 class BulkUserMetaForm(forms.Form):
-    role = forms.ChoiceField(choices=User.Role.choices)
+    role = forms.ChoiceField(label=_("Role"), choices=User.Role.choices)
     group = forms.ModelChoiceField(
         queryset=Group.objects.none(),
         required=False,
-        empty_label="Select group",
+        label=_("Group"),
+        empty_label=_("Select group"),
     )
 
     def __init__(self, *args, **kwargs):
@@ -125,9 +142,9 @@ class BulkUserMetaForm(forms.Form):
         return cleaned_data
 
 class BulkUserRowForm(forms.Form):
-    first_name = forms.CharField(max_length=150, required=False)
-    last_name = forms.CharField(max_length=150, required=False)
-    phone_number = forms.CharField(max_length=15, required=False)
+    first_name = forms.CharField(label=_("First name"), max_length=150, required=False)
+    last_name = forms.CharField(label=_("Last name"), max_length=150, required=False)
+    phone_number = forms.CharField(label=_("Phone number"), max_length=15, required=False)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -159,12 +176,12 @@ class BaseBulkUserRowFormSet(BaseFormSet):
             name_key = (first_name.lower(), last_name.lower())
             if name_key in seen_name_keys:
                 raise forms.ValidationError(
-                    "Duplicate first name + last name rows found in the bulk table."
+                    _("Duplicate first name + last name rows found in the bulk table.")
                 )
             seen_name_keys.add(name_key)
 
         if non_empty_rows == 0:
-            raise forms.ValidationError("Add at least one user row.")
+            raise forms.ValidationError(_("Add at least one user row."))
 
     def validate_against_role(self, role):
         for form in self.forms:
@@ -182,7 +199,7 @@ class BaseBulkUserRowFormSet(BaseFormSet):
             ).exists():
                 form.add_error(
                     None,
-                    "A user with this first name, last name, and role already exists."
+                    _("A user with this first name, last name, and role already exists.")
                 )
 
 BulkUserRowFormSet = formset_factory(

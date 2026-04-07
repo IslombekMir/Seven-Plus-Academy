@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Attendance Session{% endblock %}
+{% block title %}{% trans "Attendance Session" %}{% endblock %}
 
 {% block content %}
 <div class="detail-page">
@@ -9,11 +9,11 @@
     <div>
       <h1 class="page-title">{{ group.name }} — {{ session.date }}</h1>
       <p class="page-subtitle">
-        Teacher: {{ group.teacher.get_full_name }} ·
-        Created by: {{ session.created_by.get_full_name|default:session.created_by.username }}
+        {% trans "Teacher" %}: {{ group.teacher.get_full_name }} ·
+        {% trans "Created by" %}: {{ session.created_by.get_full_name|default:session.created_by.username }}
       </p>
     </div>
-    <a href="{% url 'attendances:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Back to group attendance</a>
+    <a href="{% url 'attendances:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Back to group attendance" %}</a>
   </div>
 
   {% if can_manage %}
@@ -24,8 +24,8 @@
           <table>
             <thead>
               <tr>
-                <th>Student</th>
-                <th>Status</th>
+                <th>{% trans "Student" %}</th>
+                <th>{% trans "Status" %}</th>
               </tr>
             </thead>
             <tbody>
@@ -39,7 +39,7 @@
           </table>
         </div>
         <div>
-          <button type="submit">Save attendance</button>
+          <button type="submit">{% trans "Save" %}</button>
         </div>
       </form>
     </div>
@@ -57,7 +57,7 @@
             </span>
           </div>
         {% empty %}
-          <div class="empty-state">No attendance records yet.</div>
+          <div class="empty-state">{% trans "No attendance records yet." %}</div>
         {% endfor %}
       </div>
     </div>

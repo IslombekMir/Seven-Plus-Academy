@@ -1,12 +1,12 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Create a Subject{% endblock %}
+{% block title %}{% trans "Create a Subject" %}{% endblock %}
 
 {% block content %}
 <div class="form-page">
 
   <div class="page-header">
-    <h1 class="page-title">Create Subject</h1>
+    <h1 class="page-title">{% trans "Create Subject" %}</h1>
   </div>
 
   <div class="card form-card">
@@ -14,7 +14,7 @@
       {% csrf_token %}
       {{ form.as_p }}
       <div>
-        <button type="submit">Submit</button>
+        <button type="submit">{% trans "Submit" %}</button>
       </div>
     </form>
   </div>

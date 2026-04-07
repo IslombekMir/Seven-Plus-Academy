@@ -1,25 +1,25 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Removed Groups{% endblock %}
+{% block title %}{% trans "Removed Groups" %}{% endblock %}
 
 {% block content %}
 <div class="list-page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Removed Groups</h1>
-      <p class="page-subtitle">Inactive groups removed from the main groups list</p>
+      <h1 class="page-title">{% trans "Removed Groups" %}</h1>
+      <p class="page-subtitle">{% trans "Inactive groups removed from the main groups list" %}</p>
     </div>
-    <a href="{% url 'lessons:group_list' %}" class="button">Back to Groups</a>
+    <a href="{% url 'lessons:group_list' %}" class="button">{% trans "Back to Groups" %}</a>
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Subject</th>
-          <th>Teacher</th>
-          <th>Actions</th>
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Subject" %}</th>
+          <th>{% trans "Teacher" %}</th>
+          <th>{% trans "Actions" %}</th>
         </tr>
       </thead>
       <tbody>
@@ -30,15 +30,15 @@
             <td>{{ group.teacher.get_full_name|default:group.teacher.username }}</td>
             <td>
               <div class="inline-actions">
-                <a href="{% url 'lessons:restore_group' group.pk %}" class="button">Restore</a>
-                <a href="{% url 'lessons:group_delete' group.pk %}" class="button" style="background:var(--danger);">Delete Permanently</a>
+                <a href="{% url 'lessons:restore_group' group.pk %}" class="button">{% trans "Restore" %}</a>
+                <a href="{% url 'lessons:group_delete' group.pk %}" class="button" style="background:var(--danger);">{% trans "Delete Permanently" %}</a>
               </div>
             </td>
           </tr>
         {% empty %}
           <tr>
             <td colspan="4">
-              <div class="empty-state">No removed groups found.</div>
+              <div class="empty-state">{% trans "No removed groups found." %}</div>
             </td>
           </tr>
         {% endfor %}

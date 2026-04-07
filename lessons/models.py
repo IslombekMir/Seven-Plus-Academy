@@ -2,6 +2,7 @@ from django.db import models
 from users.models import User
 from datetime import date
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 class Subject(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -97,7 +98,7 @@ class Mark(models.Model):
     def clean(self):
         if self.exam_id and self.enrollment_id:
             if self.enrollment.group_id != self.exam.group_id:
-                raise ValidationError("Enrollment and Exam must belong to the same group.")
+                raise ValidationError(_("Enrollment and exam must belong to the same group."))
 
     def save(self, *args, **kwargs):
         self.full_clean()

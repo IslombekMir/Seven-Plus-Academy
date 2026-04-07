@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 
 class RoleCounter(models.Model):
     role = models.CharField(max_length=20, unique=True)
@@ -18,9 +19,9 @@ class User(AbstractUser):
     )
 
     class Role(models.TextChoices):
-        ADMIN = 'ADMIN', 'Admin'
-        TEACHER = 'TEACHER', 'Teacher'
-        STUDENT = 'STUDENT', 'Student'
+        ADMIN = 'ADMIN', _('Admin')
+        TEACHER = 'TEACHER', _('Teacher')
+        STUDENT = 'STUDENT', _('Student')
 
     ROLE_PREFIXES = {
         Role.ADMIN: 'adm',
@@ -65,12 +66,12 @@ class UserSettings(models.Model):
     user = models.OneToOneField(User, related_name="settings", on_delete=models.CASCADE)
     
     class Theme(models.TextChoices):
-        LIGHT = 'LIGHT', 'Light'
-        DARK = 'DARK', 'Dark'
+        LIGHT = 'LIGHT', _('Light')
+        DARK = 'DARK', _('Dark')
     
     class Language(models.TextChoices):
-        UZBEK = 'UZBEK', 'Uzbek'
-        ENGLISH = 'ENGLISH', 'English'
+        UZBEK = 'UZBEK', _('Uzbek')
+        ENGLISH = 'ENGLISH', _('English')
     
     theme = models.CharField(max_length=20, choices=Theme.choices, default=Theme.LIGHT)
     language = models.CharField(max_length=30, choices=Language.choices, default=Language.UZBEK)

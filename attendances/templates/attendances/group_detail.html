@@ -1,38 +1,38 @@
 {% extends 'core/base.html' %}
 
-{% block title %}{{ group.name }} Attendances{% endblock %}
+{% block title %}{{ group.name }} {% trans "Attendances" %}{% endblock %}
 
 {% block content %}
 <div class="detail-page">
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">{{ group.name }} Attendances</h1>
+      <h1 class="page-title">{{ group.name }} {% trans "Attendances" %}</h1>
       <p class="page-subtitle">{{ group.subject }} · {{ group.teacher.get_full_name }}</p>
     </div>
-    <a href="{% url 'lessons:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">Back to group</a>
+    <a href="{% url 'lessons:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Back to group" %}</a>
   </div>
 
   {% if form %}
     <div class="card form-card">
-      <h3 class="page-title">Create Attendance Session</h3>
+      <h3 class="page-title">{% trans "Create Attendance Session" %}</h3>
       <form method="post" class="form-grid" style="margin-top:var(--space-4);">
         {% csrf_token %}
         {{ form.as_p }}
         <div>
-          <button type="submit">Create session</button>
+          <button type="submit">{% trans "Create session" %}</button>
         </div>
       </form>
     </div>
   {% endif %}
   <div class="stack">
-    <h3 class="page-title">Attendance Sessions</h3>
+    <h3 class="page-title">{% trans "Attendance Sessions" %}</h3>
     <form method="get" id="group-session-filter-form">
       <div class="filter-bar">
         <input type="date" name="date" value="{{ selected_date }}">
         <div class="filter-bar__actions">
-          <button type="submit">Filter</button>
-          <a href="{% url 'attendances:group_detail' group.pk %}" class="button">Reset</a>
+          <button type="submit">{% trans "Filter" %}</button>
+          <a href="{% url 'attendances:group_detail' group.pk %}" class="button">{% trans "Reset" %}</a>
         </div>
       </div>
     </form>
@@ -42,13 +42,17 @@
           <div>
             <a href="{% url 'attendances:session_detail' session.pk %}">{{ session.date }}</a>
             <span class="page-subtitle" style="display:inline; margin-left:var(--space-3);">
-              {{ session.attendances.count }} records · created by {{ session.created_by.get_full_name|default:session.created_by.username }}
+              {% blocktrans count record_count=session.attendances.count with user=session.created_by.get_full_name|default:session.created_by.username %}
+                {{ record_count }} record · created by {{ user }}
+              {% plural %}
+                {{ record_count }} records · created by {{ user }}
+              {% endblocktrans %}
             </span>
           </div>
         </div>
       </div>
     {% empty %}
-      <div class="empty-state">No attendance sessions yet.</div>
+      <div class="empty-state">{% trans "No attendance sessions yet." %}</div>
     {% endfor %}
   </div>
 

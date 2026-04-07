@@ -1,35 +1,35 @@
 {% extends "core/base.html" %}
 
-{% block title %}Confirm User Delete{% endblock %}
+{% block title %}{% trans "Confirm User Delete" %}{% endblock %}
 
 {% block content %}
 <div class="detail-page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Delete User Account</h1>
+      <h1 class="page-title">{% trans "Delete User Account" %}</h1>
       <p class="page-subtitle">{{ target_user.username }} · {{ target_user.role }}</p>
     </div>
   </div>
 
   <div class="card" style="padding:var(--space-4); border:1px solid var(--danger);">
     {% if can_delete_user %}
-      <p>This will permanently delete the user account.</p>
+      <p>{% trans "This will permanently delete the user account." %}</p>
 
       <div class="inline-actions" style="margin-top:16px;">
         <a href="{% url 'users:user_detail' target_user.username %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
-          Cancel
+          {% trans "Cancel" %}
         </a>
         <form method="post">
           {% csrf_token %}
           <button type="submit" class="button" style="background:var(--danger);color:white;">
-            Confirm Delete User
+            {% trans "Confirm Delete User" %}
           </button>
         </form>
       </div>
     {% else %}
-      <p>Related blocking data still exists. Delete those first.</p>
+      <p>{% trans "Related blocking data still exists. Delete those first." %}</p>
       <a href="{% url 'users:user_detail' target_user.username %}" class="button">
-        Back
+        {% trans "Back" %}
       </a>
     {% endif %}
   </div>

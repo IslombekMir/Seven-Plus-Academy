@@ -1,0 +1,662 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-08 01:50+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: forms.py:12 forms.py:31 forms.py:98 templates/lessons/exam_list.html:22
+#: templates/lessons/group_list.html:58
+#: templates/lessons/removed_groups.html:19
+#: templates/lessons/subjects_list.html:28
+msgid "Name"
+msgstr "Nomi"
+
+#: forms.py:18
+msgid "Enter subject name"
+msgstr "Fan nomini kiriting"
+
+#: forms.py:32 templates/lessons/group_list.html:59
+#: templates/lessons/mark_dashboard.html:114
+#: templates/lessons/removed_groups.html:20
+msgid "Subject"
+msgstr "Fan"
+
+#: forms.py:33 templates/lessons/group_list.html:60
+#: templates/lessons/mark_dashboard.html:115
+#: templates/lessons/removed_groups.html:21
+msgid "Teacher"
+msgstr "O‘qituvchi"
+
+#: forms.py:34
+msgid "Homework description"
+msgstr "Uy vazifasi tavsifi"
+
+#: forms.py:35
+msgid "Default payment amount"
+msgstr "Standart to‘lov miqdori"
+
+#: forms.py:36
+msgid "Week days"
+msgstr "Hafta kunlari"
+
+#: forms.py:37
+msgid "Start time"
+msgstr "Boshlanish vaqti"
+
+#: forms.py:38
+msgid "End time"
+msgstr "Tugash vaqti"
+
+#: forms.py:39 forms.py:56 templates/lessons/group_detail.html:116
+msgid "Start date"
+msgstr "Boshlanish sanasi"
+
+#: forms.py:40 forms.py:57 templates/lessons/group_detail.html:120
+msgid "End date"
+msgstr "Tugash sanasi"
+
+#: forms.py:55 forms.py:130 templates/lessons/exam_detail.html:45
+#: templates/lessons/group_detail.html:50
+#: templates/lessons/group_detail.html:112
+#: templates/lessons/mark_dashboard.html:111
+msgid "Student"
+msgstr "Talaba"
+
+#: forms.py:58 templates/lessons/group_detail.html:124
+msgid "Payment amount"
+msgstr "To‘lov miqdori"
+
+#: forms.py:89
+msgid "Select student"
+msgstr "Talabani tanlang"
+
+#: forms.py:99
+msgid "Description"
+msgstr "Tavsif"
+
+#: forms.py:100 templates/lessons/exam_list.html:23
+#: templates/lessons/mark_dashboard.html:110
+msgid "Date"
+msgstr "Sana"
+
+#: forms.py:101
+msgid "Full mark"
+msgstr "Maksimal ball"
+
+#: forms.py:106
+msgid "Enter exam name"
+msgstr "Imtihon nomini kiriting"
+
+#: forms.py:110
+msgid "Enter exam description"
+msgstr "Imtihon tavsifini kiriting"
+
+#: forms.py:119
+msgid "Enter full mark"
+msgstr "Maksimal ballni kiriting"
+
+#: forms.py:131 templates/lessons/exam_detail.html:46
+#: templates/lessons/mark_dashboard.html:116
+msgid "Mark"
+msgstr "Ball"
+
+#: models.py:101
+msgid "Enrollment and exam must belong to the same group."
+msgstr "Ro‘yxatga olish va imtihon bir xil guruhga tegishli bo‘lishi kerak."
+
+#: templates/lessons/create_subject.html:3
+msgid "Create a Subject"
+msgstr "Fan yaratish"
+
+#: templates/lessons/create_subject.html:9
+msgid "Create Subject"
+msgstr "Fan yaratish"
+
+#: templates/lessons/create_subject.html:17
+msgid "Submit"
+msgstr "Tasdiqlash"
+
+#: templates/lessons/enrollment_confirm_delete.html:3
+msgid "Delete Enrollment"
+msgstr "Ro‘yxatni o‘chirish"
+
+#: templates/lessons/enrollment_confirm_delete.html:9
+msgid "Delete Enrollment?"
+msgstr "Ro‘yxatni o‘chirmoqchimisiz?"
+
+#: templates/lessons/enrollment_confirm_delete.html:13
+#, python-format
+msgid ""
+"Are you sure you want to remove <span class=\"danger-text\">%(student)s</"
+"span> from <strong>%(group_name)s</strong>?"
+msgstr ""
+"<span class=\"danger-text\">%(student)s</span>ni <strong>%(group_name)s</"
+"strong> guruhidan olib tashlashga ishonchingiz komilmi?"
+
+#: templates/lessons/enrollment_confirm_delete.html:17
+msgid "Confirm delete"
+msgstr "O‘chirishni tasdiqlash"
+
+#: templates/lessons/enrollment_confirm_delete.html:18
+#: templates/lessons/exam_confirm_delete.html:18
+#: templates/lessons/exam_detail.html:93
+#: templates/lessons/group_confirm_delete.html:25
+#: templates/lessons/group_confirm_remove.html:19
+#: templates/lessons/group_confirm_restore.html:18
+#: templates/lessons/subject_confirm_delete.html:18
+msgid "Cancel"
+msgstr "Bekor qilish"
+
+#: templates/lessons/enrollment_form.html:3
+#: templates/lessons/enrollment_form.html:9
+msgid "Edit Enrollment"
+msgstr "Ro‘yxatni tahrirlash"
+
+#: templates/lessons/enrollment_form.html:17
+#: templates/lessons/exam_detail.html:91 templates/lessons/exam_form.html:23
+#: templates/lessons/group_form.html:17
+msgid "Save"
+msgstr "Saqlash"
+
+#: templates/lessons/exam_confirm_delete.html:3
+#: templates/lessons/exam_confirm_delete.html:9
+msgid "Delete Exam"
+msgstr "Imtihonni o‘chirish"
+
+#: templates/lessons/exam_confirm_delete.html:13
+#, python-format
+msgid ""
+"Are you sure you want to delete <span class=\"danger-text\">%(exam_name)s</"
+"span> from <strong>%(group_name)s</strong>?"
+msgstr ""
+"<span class=\"danger-text\">%(exam_name)s</span>ni <strong>%(group_name)s</"
+"strong> guruhidan o‘chirishga ishonchingiz komilmi?"
+
+#: templates/lessons/exam_confirm_delete.html:17
+#: templates/lessons/group_confirm_delete.html:23
+msgid "Yes, delete"
+msgstr "Ha, o‘chiring"
+
+#: templates/lessons/exam_detail.html:3
+msgid "Exam Details"
+msgstr "Imtihon tafsilotlari"
+
+#: templates/lessons/exam_detail.html:14 templates/lessons/exam_detail.html:86
+msgid "Add Mark"
+msgstr "Ball qo‘shish"
+
+#: templates/lessons/exam_detail.html:26 templates/lessons/exam_list.html:24
+msgid "Full Mark"
+msgstr "Maksimal ball"
+
+#: templates/lessons/exam_detail.html:30
+#: templates/lessons/mark_dashboard.html:71
+msgid "Average Score"
+msgstr "O‘rtacha ball"
+
+#: templates/lessons/exam_detail.html:35
+msgid "No records yet"
+msgstr "Hozircha yozuvlar yo‘q"
+
+#: templates/lessons/exam_detail.html:47 templates/lessons/exam_list.html:26
+#: templates/lessons/group_detail.html:55 templates/lessons/group_list.html:62
+#: templates/lessons/removed_groups.html:22
+#: templates/lessons/subjects_list.html:29
+msgid "Actions"
+msgstr "Amallar"
+
+#: templates/lessons/exam_detail.html:60
+msgid "Delete mark"
+msgstr "Ballni o‘chirish"
+
+#: templates/lessons/exam_detail.html:73
+msgid "No marks yet."
+msgstr "Hozircha ball yo‘q."
+
+#: templates/lessons/exam_form.html:3
+msgid "Edit Exam"
+msgstr "Imtihonni tahrirlash"
+
+#: templates/lessons/exam_form.html:3 templates/lessons/exam_list.html:12
+msgid "Create Exam"
+msgstr "Imtihon yaratish"
+
+#: templates/lessons/exam_form.html:11
+#, python-format
+msgid "Edit Exam for %(group_name)s"
+msgstr "%(group_name)s guruhi uchun imtihonni tahrirlash"
+
+#: templates/lessons/exam_form.html:13
+#, python-format
+msgid "Create Exam for %(group_name)s"
+msgstr "%(group_name)s guruhi uchun imtihon yaratish"
+
+#: templates/lessons/exam_list.html:3
+msgid "Exam List"
+msgstr "Imtihonlar ro‘yxati"
+
+#: templates/lessons/exam_list.html:9
+#, python-format
+msgid "Exams for %(group_name)s"
+msgstr "%(group_name)s guruhi uchun imtihonlar"
+
+#: templates/lessons/exam_list.html:14
+msgid "Back to Group"
+msgstr "Guruhga qaytish"
+
+#: templates/lessons/exam_list.html:39
+msgid "Edit exam"
+msgstr "Imtihonni tahrirlash"
+
+#: templates/lessons/exam_list.html:44
+msgid "Delete exam"
+msgstr "Imtihonni o‘chirish"
+
+#: templates/lessons/exam_list.html:56
+msgid "No exams yet."
+msgstr "Hozircha imtihonlar yo‘q."
+
+#: templates/lessons/group_confirm_delete.html:3
+#: templates/lessons/group_confirm_delete.html:9
+msgid "Delete Group"
+msgstr "Guruhni o‘chirish"
+
+#: templates/lessons/group_confirm_delete.html:13
+#, python-format
+msgid ""
+"Are you sure you want to delete <span class=\"danger-text\">%(group_name)s</"
+"span>?"
+msgstr ""
+"<span class=\"danger-text\">%(group_name)s</span> guruhini o‘chirishga "
+"ishonchingiz komilmi?"
+
+#: templates/lessons/group_confirm_delete.html:16 views.py:196
+msgid ""
+"This group has enrollment, exam, or payment history and cannot be "
+"permanently deleted."
+msgstr ""
+"Bu guruhda ro‘yxat, imtihon yoki to‘lov tarixi mavjud, shuning uchun uni "
+"butunlay o‘chirib bo‘lmaydi."
+
+#: templates/lessons/group_confirm_remove.html:3
+#: templates/lessons/group_confirm_remove.html:9
+msgid "Remove Group"
+msgstr "Guruhni olib tashlash"
+
+#: templates/lessons/group_confirm_remove.html:13
+#, python-format
+msgid ""
+"Are you sure you want to remove <span class=\"danger-text\">%(group_name)s</"
+"span>?"
+msgstr ""
+"<span class=\"danger-text\">%(group_name)s</span> guruhini olib tashlashga "
+"ishonchingiz komilmi?"
+
+#: templates/lessons/group_confirm_remove.html:14
+msgid ""
+"This will hide the group from the main list and close any active enrollments "
+"in it."
+msgstr ""
+"Bu guruh asosiy ro‘yxatdan yashiriladi va undagi barcha faol ro‘yxatlar "
+"yopiladi."
+
+#: templates/lessons/group_confirm_remove.html:18
+msgid "Yes, remove"
+msgstr "Ha, olib tashlang"
+
+#: templates/lessons/group_confirm_restore.html:3
+#: templates/lessons/group_confirm_restore.html:9
+msgid "Restore Group"
+msgstr "Guruhni tiklash"
+
+#: templates/lessons/group_confirm_restore.html:13
+#, python-format
+msgid ""
+"Are you sure you want to restore <span class=\"danger-text\">%(group_name)s</"
+"span>?"
+msgstr ""
+"<span class=\"danger-text\">%(group_name)s</span> guruhini tiklashga "
+"ishonchingiz komilmi?"
+
+#: templates/lessons/group_confirm_restore.html:17
+msgid "Yes, restore"
+msgstr "Ha, tiklang"
+
+#: templates/lessons/group_detail.html:14
+msgid "Exams"
+msgstr "Imtihonlar"
+
+#: templates/lessons/group_detail.html:15
+msgid "Attendances"
+msgstr "Davomat"
+
+#: templates/lessons/group_detail.html:16
+msgid "Payments"
+msgstr "To‘lovlar"
+
+#: templates/lessons/group_detail.html:22
+msgid "Fee"
+msgstr "To‘lov"
+
+#: templates/lessons/group_detail.html:26
+msgid "Schedule"
+msgstr "Jadval"
+
+#: templates/lessons/group_detail.html:30
+msgid "Dates"
+msgstr "Sanalar"
+
+#: templates/lessons/group_detail.html:35
+msgid "Homework"
+msgstr "Uy vazifasi"
+
+#: templates/lessons/group_detail.html:44
+msgid "Students"
+msgstr "Talabalar"
+
+#: templates/lessons/group_detail.html:52
+msgid "Payment"
+msgstr "To‘lov"
+
+#: templates/lessons/group_detail.html:54
+msgid "Start Date"
+msgstr "Boshlanish sanasi"
+
+#: templates/lessons/group_detail.html:79
+msgid "Edit enrollment"
+msgstr "Ro‘yxatni tahrirlash"
+
+#: templates/lessons/group_detail.html:84
+msgid "Remove enrollment"
+msgstr "Ro‘yxatni olib tashlash"
+
+#: templates/lessons/group_detail.html:96
+msgid "No students enrolled yet."
+msgstr "Hozircha ro‘yxatdan o‘tgan talabalar yo‘q."
+
+#: templates/lessons/group_detail.html:108
+msgid "Add Student"
+msgstr "Talaba qo‘shish"
+
+#: templates/lessons/group_detail.html:128
+msgid "Add"
+msgstr "Qo‘shish"
+
+#: templates/lessons/group_detail.html:143
+#: templates/lessons/mark_dashboard.html:152
+msgid "Search students..."
+msgstr "Talabalarni qidirish..."
+
+#: templates/lessons/group_form.html:3 templates/lessons/group_form.html:9
+msgid "Edit Group"
+msgstr "Guruhni tahrirlash"
+
+#: templates/lessons/group_form.html:3 templates/lessons/group_form.html:9
+msgid "Create Group"
+msgstr "Guruh yaratish"
+
+#: templates/lessons/group_list.html:3 templates/lessons/group_list.html:10
+msgid "Groups"
+msgstr "Guruhlar"
+
+#: templates/lessons/group_list.html:11
+msgid "Active groups currently shown in the main list"
+msgstr "Asosiy ro‘yxatda hozir ko‘rsatilayotgan faol guruhlar"
+
+#: templates/lessons/group_list.html:15
+msgid "Removed groups"
+msgstr "Olib tashlangan guruhlar"
+
+#: templates/lessons/group_list.html:20
+msgid "New Group"
+msgstr "Yangi guruh"
+
+#: templates/lessons/group_list.html:29
+#: templates/lessons/mark_dashboard.html:16
+msgid "All Teachers"
+msgstr "Barcha o‘qituvchilar"
+
+#: templates/lessons/group_list.html:39
+#: templates/lessons/mark_dashboard.html:37
+msgid "All Groups"
+msgstr "Barcha guruhlar"
+
+#: templates/lessons/group_list.html:48
+#: templates/lessons/mark_dashboard.html:57
+msgid "Filter"
+msgstr "Filtrlash"
+
+#: templates/lessons/group_list.html:49
+#: templates/lessons/mark_dashboard.html:58
+msgid "Reset"
+msgstr "Qayta tiklash"
+
+#: templates/lessons/group_list.html:76
+msgid "Edit group"
+msgstr "Guruhni tahrirlash"
+
+#: templates/lessons/group_list.html:81
+msgid "Remove group"
+msgstr "Guruhni olib tashlash"
+
+#: templates/lessons/group_list.html:94
+msgid "No groups available."
+msgstr "Mavjud guruhlar yo‘q."
+
+#: templates/lessons/group_list.html:110
+#: templates/lessons/mark_dashboard.html:152
+msgid "Search teachers..."
+msgstr "O‘qituvchilarni qidirish..."
+
+#: templates/lessons/mark_dashboard.html:3
+#: templates/lessons/mark_dashboard.html:9
+msgid "Marks"
+msgstr "Ballar"
+
+#: templates/lessons/mark_dashboard.html:27
+msgid "All Students"
+msgstr "Barcha talabalar"
+
+#: templates/lessons/mark_dashboard.html:46
+msgid "All Exams"
+msgstr "Barcha imtihonlar"
+
+#: templates/lessons/mark_dashboard.html:64
+msgid "Mark Indicator"
+msgstr "Ball ko‘rsatkichi"
+
+#: templates/lessons/mark_dashboard.html:67
+msgid "Total Records"
+msgstr "Jami yozuvlar"
+
+#: templates/lessons/mark_dashboard.html:77
+msgid "Highest Score"
+msgstr "Eng yuqori ball"
+
+#: templates/lessons/mark_dashboard.html:83
+msgid "Lowest Score"
+msgstr "Eng past ball"
+
+#: templates/lessons/mark_dashboard.html:89
+msgid "Average Percent"
+msgstr "O‘rtacha foiz"
+
+#: templates/lessons/mark_dashboard.html:112
+msgid "Exam"
+msgstr "Imtihon"
+
+#: templates/lessons/mark_dashboard.html:113
+msgid "Group"
+msgstr "Guruh"
+
+#: templates/lessons/mark_dashboard.html:137
+msgid "No marks found."
+msgstr "Ballar topilmadi."
+
+#: templates/lessons/removed_groups.html:3
+#: templates/lessons/removed_groups.html:9
+msgid "Removed Groups"
+msgstr "Olib tashlangan guruhlar"
+
+#: templates/lessons/removed_groups.html:10
+msgid "Inactive groups removed from the main groups list"
+msgstr "Asosiy guruhlar ro‘yxatidan olib tashlangan nofaol guruhlar"
+
+#: templates/lessons/removed_groups.html:12
+msgid "Back to Groups"
+msgstr "Guruhlarga qaytish"
+
+#: templates/lessons/removed_groups.html:33
+msgid "Restore"
+msgstr "Tiklash"
+
+#: templates/lessons/removed_groups.html:34
+msgid "Delete Permanently"
+msgstr "Butunlay o‘chirish"
+
+#: templates/lessons/removed_groups.html:41
+msgid "No removed groups found."
+msgstr "Olib tashlangan guruhlar topilmadi."
+
+#: templates/lessons/subject_confirm_delete.html:3
+#: templates/lessons/subject_confirm_delete.html:9
+msgid "Delete Subject"
+msgstr "Fanni o‘chirish"
+
+#: templates/lessons/subject_confirm_delete.html:13
+#, python-format
+msgid ""
+"Are you sure you want to delete <span class=\"danger-"
+"text\">%(subject_name)s</span>?"
+msgstr ""
+"<span class=\"danger-text\">%(subject_name)s</span> fanini o‘chirishga "
+"ishonchingiz komilmi?"
+
+#: templates/lessons/subject_confirm_delete.html:17
+msgid "Delete"
+msgstr "O‘chirish"
+
+#: templates/lessons/subjects_list.html:3
+#: templates/lessons/subjects_list.html:9
+msgid "Subjects"
+msgstr "Fanlar"
+
+#: templates/lessons/subjects_list.html:11
+msgid "New Subject"
+msgstr "Yangi fan"
+
+#: templates/lessons/subjects_list.html:17
+msgid "Search by name"
+msgstr "Nomi bo‘yicha qidirish"
+
+#: templates/lessons/subjects_list.html:19
+msgid "Search"
+msgstr "Qidirish"
+
+#: templates/lessons/subjects_list.html:39
+msgid "Edit subject"
+msgstr "Fanni tahrirlash"
+
+#: templates/lessons/subjects_list.html:44
+msgid "Delete subject"
+msgstr "Fanni o‘chirish"
+
+#: templates/lessons/subjects_list.html:56
+msgid "No subjects found."
+msgstr "Fanlar topilmadi."
+
+#: views.py:117
+msgid "Students cannot view removed groups."
+msgstr "Talabalar olib tashlangan guruhlarni ko‘ra olmaydi."
+
+#: views.py:127
+msgid "Students cannot create groups."
+msgstr "Talabalar guruh yarata olmaydi."
+
+#: views.py:145
+msgid "Students cannot remove groups."
+msgstr "Talabalar guruhlarni olib tashlay olmaydi."
+
+#: views.py:150
+msgid "Teachers can only remove their own groups."
+msgstr "O‘qituvchilar faqat o‘z guruhlarini olib tashlashi mumkin."
+
+#: views.py:168
+msgid "Students cannot restore groups."
+msgstr "Talabalar guruhlarni tiklay olmaydi."
+
+#: views.py:173
+msgid "Teachers can only restore their own groups."
+msgstr "O‘qituvchilar faqat o‘z guruhlarini tiklashi mumkin."
+
+#: views.py:185
+msgid "Students cannot delete groups."
+msgstr "Talabalar guruhlarni o‘chira olmaydi."
+
+#: views.py:190
+msgid "Teachers can only delete their own groups."
+msgstr "O‘qituvchilar faqat o‘z guruhlarini o‘chirishi mumkin."
+
+#: views.py:202
+msgid "Group was permanently deleted."
+msgstr "Guruh butunlay o‘chirildi."
+
+#: views.py:206
+msgid "This group still has related records that prevent permanent deletion."
+msgstr ""
+"Bu guruhga bog‘liq yozuvlar hali mavjud, shuning uchun uni butunlay "
+"o‘chirib bo‘lmaydi."
+
+#: views.py:219
+msgid "Students cannot edit groups."
+msgstr "Talabalar guruhlarni tahrirlay olmaydi."
+
+#: views.py:224
+msgid "Teachers can only edit their own groups."
+msgstr "O‘qituvchilar faqat o‘z guruhlarini tahrirlashi mumkin."
+
+#: views.py:327
+msgid "You do not have permission to edit enrollments."
+msgstr "Sizda ro‘yxatlarni tahrirlash uchun ruxsat yo‘q."
+
+#: views.py:350
+msgid "You do not have permission to delete enrollments."
+msgstr "Sizda ro‘yxatlarni o‘chirish uchun ruxsat yo‘q."
+
+#: views.py:384
+msgid "You do not have permission to create exams."
+msgstr "Sizda imtihon yaratish uchun ruxsat yo‘q."
+
+#: views.py:406
+msgid "You do not have permission to view exams."
+msgstr "Sizda imtihonlarni ko‘rish uchun ruxsat yo‘q."
+
+#: views.py:421
+msgid "You do not have permission to view this exam."
+msgstr "Sizda bu imtihonni ko‘rish uchun ruxsat yo‘q."
+
+#: views.py:451
+msgid "You do not have permission to edit exams."
+msgstr "Sizda imtihonlarni tahrirlash uchun ruxsat yo‘q."
+
+#: views.py:473
+msgid "You do not have permission to delete exams."
+msgstr "Sizda imtihonlarni o‘chirish uchun ruxsat yo‘q."
+
+#: views.py:494
+msgid "You do not have permission to delete marks."
+msgstr "Sizda ballarni o‘chirish uchun ruxsat yo‘q."

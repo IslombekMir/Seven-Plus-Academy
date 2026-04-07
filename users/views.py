@@ -27,12 +27,13 @@ from .forms import (
 
 from .forms import FirstLoginPasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.utils.translation import gettext as _
 
 
 @login_required
 def users_list(request):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot view this page.")
+        return HttpResponseForbidden(_("Students cannot view this page."))
 
     if request.user.role == User.Role.TEACHER:
         users = User.objects.filter(
@@ -82,7 +83,7 @@ def users_list(request):
 @login_required
 def removed_users(request):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot view this page.")
+        return HttpResponseForbidden(_("Students cannot view this page."))
 
     if request.user.role == User.Role.TEACHER:
         users = User.objects.filter(
@@ -132,12 +133,12 @@ def removed_users(request):
 @login_required
 def remove_user(request, user_id):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot remove users.")
+        return HttpResponseForbidden(_("Students cannot remove users."))
 
     user_obj = get_object_or_404(User, pk=user_id, is_active=True)
 
     if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
-        return HttpResponseForbidden("Teachers can only remove student users.")
+        return HttpResponseForbidden(_("Teachers can only remove student users."))
     
     if request.method == "POST":
         with transaction.atomic():
@@ -156,12 +157,12 @@ def remove_user(request, user_id):
 @login_required
 def restore_user(request, user_id):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot restore users.")
+        return HttpResponseForbidden(_("Students cannot restore users."))
 
     user_obj = get_object_or_404(User, pk=user_id, is_active=False)
 
     if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
-        return HttpResponseForbidden("Teachers can only restore student users.")
+        return HttpResponseForbidden(_("Teachers can only restore student users."))
 
     if request.method == "POST":
         user_obj.is_active = True
@@ -185,7 +186,7 @@ def login_view(request):
                     return redirect("users:force_password_change")
                 return redirect("core:index")
             else:
-                form.add_error(None, "Invalid username or password")
+                form.add_error(None, _("Invalid username or password"))
     else:
         form = LoginForm()
     return render(request, "users/login.html", {"form": form})
@@ -198,7 +199,7 @@ def logout_view(request):
 @login_required
 def create_user(request):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot create users.")
+        return HttpResponseForbidden(_("Students cannot create users."))
 
     if request.method == "POST":
         form = UserCreateForm(request.POST, current_user=request.user)
@@ -218,7 +219,7 @@ def create_user(request):
 @login_required
 def bulk_create_users(request):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot create users.")
+        return HttpResponseForbidden(_("Students cannot create users."))
 
     if request.method == "POST":
         meta_form = BulkUserMetaForm(request.POST, current_user=request.user)
@@ -276,7 +277,7 @@ def bulk_create_users(request):
                 else:
                     meta_form.add_error(None, "; ".join(exc.messages))
             else:
-                messages.success(request, f"{created_count} user(s) created successfully.")
+                messages.success(request, _("%(count)s user(s) created successfully.") % {"count": created_count})
                 return redirect("users:users_list")
     else:
         initial_role = User.Role.STUDENT if request.user.role == User.Role.TEACHER else User.Role.STUDENT
@@ -294,12 +295,12 @@ def bulk_create_users(request):
 @login_required
 def edit_user(request, user_id):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot edit users.")
+        return HttpResponseForbidden(_("Students cannot edit users."))
 
     user_obj = get_object_or_404(User, pk=user_id)
 
     if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
-        return HttpResponseForbidden("Teachers can only edit student users.")
+        return HttpResponseForbidden(_("Teachers can only edit student users."))
 
     if request.method == "POST":
         form = UserEditForm(request.POST, instance=user_obj)
@@ -326,28 +327,28 @@ def _can_permanently_delete_user(user_obj):
 @login_required
 def delete_user(request, user_id):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot delete users.")
+        return HttpResponseForbidden(_("Students cannot delete users."))
 
     user_obj = get_object_or_404(User, pk=user_id, is_active=False)
 
     if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
-        return HttpResponseForbidden("Teachers can only delete student users.")
+        return HttpResponseForbidden(_("Teachers can only delete student users."))
 
     if request.method == "POST":
         if not _can_permanently_delete_user(user_obj):
             messages.error(
                 request,
-                "This user has attendance or payment history and cannot be permanently deleted."
+                _("This user has attendance or payment history and cannot be permanently deleted.")
             )
             return redirect("users:removed_users")
 
         try:
             user_obj.delete()
-            messages.success(request, "User was permanently deleted.")
+            messages.success(request, _("User was permanently deleted."))
         except ProtectedError:
             messages.error(
                 request,
-                "This user still has related records that prevent permanent deletion."
+                _("This user still has related records that prevent permanent deletion.")
             )
 
         return redirect("users:removed_users")
@@ -361,12 +362,12 @@ def delete_user(request, user_id):
 @login_required
 def reset_password(request, user_id):
     if request.user.role == User.Role.STUDENT:
-        return HttpResponseForbidden("Students cannot reset passwords.")
+        return HttpResponseForbidden(_("Students cannot reset passwords."))
 
     user_obj = get_object_or_404(User, pk=user_id)
 
     if request.user.role == User.Role.TEACHER and user_obj.role != User.Role.STUDENT:
-        return HttpResponseForbidden("Teachers can only reset student passwords.")
+        return HttpResponseForbidden(_("Teachers can only reset student passwords."))
 
     user_obj.set_password(user_obj.username)
     user_obj.must_reset_password = True
@@ -434,7 +435,7 @@ def edit_teacher_profile(request, teacher_id):
     teacher = get_object_or_404(User, pk=teacher_id, role=User.Role.TEACHER)
 
     if not _can_edit_teacher_profile(request.user, teacher):
-        return HttpResponseForbidden("You can only edit your own profile.")
+        return HttpResponseForbidden(_("You can only edit your own profile."))
 
     profile, _ = TeacherProfile.objects.get_or_create(teacher=teacher)
     form = TeacherProfileForm(request.POST or None, request.FILES or None, instance=profile)
@@ -504,10 +505,10 @@ def _build_user_deletion_context(user_obj):
 
         context.update({
             "deletion_steps": [
-                ("Marks", "marks", marks),
-                ("Attendances", "attendances", attendances),
-                ("Payments", "payments", payments),
-                ("Enrollments", "enrollments", enrollments),
+                (_("Marks"), "marks", marks),
+                (_("Attendances"), "attendances", attendances),
+                (_("Payments"), "payments", payments),
+                (_("Enrollments"), "enrollments", enrollments),
             ],
             "marks": marks,
             "attendances": attendances,
@@ -529,14 +530,14 @@ def _build_user_deletion_context(user_obj):
 
         context.update({
             "deletion_steps": [
-                ("Attendance Sessions Created By Teacher", "created_sessions", attendance_sessions_by_creator),
-                ("Attendances In Teacher Groups", "attendances", attendances),
-                ("Payments In Teacher Groups", "payments", payments),
-                ("Marks In Teacher Groups", "marks", marks),
-                ("Exams In Teacher Groups", "exams", exams),
-                ("Enrollments In Teacher Groups", "enrollments", enrollments),
-                ("Attendance Sessions For Teacher Groups", "group_sessions", group_sessions),
-                ("Groups", "groups", groups),
+                (_("Attendance Sessions Created By Teacher"), "created_sessions", attendance_sessions_by_creator),
+                (_("Attendances In Teacher Groups"), "attendances", attendances),
+                (_("Payments In Teacher Groups"), "payments", payments),
+                (_("Marks In Teacher Groups"), "marks", marks),
+                (_("Exams In Teacher Groups"), "exams", exams),
+                (_("Enrollments In Teacher Groups"), "enrollments", enrollments),
+                (_("Attendance Sessions For Teacher Groups"), "group_sessions", group_sessions),
+                (_("Groups"), "groups", groups),
             ],
             "groups": groups,
             "attendance_sessions_by_creator": attendance_sessions_by_creator,
@@ -553,7 +554,7 @@ def _build_user_deletion_context(user_obj):
 
         context.update({
             "deletion_steps": [
-                ("Attendance Sessions Created By Admin", "created_sessions", attendance_sessions_by_creator),
+                (_("Attendance Sessions Created By Admin"), "created_sessions", attendance_sessions_by_creator),
             ],
             "attendance_sessions_by_creator": attendance_sessions_by_creator,
         })
@@ -565,7 +566,7 @@ def user_detail(request, username):
     user_obj = get_object_or_404(User, username=username)
 
     if request.user.role != User.Role.ADMIN:
-        return HttpResponseForbidden("Only admins can view this page.")
+        return HttpResponseForbidden(_("Only admins can view this page."))
 
     context = _build_user_deletion_context(user_obj)
     context["can_delete_user"] = all(not items for _, _, items in context["deletion_steps"])
@@ -577,7 +578,7 @@ def delete_user_related(request, username, section):
     user_obj = get_object_or_404(User, username=username)
 
     if request.user.role != User.Role.ADMIN:
-        return HttpResponseForbidden("Only admins can delete related data.")
+        return HttpResponseForbidden(_("Only admins can delete related data."))
 
     with transaction.atomic():
         if user_obj.role == User.Role.STUDENT:
@@ -614,14 +615,19 @@ def delete_user_related(request, username, section):
 
         action = section_map.get(section)
         if not action:
-            messages.error(request, "Unknown delete section.")
+            messages.error(request, _("Unknown delete section."))
             return redirect("users:user_detail", username=user_obj.username)
+
+        section_titles = {slug: title for title, slug, _ in _build_user_deletion_context(user_obj)["deletion_steps"]}
 
         try:
             action()
-            messages.success(request, f"{section.replace('_', ' ').title()} deleted.")
+            messages.success(
+                request,
+                _("%(section)s deleted.") % {"section": section_titles.get(section, section)}
+            )
         except ProtectedError:
-            messages.error(request, "That section still has dependent records. Delete earlier steps first.")
+            messages.error(request, _("That section still has dependent records. Delete earlier steps first."))
 
     return redirect("users:user_detail", username=user_obj.username)
 
@@ -631,14 +637,14 @@ def delete_user_only(request, username):
     user_obj = get_object_or_404(User, username=username)
 
     if request.user.role != User.Role.ADMIN:
-        return HttpResponseForbidden("Only admins can delete users.")
+        return HttpResponseForbidden(_("Only admins can delete users."))
 
     if not _can_delete_user_now(user_obj):
-        messages.error(request, "Delete blocking related data first.")
+        messages.error(request, _("Delete blocking related data first."))
         return redirect("users:user_detail", username=user_obj.username)
 
     user_obj.delete()
-    messages.success(request, "User deleted successfully.")
+    messages.success(request, _("User deleted successfully."))
     return redirect("users:users_list")
 
 @login_required
@@ -646,13 +652,13 @@ def confirm_delete_user_related(request, username, section):
     user_obj = get_object_or_404(User, username=username)
 
     if request.user.role != User.Role.ADMIN:
-        return HttpResponseForbidden("Only admins can manage this page.")
+        return HttpResponseForbidden(_("Only admins can manage this page."))
 
     context = _build_user_deletion_context(user_obj)
 
     step = next((step for step in context["deletion_steps"] if step[1] == section), None)
     if not step:
-        messages.error(request, "Unknown delete section.")
+        messages.error(request, _("Unknown delete section."))
         return redirect("users:user_detail", username=user_obj.username)
 
     title, slug, items = step
@@ -672,7 +678,7 @@ def confirm_delete_user_only(request, username):
     user_obj = get_object_or_404(User, username=username)
 
     if request.user.role != User.Role.ADMIN:
-        return HttpResponseForbidden("Only admins can manage this page.")
+        return HttpResponseForbidden(_("Only admins can manage this page."))
 
     context = _build_user_deletion_context(user_obj)
     can_delete_user = all(not items for _, _, items in context["deletion_steps"])
@@ -684,3 +690,17 @@ def confirm_delete_user_only(request, username):
         "target_user": user_obj,
         "can_delete_user": can_delete_user,
     })
+
+### Language Toggle
+@login_required
+@require_POST
+def toggle_language(request):
+    settings = request.user.settings
+    settings.language = (
+        UserSettings.Language.ENGLISH
+        if settings.language == UserSettings.Language.UZBEK
+        else UserSettings.Language.UZBEK
+    )
+    settings.save(update_fields=["language"])
+    return redirect("users:profile")
+
