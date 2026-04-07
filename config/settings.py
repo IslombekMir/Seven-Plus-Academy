@@ -168,3 +168,4 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesSto
 # chech again
 # test ci again
 # test test
+# last time ci/cd had network failure
