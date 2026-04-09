@@ -1,0 +1,106 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+  <h1 class="page-title">{{ quiz.title }}</h1>
+
+  
+  {% if quiz.completion_time %}
+    <div id="quiz-timer" style="font-size:1.1rem;font-weight:bold;margin-bottom:1rem;">
+      <svg width="16" height="16" aria-hidden="true">
+        <use href="#icon-clock"></use>
+      </svg>
+      {% trans "Time remaining" %}: <span id="timer-display">--:--</span>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+      
+        var remaining = {{ remaining_seconds|default:0 }};
+        var display = document.getElementById("timer-display");
+        var form = document.getElementById("quiz-form");
+      
+        if (!form || !display) return; // safety guard
+      
+        function pad(n) { return String(n).padStart(2, "0"); }
+      
+        function updateDisplay() {
+          var m = Math.floor(remaining / 60);
+          var s = remaining % 60;
+          display.textContent = pad(m) + ":" + pad(s);
+        }
+      
+        function tick() {
+          if (remaining <= 0) {
+            display.textContent = "00:00";
+      
+            // prevent double submission
+            if (!form.dataset.submitted) {
+              form.dataset.submitted = "1";
+              form.submit();
+            }
+            return;
+          }
+      
+          updateDisplay();
+      
+          if (remaining <= 60) {
+            display.style.color = "red";
+          }
+      
+          remaining--;
+        }
+      
+        tick();
+        setInterval(tick, 1000);
+      });
+      </script>
+{% endif %}
+
+  <form method="post" id="quiz-form">
+    {% csrf_token %}
+    {% for q in questions %}
+      <div class="stat-card" style="margin-bottom:1rem;">
+        <p><strong>{{ forloop.counter }}.</strong> {{ q.question_text }}</p>
+
+        {% if q.image %}
+          <img src="{{ q.image.url }}" alt="question image" style="max-width:300px;display:block;margin-bottom:.5rem;">
+        {% endif %}
+
+        {% for option in q.options.all %}
+          <div>
+            <label>
+              <input type="radio" name="q_{{ q.id }}" value="{{ option.id }}">
+              {{ option.option_text }}
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    {# FIX: warn before submitting if any question is unanswered #}
+    <script>
+      document.getElementById("quiz-form").addEventListener("submit", function (e) {
+        var inputs = document.querySelectorAll("input[type='radio']");
+        var names = new Set();
+        inputs.forEach(function(el) { names.add(el.name); });
+        var unanswered = 0;
+        names.forEach(function(name) {
+          if (!document.querySelector("input[name='" + name + "']:checked")) {
+            unanswered++;
+          }
+        });
+        if (unanswered > 0) {
+          var ok = confirm("{% trans 'You have' %} " + unanswered + " {% trans 'unanswered question(s). Submit anyway?' %}");
+          if (!ok) { e.preventDefault(); }
+        }
+      });
+    </script>
+
+    <button type="submit">{% trans "Submit Quiz" %}</button>
+  </form>
+</div>
+{% endblock %}

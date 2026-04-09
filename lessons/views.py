@@ -312,6 +312,7 @@ def group_detail(request, pk):
     "group": group,
     "enrollments": enrollments,
     "enrollment_form": enrollment_form,
+    "can_manage_enrollment": can_manage_enrollments(request.user, group),
 })
 
 ### Enrollment

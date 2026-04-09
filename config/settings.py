@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'payments',
     'users.apps.UsersConfig',
     'django.contrib.humanize',
+    'quizzes',
 ]
 
 MIDDLEWARE = [

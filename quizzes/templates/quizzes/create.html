@@ -1,0 +1,65 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Create Quiz" %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+  <h1 class="page-title">{% trans "Create Quiz" %}</h1>
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="type" value="quiz">
+
+    {# ── Quiz metadata ──────────────────────────────────────────────────── #}
+    <div class="stat-card" style="max-width:700px;margin-bottom:1.5rem;">
+      <h2 style="margin-top:0;">{% trans "Quiz details" %}</h2>
+
+      <label>{% trans "Title" %} <span style="color:red;">*</span></label>
+      <input type="text" name="title" class="form-control"
+             value="{{ post.title|default:'' }}" required>
+
+      <label style="margin-top:1rem;display:block;">{% trans "Description" %}</label>
+      <textarea name="description" class="form-control"
+                rows="3">{{ post.description|default:'' }}</textarea>
+
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1rem;">
+        <div style="flex:1;min-width:160px;">
+          <label>{% trans "Allowed attempts" %}
+            <small style="opacity:.7;">(0 = {% trans "unlimited" %})</small>
+          </label>
+          <input type="number" name="allowed_attempts" min="0"
+                 value="{{ post.allowed_attempts|default:'1' }}" class="form-control">
+        </div>
+        <div style="flex:1;min-width:160px;">
+          <label>{% trans "Completion time (minutes, optional)" %}</label>
+          <input type="number" name="completion_time" min="1"
+                 value="{{ post.completion_time|default:'' }}" class="form-control">
+        </div>
+      </div>
+
+      <div style="margin-top:1rem;">
+        <label>
+          <input type="checkbox" name="random_question_order"
+                 {% if post.random_question_order %}checked{% endif %}>
+          {% trans "Random question order" %}
+        </label>
+      </div>
+    </div>
+
+    {# ── Question builder ───────────────────────────────────────────────── #}
+    {% with existing_questions=None %}
+      {% include "quizzes/includes/quiz_form_questions.html" %}
+    {% endwith %}
+
+    <div style="margin-top:1.5rem;display:flex;gap:.75rem;">
+      <button type="submit" class="btn btn-primary">{% trans "Create Quiz" %}</button>
+      <a href="{% url 'quizzes:list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

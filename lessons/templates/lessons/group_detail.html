@@ -10,11 +10,13 @@
       <h1 class="page-title">{{ group.name }}</h1>
       <p class="page-subtitle">{{ group.subject }} · {{ group.teacher.get_full_name }}</p>
     </div>
-    <div class="inline-actions">
-      <a href="{% url 'lessons:exam_list' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Exams" %}</a>
-      <a href="{% url 'attendances:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Attendances" %}</a>
-      <a href="{% url 'payments:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Payments" %}</a>
-    </div>
+    {% if can_manage_enrollment %}
+      <div class="inline-actions">
+        <a href="{% url 'lessons:exam_list' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Exams" %}</a>
+        <a href="{% url 'attendances:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Attendances" %}</a>
+        <a href="{% url 'payments:group_detail' group.pk %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">{% trans "Payments" %}</a>
+      </div>
+    {% endif %}
   </div>
 
   <div class="info-grid">

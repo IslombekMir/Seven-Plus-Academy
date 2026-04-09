@@ -1,0 +1,163 @@
+ {% load i18n %}
+ 
+ <div id="questions-section">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+     <h2 style="margin:0;">{% trans "Questions" %}</h2>
+   </div>
+ 
+   <div id="question-list">
+     {# Render existing questions (edit mode) or nothing (create mode) #}
+     {% for q in existing_questions %}
+     <div class="stat-card question-block" id="qblock-existing-{{ forloop.counter }}" style="margin-bottom:1rem;">
+        <div class="page-header" style="margin-bottom:.5rem;">
+          <strong>{% trans "Question" %} <span class="q-number">{{ forloop.counter }}</span></strong>
+          <button type="button" onclick="removeQuestion(this)" style="background:var(--danger);">
+            {% trans "Remove" %}
+          </button>
+        </div>
+ 
+        <label style="margin-top:.75rem;display:block;">{% trans "Question text" %}</label>
+        <textarea name="question_text_{{ forloop.counter }}" rows="2" required>{{ q.question_text }}</textarea>
+ 
+        <label style="margin-top:.5rem;display:block;">{% trans "Points" %}</label>
+        <input type="number" name="value_{{ forloop.counter }}" min="1" value="{{ q.value }}" style="max-width:100px;">
+ 
+       <div style="margin-top:.75rem;">
+         <strong>{% trans "Options" %}</strong>
+         <small style="opacity:.7;"> — {% trans "pick the correct one" %}</small>
+       </div>
+ 
+       {% for opt in q.options.all %}
+       <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;">
+        <input type="radio" name="correct_{{ forloop.parentloop.counter }}" value="{{ forloop.counter }}" {% if opt.is_correct %}checked{% endif %} required>
+        <input type="text" name="option_{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+               value="{{ opt.option_text }}"
+               {% if forloop.counter <= 2 %}required{% endif %}
+               placeholder="{% if forloop.counter <= 2 %}{% trans 'Required' %}{% else %}{% trans 'Optional' %}{% endif %}">
+      </div>
+       {% endfor %}
+       {# Pad to 4 option slots if the saved question has fewer than 4 #}
+       {% with q.options.all|length as opt_count %}
+         {% for extra in "1234" %}
+           {% if forloop.counter > opt_count %}
+           <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;">
+             <input type="radio" name="correct_{{ forloop.parentloop.counter }}"
+                    value="{{ forloop.counter }}">
+             <input type="text" name="option_{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+                    class="form-control" placeholder="{% trans 'Optional' %}">
+           </div>
+           {% endif %}
+         {% endfor %}
+       {% endwith %}
+     </div>
+     {% endfor %}
+   </div>
+   <button type="button" onclick="addQuestion()">{% trans "Add Question" %}</button>
+ 
+   {# Hidden counter — updated by JS on every add/remove #}
+   <input type="hidden" name="question_count" id="question-count"
+          value="{{ existing_questions|length }}">
+ </div>
+ 
+ <template id="question-template">
+   <div class="stat-card question-block" style="margin-bottom:1rem;">
+     <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+       <strong>{% trans "Question" %} <span class="q-number"></span></strong>
+       <button type="button" class="btn btn-danger btn-sm"
+               onclick="removeQuestion(this)">{% trans "Remove" %}</button>
+     </div>
+ 
+     <label style="margin-top:.75rem;display:block;">{% trans "Question text" %}</label>
+     <textarea name="__Q_TEXT__" rows="2" class="form-control" required></textarea>
+ 
+     <label style="margin-top:.5rem;display:block;">{% trans "Points" %}</label>
+     <input type="number" name="__Q_VALUE__" min="1" value="1"
+            class="form-control" style="max-width:100px;">
+ 
+     <div style="margin-top:.75rem;">
+       <strong>{% trans "Options" %}</strong>
+       <small style="opacity:.7;"> — {% trans "pick the correct one" %}</small>
+     </div>
+ 
+     <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;">
+       <input type="radio" name="__Q_CORRECT__" value="1" required>
+       <input type="text" name="__Q_OPT1__" class="form-control"
+              placeholder="{% trans 'Required' %}" required>
+     </div>
+     <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;">
+       <input type="radio" name="__Q_CORRECT__" value="2">
+       <input type="text" name="__Q_OPT2__" class="form-control"
+              placeholder="{% trans 'Required' %}" required>
+     </div>
+     <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;">
+       <input type="radio" name="__Q_CORRECT__" value="3">
+       <input type="text" name="__Q_OPT3__" class="form-control"
+              placeholder="{% trans 'Optional' %}">
+     </div>
+     <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;">
+       <input type="radio" name="__Q_CORRECT__" value="4">
+       <input type="text" name="__Q_OPT4__" class="form-control"
+              placeholder="{% trans 'Optional' %}">
+     </div>
+   </div>
+ </template>
+ 
+ <script>
+ (function () {
+   // How many question blocks currently exist (including pre-rendered ones from server)
+   var count = parseInt(document.getElementById("question-count").value, 10) || 0;
+ 
+   function updateCounter() {
+     document.getElementById("question-count").value = count;
+   }
+ 
+   function renumberAll() {
+     var blocks = document.querySelectorAll(".question-block");
+     blocks.forEach(function (block, idx) {
+       var n = idx + 1;
+       block.querySelector(".q-number").textContent = n;
+ 
+       // Rename all inputs/textareas/radios so indices stay contiguous
+       block.querySelectorAll("textarea, input").forEach(function (el) {
+         if (!el.name) return;
+         // Replace any existing _N_ index pattern with the new one
+         el.name = el.name.replace(/_\d+(_|$)/, "_" + n + "$1")
+                          .replace(/_\d+_(\d+)$/, "_" + n + "_$1");
+       });
+     });
+     count = blocks.length;
+     updateCounter();
+   }
+ 
+   window.addQuestion = function () {
+     count++;
+     var tmpl = document.getElementById("question-template");
+     var clone = tmpl.content.cloneNode(true);
+     var n = count;
+ 
+     // Replace placeholder tokens with the real index
+     clone.querySelectorAll("textarea, input").forEach(function (el) {
+       if (el.name) {
+         el.name = el.name
+           .replace("__Q_TEXT__",    "question_text_" + n)
+           .replace("__Q_VALUE__",   "value_" + n)
+           .replace("__Q_CORRECT__", "correct_" + n)
+           .replace("__Q_OPT1__",    "option_" + n + "_1")
+           .replace("__Q_OPT2__",    "option_" + n + "_2")
+           .replace("__Q_OPT3__",    "option_" + n + "_3")
+           .replace("__Q_OPT4__",    "option_" + n + "_4");
+       }
+     });
+     clone.querySelector(".q-number").textContent = n;
+ 
+     document.getElementById("question-list").appendChild(clone);
+     updateCounter();
+   };
+ 
+   window.removeQuestion = function (btn) {
+     var block = btn.closest(".question-block");
+     block.remove();
+     renumberAll();
+   };
+ })();
+ </script>

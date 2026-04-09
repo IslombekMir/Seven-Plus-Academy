@@ -1,0 +1,108 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Quizzes" %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+  <div class="page-header">
+    <h1 class="page-title">{% trans "Quizzes" %}</h1>
+    {% if can_create %}
+      <a href="{% url 'quizzes:create' %}" class="button">{% trans "Create Quiz" %}</a>
+    {% endif %}
+  </div>
+
+  <form method="get" class="filter-bar">
+    <div>
+      <label for="quiz-search">{% trans "Search quizzes" %}</label>
+      <input
+        id="quiz-search"
+        type="search"
+        name="q"
+        value="{{ q|default:'' }}"
+        placeholder="{% trans 'Search by title...' %}"
+      >
+    </div>
+  
+    <div class="filter-bar__actions">
+      <button type="submit">{% trans "Search" %}</button>
+      {% if q %}
+        <a href="{% url 'quizzes:list' %}"
+           class="button"
+           style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
+          {% trans "Clear" %}
+        </a>
+      {% endif %}
+    </div>
+  </form>
+
+  {% if my_quizzes %}
+    <div class="card">
+      <h2 style="margin:0 0 1rem 0;">{% trans "My quizzes" %}</h2>
+      <div class="stats-grid">
+        {% for quiz in my_quizzes %}
+          <a href="{% url 'quizzes:detail' quiz.id %}" class="stat-card" style="text-decoration:none;border-color:var(--primary);">
+            <div class="stat-label">{{ quiz.get_type_display }}</div>
+            <div class="stat-value" style="font-size:1.05rem;">
+              {{ quiz.title }}
+            
+              {% if quiz.is_completed %}
+                <span style="display:inline-flex;align-items:center;gap:4px;color:green;">
+                  <svg width="16" height="16" aria-hidden="true">
+                    <use href="#icon-completed"></use>
+                  </svg>
+                </span>
+              {% endif %}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if other_quizzes %}
+    <div class="card">
+      <h2 style="margin:0 0 1rem 0;">
+        <h2 style="margin:0 0 1rem 0;">
+          {% if request.user.role == "teacher" %}
+            {% trans "Other quizzes" %}
+          {% else %}
+            {% trans "Quizzes" %}
+          {% endif %}
+        </h2>
+      </h2>
+      <div class="stats-grid">
+        {% for quiz in other_quizzes %}
+          <a href="{% url 'quizzes:detail' quiz.id %}" class="stat-card" style="text-decoration:none;">
+            <div class="stat-label">{{ quiz.get_type_display }}</div>
+            <div class="stat-value" style="font-size:1.05rem;">
+              {{ quiz.title }}
+            
+              {% if quiz.is_completed %}
+                <span style="display:inline-flex;align-items:center;gap:4px;color:green;">
+                  <svg width="16" height="16" aria-hidden="true">
+                    <use href="#icon-completed"></use>
+                  </svg>
+                </span>
+              {% endif %}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    {% if not my_quizzes %}
+      <div class="stat-card">{% trans "No quizzes yet." %}</div>
+    {% endif %}
+  {% endif %}
+  {% if not my_quizzes and not other_quizzes %}
+    <div class="stat-card">
+      {% if q %}
+        {% trans "No quizzes found for your search." %}
+      {% else %}
+        {% trans "No quizzes yet." %}
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

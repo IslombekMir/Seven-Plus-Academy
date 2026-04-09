@@ -1,0 +1,68 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Edit Quiz" %}: {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+  <h1 class="page-title">{% trans "Edit Quiz" %}: {{ quiz.title }}</h1>
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="card form-card">
+      <h2>{% trans "Quiz details" %}</h2>
+  
+      <label>{% trans "Title" %} <span style="color:red;">*</span></label>
+      <input type="text" name="title" value="{{ post.title|default:quiz.title }}" required>
+  
+      <label style="margin-top:1rem;display:block;">{% trans "Description" %}</label>
+      <textarea name="description" rows="3">{{ post.description|default:quiz.description }}</textarea>
+  
+      <div class="form-grid" style="margin-top:1rem;">
+        <div>
+          <label>{% trans "Allowed attempts" %}
+            <small style="opacity:.7;">(0 = {% trans "unlimited" %})</small>
+          </label>
+          <input type="number" name="allowed_attempts" min="0" value="{{ post.allowed_attempts|default:quiz.allowed_attempts }}">
+        </div>
+        <div>
+          <label>{% trans "Completion time (minutes, optional)" %}</label>
+          <input type="number" name="completion_time" min="1" value="{{ post.completion_time|default:quiz.completion_time }}">
+        </div>
+      </div>
+  
+      <div style="margin-top:1rem;">
+        <label>
+          <input type="checkbox" name="random_question_order"
+                 {% if post %}
+                   {% if post.random_question_order %}checked{% endif %}
+                 {% else %}
+                   {% if quiz.random_question_order %}checked{% endif %}
+                 {% endif %}>
+          {% trans "Random question order" %}
+        </label>
+      </div>
+    </div>
+  
+    {% with existing_questions=quiz.questions.all %}
+      {% include "quizzes/includes/quiz_form_questions.html" %}
+    {% endwith %}
+  
+    <div class="inline-actions" style="margin-top:1.5rem;">
+      <button type="submit">{% trans "Save Changes" %}</button>
+      <a href="{% url 'quizzes:detail' quiz.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
+        {% trans "Cancel" %}
+      </a>
+    </div>
+  </form>
+
+  <a href="{% url 'quizzes:delete' quiz.id %}" class="button" style="background:var(--danger);">
+    {% trans "Delete Quiz" %}
+  </a>
+</div>
+{% endblock %}

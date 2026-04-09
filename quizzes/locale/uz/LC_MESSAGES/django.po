@@ -1,0 +1,279 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-10 00:31+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: templates/quizzes/create.html:4 templates/quizzes/create.html:8
+#: templates/quizzes/create.html:60 templates/quizzes/list.html:11
+msgid "Create Quiz"
+msgstr "Quiz yaratish"
+
+#: templates/quizzes/create.html:20 templates/quizzes/edit.html:18
+msgid "Quiz details"
+msgstr "Quiz tafsilotlari"
+
+#: templates/quizzes/create.html:22 templates/quizzes/edit.html:20
+msgid "Title"
+msgstr "Sarlavha"
+
+#: templates/quizzes/create.html:26 templates/quizzes/edit.html:23
+msgid "Description"
+msgstr "Tavsif"
+
+#: templates/quizzes/create.html:32 templates/quizzes/detail.html:27
+#: templates/quizzes/edit.html:28
+msgid "Allowed attempts"
+msgstr "Ruxsat etilgan urinishlar"
+
+#: templates/quizzes/create.html:33 templates/quizzes/edit.html:29
+msgid "unlimited"
+msgstr "cheksiz"
+
+#: templates/quizzes/create.html:39 templates/quizzes/edit.html:34
+msgid "Completion time (minutes, optional)"
+msgstr "Tugatish vaqti (daqiqada, majburiy emas)"
+
+#: templates/quizzes/create.html:49 templates/quizzes/edit.html:47
+msgid "Random question order"
+msgstr "Savollar tartibini tasodifiylashtirish"
+
+#: templates/quizzes/create.html:61 templates/quizzes/delete_confirm.html:31
+#: templates/quizzes/edit.html:59
+msgid "Cancel"
+msgstr "Bekor qilish"
+
+#: templates/quizzes/delete_confirm.html:4
+#: templates/quizzes/delete_confirm.html:9 templates/quizzes/edit.html:65
+msgid "Delete Quiz"
+msgstr "Quizni o‘chirish"
+
+#: templates/quizzes/delete_confirm.html:14
+#, python-format
+msgid ""
+"\n"
+"      Are you sure you want to delete <span class=\"danger-"
+"text\">%(quiz_title)s</span>?\n"
+"      "
+msgstr ""
+"\n"
+"      <span class=\"danger-text\">%(quiz_title)s</span> ni o‘chirmoqchi ekanligingizga ishonchingiz komilmi?\n"
+"      "
+
+#: templates/quizzes/delete_confirm.html:19
+msgid "This action cannot be undone."
+msgstr "Bu amalni qaytarib bo‘lmaydi."
+
+#: templates/quizzes/delete_confirm.html:26
+msgid "Yes, delete quiz"
+msgstr "Ha, o‘chirilsin"
+
+#: templates/quizzes/detail.html:16
+msgid "Edit quiz"
+msgstr "Quizni tahrirlash"
+
+#: templates/quizzes/detail.html:25
+#: templates/quizzes/includes/quiz_form_questions.html:5
+msgid "Questions"
+msgstr "Savollar"
+
+#: templates/quizzes/detail.html:28
+msgid "Unlimited"
+msgstr "Cheksiz"
+
+#: templates/quizzes/detail.html:30
+msgid "Created by"
+msgstr "Yaratuvchi"
+
+#: templates/quizzes/detail.html:37
+msgid "You have used all allowed attempts for this quiz."
+msgstr "Bu quiz uchun barcha urinishlardan foydalandingiz."
+
+#: templates/quizzes/detail.html:42 templates/quizzes/detail.html:53
+msgid "View My Last Result"
+msgstr "Oxirgi natijamni ko‘rish"
+
+#: templates/quizzes/detail.html:48
+msgid "Attempts used"
+msgstr "Ishlatilgan urinishlar"
+
+#: templates/quizzes/detail.html:56
+msgid "Retake Quiz"
+msgstr "Qayta topshirish"
+
+#: templates/quizzes/detail.html:62
+msgid "Continue Quiz"
+msgstr "Davom ettirish"
+
+#: templates/quizzes/detail.html:67
+msgid "Start Quiz"
+msgstr "Boshlash"
+
+#: templates/quizzes/edit.html:4 templates/quizzes/edit.html:8
+msgid "Edit Quiz"
+msgstr "Quizni tahrirlash"
+
+#: templates/quizzes/edit.html:57
+msgid "Save Changes"
+msgstr "O‘zgarishlarni saqlash"
+
+#: templates/quizzes/includes/quiz_form_questions.html:13
+#: templates/quizzes/includes/quiz_form_questions.html:65
+msgid "Question"
+msgstr "Savol"
+
+#: templates/quizzes/includes/quiz_form_questions.html:15
+#: templates/quizzes/includes/quiz_form_questions.html:67
+msgid "Remove"
+msgstr "O‘chirish"
+
+#: templates/quizzes/includes/quiz_form_questions.html:19
+#: templates/quizzes/includes/quiz_form_questions.html:70
+msgid "Question text"
+msgstr "Savol matni"
+
+#: templates/quizzes/includes/quiz_form_questions.html:22
+#: templates/quizzes/includes/quiz_form_questions.html:73
+msgid "Points"
+msgstr "Ballar"
+
+#: templates/quizzes/includes/quiz_form_questions.html:26
+#: templates/quizzes/includes/quiz_form_questions.html:78
+msgid "Options"
+msgstr "Variantlar"
+
+#: templates/quizzes/includes/quiz_form_questions.html:27
+#: templates/quizzes/includes/quiz_form_questions.html:79
+msgid "pick the correct one"
+msgstr "to‘g‘ri javobni tanlang"
+
+#: templates/quizzes/includes/quiz_form_questions.html:36
+#: templates/quizzes/includes/quiz_form_questions.html:85
+#: templates/quizzes/includes/quiz_form_questions.html:90
+msgid "Required"
+msgstr "Majburiy"
+
+#: templates/quizzes/includes/quiz_form_questions.html:36
+#: templates/quizzes/includes/quiz_form_questions.html:47
+#: templates/quizzes/includes/quiz_form_questions.html:95
+#: templates/quizzes/includes/quiz_form_questions.html:100
+msgid "Optional"
+msgstr "Ixtiyoriy"
+
+#: templates/quizzes/includes/quiz_form_questions.html:55
+msgid "Add Question"
+msgstr "Savol qo‘shish"
+
+#: templates/quizzes/list.html:4 templates/quizzes/list.html:9
+msgid "Quizzes"
+msgstr "Quizlar"
+
+#: templates/quizzes/list.html:17
+msgid "Search quizzes"
+msgstr "Quizlarni qidirish"
+
+#: templates/quizzes/list.html:23
+msgid "Search by title..."
+msgstr "Sarlavha bo‘yicha qidirish..."
+
+#: templates/quizzes/list.html:28
+msgid "Search"
+msgstr "Qidirish"
+
+#: templates/quizzes/list.html:33
+msgid "Clear"
+msgstr "Tozalash"
+
+#: templates/quizzes/list.html:41
+msgid "My quizzes"
+msgstr "Mening quizlarim"
+
+#: templates/quizzes/list.html:55
+msgid "Other quizzes"
+msgstr "Boshqa quizlar"
+
+#: templates/quizzes/list.html:67 templates/quizzes/list.html:75
+msgid "No quizzes yet."
+msgstr "Hozircha quizlar yo‘q."
+
+#: templates/quizzes/list.html:73
+msgid "No quizzes found for your search."
+msgstr "Qidiruv bo‘yicha hech narsa topilmadi."
+
+#: templates/quizzes/result.html:4
+msgid "Quiz Result"
+msgstr "Quiz natijasi"
+
+#: templates/quizzes/result.html:9
+msgid "Result"
+msgstr "Natija"
+
+#: templates/quizzes/result.html:10
+msgid "Participant"
+msgstr "Ishtirokchi"
+
+#: templates/quizzes/result.html:11
+msgid "Attempt"
+msgstr "Urinish"
+
+#: templates/quizzes/result.html:12
+msgid "Score"
+msgstr "Ball"
+
+#: templates/quizzes/result.html:13
+msgid "Submitted at"
+msgstr "Topshirilgan vaqt"
+
+#: templates/quizzes/result.html:21
+msgid "Your answer"
+msgstr "Sizning javobingiz"
+
+#: templates/quizzes/result.html:25
+msgid "No answer"
+msgstr "Javob berilmagan"
+
+#: templates/quizzes/result.html:30
+msgid "Correct"
+msgstr "To‘g‘ri"
+
+#: templates/quizzes/result.html:32
+msgid "Incorrect"
+msgstr "Noto‘g‘ri"
+
+#: templates/quizzes/result.html:38
+msgid "Correct answer"
+msgstr "To‘g‘ri javob"
+
+#: templates/quizzes/result.html:48
+msgid "Back to Quiz"
+msgstr "Quizga qaytish"
+
+#: templates/quizzes/take.html:13
+msgid "Time remaining"
+msgstr "Qolgan vaqt"
+
+#: templates/quizzes/take.html:76
+msgid "You have"
+msgstr "Sizda"
+
+#: templates/quizzes/take.html:76
+msgid "unanswered question(s). Submit anyway?"
+msgstr "javobsiz savol(lar) bor. Baribir topshirasizmi?"
+
+#: templates/quizzes/take.html:82
+msgid "Submit Quiz"
+msgstr "Quizni topshirish"

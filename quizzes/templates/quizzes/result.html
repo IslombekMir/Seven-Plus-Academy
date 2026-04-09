@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Quiz Result" %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+  <div class="stat-card">
+    <h1 class="page-title">{{ quiz.title }} — {% trans "Result" %}</h1>
+    <p><strong>{% trans "Participant" %}:</strong> {{ attempt.participant.get_full_name|default:attempt.participant.username }}</p>
+    <p><strong>{% trans "Attempt" %}:</strong> {{ attempt.attempt_number }}</p>
+    <p><strong>{% trans "Score" %}:</strong> {{ raw_score }} / {{ max_score }} ({{ percent }}%)</p>
+    <p><strong>{% trans "Submitted at" %}:</strong> {{ attempt.finished_at }}</p>
+  </div>
+
+  {% for answer in answers %}
+    <div class="stat-card" style="margin-top:1rem;">
+      <p><strong>{{ forloop.counter }}.</strong> {{ answer.question.question_text }}</p>
+
+      <p>
+        <strong>{% trans "Your answer" %}:</strong>
+        {% if answer.selected_option %}
+          {{ answer.selected_option.option_text }}
+        {% else %}
+          <em>{% trans "No answer" %}</em>
+        {% endif %}
+      </p>
+
+      {% if answer.selected_option and answer.selected_option.is_correct %}
+        <p style="color:green;">✔ {% trans "Correct" %}</p>
+      {% else %}
+        <p style="color:red;">✘ {% trans "Incorrect" %}</p>
+
+        {# FIX: reveal the correct answer when the user got it wrong #}
+        {% for option in answer.question.options.all %}
+          {% if option.is_correct %}
+            <p>
+              <strong>{% trans "Correct answer" %}:</strong>
+              {{ option.option_text }}
+            </p>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <a href="{% url 'quizzes:detail' quiz.id %}" class="button" style="background:var(--surface-alt);color:var(--text);border-color:var(--border);">
+    {% trans "Back to Quiz" %}
+  </a>
+</div>
+{% endblock %}

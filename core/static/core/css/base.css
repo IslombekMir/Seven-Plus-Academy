@@ -151,7 +151,7 @@ button:hover,
   text-decoration: none;
 }
 
-input,
+input:not([type="radio"]):not([type="checkbox"]),
 select,
 textarea {
   width: 100%;
@@ -165,12 +165,21 @@ textarea {
 }
 
 @media (min-width: 480px) {
-  input,
+  input:not([type="radio"]):not([type="checkbox"]),
   select,
   textarea {
     min-height: 44px;
     padding: 0.75rem 0.875rem;
   }
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  width: auto;
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 textarea {
