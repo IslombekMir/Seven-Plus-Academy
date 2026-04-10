@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 def can_manage_attendance(user, group):
     return user.role == User.Role.ADMIN or group.teacher == user
 
+
 @login_required
 def attendance_dashboard(request):
     selected_student = request.GET.get("student", "")
@@ -101,6 +102,7 @@ def attendance_dashboard(request):
         "attendance_percent": attendance_percent,
     })
 
+
 @login_required
 def attendance_group_detail(request, group_id):
     group = get_object_or_404(
@@ -167,6 +169,7 @@ def attendance_group_detail(request, group_id):
         "can_manage": can_manage_attendance(request.user, group),
         "selected_date": selected_date,
     })
+
 
 @login_required
 def attendance_session_detail(request, pk):

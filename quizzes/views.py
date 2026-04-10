@@ -11,15 +11,13 @@ from django.views.decorators.http import require_http_methods
 from users.models import User
 from lessons.models import Group
 from .models import Quiz, Question, Option, QuizAttempt, QuestionAnswer
-
-
-def can_create_quiz(user):
-    return user.role == User.Role.TEACHER
-
 from datetime import timedelta
 from django.utils import timezone
 
 from django.db.models import Exists, OuterRef
+
+def can_create_quiz(user):
+    return user.role == User.Role.TEACHER
 
 
 def calculate_attempt_score(attempt: QuizAttempt):
@@ -263,10 +261,6 @@ def quiz_edit(request, pk):
                 "random_question_order", "allowed_attempts",
             ])
 
-            # Replace all questions in one go — simplest and safest strategy.
-            # Existing QuizAttempt answers referencing old Question rows are
-            # intentionally kept (the FK is to Question id which is gone, so
-            # results already submitted remain intact via the answer records).
             quiz.questions.all().delete()
 
             for qd in questions_data:
@@ -337,13 +331,11 @@ def quiz_take(request, pk):
     ordered_questions = list(quiz.questions.all())
 
     if request.method == "POST":
-        # 1. check timeout FIRST
         if attempt.ends_at and timezone.now() >= attempt.ends_at:
             if not attempt.is_submitted:
                 finalize_attempt(attempt)
             return redirect("quizzes:result", attempt_id=attempt.id)
 
-        # 2. save answers FIRST
         for question in ordered_questions:
             selected_option_id = request.POST.get(f"q_{question.id}")
             selected_option = None
@@ -356,12 +348,10 @@ def quiz_take(request, pk):
                 defaults={"selected_option": selected_option},
             )
 
-        # 3. re-check timeout (IMPORTANT EDGE CASE SAFETY)
         if attempt.ends_at and timezone.now() > attempt.ends_at:
             finalize_attempt(attempt)
             return redirect("quizzes:result", attempt_id=attempt.id)
 
-        # 4. normal finish
         finalize_attempt(attempt)
         return redirect("quizzes:result", attempt_id=attempt.id)
 

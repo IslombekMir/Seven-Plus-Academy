@@ -26,6 +26,7 @@ def subjects_list(request):
         "can_manage": request.user.role in [User.Role.ADMIN],
         })
 
+
 @login_required
 def create_subject(request):
     if request.user.role != request.user.Role.ADMIN:
@@ -40,6 +41,7 @@ def create_subject(request):
         form = SubjectCreateForm()
 
     return render(request, "lessons/create_subject.html", {"form": form})
+
 
 @login_required
 def edit_subject(request, subject_id):
@@ -58,6 +60,7 @@ def edit_subject(request, subject_id):
 
     return render(request, "lessons/create_subject.html", {"form": form})
 
+
 @login_required
 def delete_subject(request, subject_id):
     if request.user.role != request.user.Role.ADMIN:
@@ -71,15 +74,18 @@ def delete_subject(request, subject_id):
 
     return render(request, "lessons/subject_confirm_delete.html", {"subject": subject})
 
+
 ### GROUP
 def _group_queryset_for_user(user):
     return Group.objects.select_related("subject", "teacher")
+
 
 def _can_permanently_delete_group(group):
     has_enrollments = Enrollment.objects.filter(group=group).exists()
     has_exams = Exam.objects.filter(group=group).exists()
     has_payments = Payment.objects.filter(group=group).exists()
     return not (has_enrollments or has_exams or has_payments)
+
 
 @login_required
 def group_list(request):
@@ -111,6 +117,7 @@ def group_list(request):
         "selected_group": selected_group,
     })
 
+
 @login_required
 def removed_groups(request):
     if request.user.role == User.Role.STUDENT:
@@ -120,6 +127,7 @@ def removed_groups(request):
     if request.user.role == User.Role.TEACHER:
         groups = groups.filter(teacher=request.user)
     return render(request, "lessons/removed_groups.html", {"groups": groups})
+
 
 @login_required
 def group_create(request):
@@ -138,6 +146,7 @@ def group_create(request):
         form = GroupForm(current_user=request.user)
 
     return render(request, "lessons/group_form.html", {"form": form})
+
 
 @login_required
 def remove_group(request, pk):
@@ -162,6 +171,7 @@ def remove_group(request, pk):
 
     return render(request, "lessons/group_confirm_remove.html", {"group": group})
 
+
 @login_required
 def restore_group(request, pk):
     if request.user.role == User.Role.STUDENT:
@@ -178,6 +188,7 @@ def restore_group(request, pk):
         return redirect("lessons:removed_groups")
 
     return render(request, "lessons/group_confirm_restore.html", {"group": group})
+
 
 @login_required
 def group_delete(request, pk):
@@ -213,6 +224,7 @@ def group_delete(request, pk):
         "can_delete": _can_permanently_delete_group(group),
     })
 
+
 @login_required
 def group_edit(request, pk):
     if request.user.role == "STUDENT":
@@ -232,6 +244,7 @@ def group_edit(request, pk):
         form = GroupForm(instance=group, current_user=request.user)
     
     return render(request, "lessons/group_form.html", {"form": form})
+
 
 @login_required
 def group_detail(request, pk):
@@ -314,6 +327,7 @@ def group_detail(request, pk):
     "enrollment_form": enrollment_form,
     "can_manage_enrollment": can_manage_enrollments(request.user, group),
 })
+
 
 ### Enrollment
 def can_manage_enrollments(user, group):

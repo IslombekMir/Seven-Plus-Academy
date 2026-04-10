@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-08 02:59+0500\n"
+"POT-Creation-Date: 2026-04-10 03:04+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,23 +26,23 @@ msgstr "Seven Plus"
 msgid "Removed users"
 msgstr "O‘chirilgan foydalanuvchilar"
 
-#: templates/core/base.html:58
+#: templates/core/base.html:74
 msgid "Seven Plus home"
 msgstr "Seven Plus bosh sahifasi"
 
-#: templates/core/base.html:94
+#: templates/core/base.html:110
 msgid "Profile"
 msgstr "Profil"
 
-#: templates/core/base.html:95
+#: templates/core/base.html:111
 msgid "Logout"
 msgstr "Chiqish"
 
-#: templates/core/base.html:97
+#: templates/core/base.html:113
 msgid "Login"
 msgstr "Kirish"
 
-#: templates/core/base.html:121
+#: templates/core/base.html:137
 msgid "Footer social links"
 msgstr "Pastki qismdagi ijtimoiy tarmoq havolalari"
 
@@ -51,82 +51,88 @@ msgid "Home"
 msgstr "Bosh sahifa"
 
 #: templates/core/index.html:16
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "        Welcome, %(name)s!\n"
-#| "      "
-msgid ""
-"\n"
-"          Welcome, %(name)s!\n"
-"        "
-msgstr ""
-"\n"
-"        Xush kelibsiz, %(name)s!\n"
-"      "
+msgid "Welcome"
+msgstr "Hush kelibsiz"
 
-#: templates/core/index.html:26
+#: templates/core/index.html:24
 msgid "Directory"
 msgstr "Ma’lumotnoma"
 
-#: templates/core/index.html:28
+#: templates/core/index.html:26
 msgid "Users"
 msgstr "Foydalanuvchilar"
 
-#: templates/core/index.html:28
+#: templates/core/index.html:26
 msgid "Students"
 msgstr "Talabalar"
 
-#: templates/core/index.html:34
+#: templates/core/index.html:32
 msgid "Curriculum"
 msgstr "O‘quv dasturi"
 
-#: templates/core/index.html:35
+#: templates/core/index.html:33
 msgid "Subjects"
 msgstr "Fanlar"
 
-#: templates/core/index.html:39
+#: templates/core/index.html:37
 msgid "Classes"
 msgstr "Sinf"
 
-#: templates/core/index.html:40
+#: templates/core/index.html:38
 msgid "Groups"
 msgstr "Guruhlar"
 
-#: templates/core/index.html:44
+#: templates/core/index.html:42
 msgid "Staff"
 msgstr "Xodimlar"
 
-#: templates/core/index.html:45
+#: templates/core/index.html:43
 msgid "Teachers"
 msgstr "O‘qituvchilar"
 
-#: templates/core/index.html:49
+#: templates/core/index.html:47 templates/core/index.html:53
 msgid "Assessment"
 msgstr "Baholash"
 
-#: templates/core/index.html:50
+#: templates/core/index.html:48
 msgid "Marks"
 msgstr "Baho"
 
-#: templates/core/index.html:55
+#: templates/core/index.html:54
+msgid "Quizzes"
+msgstr "Quizlar"
+
+#: templates/core/index.html:60
 msgid "Finance"
 msgstr "Moliya"
 
-#: templates/core/index.html:56
+#: templates/core/index.html:61
 msgid "Payments"
 msgstr "To‘lovlar"
 
-#: templates/core/index.html:62
+#: templates/core/index.html:67
 msgid "Tracking"
 msgstr "Kuzatuv"
 
-#: templates/core/index.html:63
+#: templates/core/index.html:68
 msgid "Attendances"
 msgstr "Davomat"
 
-#: templates/core/index.html:70
+#, fuzzy, python-format
+#~| msgid ""
+#~| "\n"
+#~| "        Welcome, %(name)s!\n"
+#~| "      "
+#~ msgid ""
+#~ "\n"
+#~ "          Welcome, %(name)s!\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "        Xush kelibsiz, %(name)s!\n"
+#~ "      "
+
 #, fuzzy
-#| msgid "Seven Plus"
-msgid "Welcome to Seven Plus"
-msgstr "Seven Plusga hush kelibsiz"
+#~| msgid "Seven Plus"
+#~ msgid "Welcome to Seven Plus"
+#~ msgstr "Seven Plusga hush kelibsiz"

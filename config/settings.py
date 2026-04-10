@@ -164,6 +164,9 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
+ESKIZ_EMAIL = os.getenv("ESKIZ_EMAIL", "")
+ESKIZ_PASSWORD = os.getenv("ESKIZ_PASSWORD", "")
 # test ci/cd
 # test again
 # chech again

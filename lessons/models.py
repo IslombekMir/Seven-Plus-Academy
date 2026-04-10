@@ -27,6 +27,7 @@ class Group(models.Model):
     def __str__(self):
         return f'{self.name} - {self.subject}'
 
+
 ### Enrollment
 class Enrollment(models.Model):
     group = models.ForeignKey(
@@ -73,6 +74,7 @@ class Exam(models.Model):
 
     def __str__(self):
         return f"{self.group} - {self.name}"
+
 
 class Mark(models.Model):
     exam = models.ForeignKey(

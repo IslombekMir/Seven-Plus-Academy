@@ -19,6 +19,7 @@ class SubjectCreateForm(forms.ModelForm):
             })
         }
 
+
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
@@ -46,6 +47,7 @@ class GroupForm(forms.ModelForm):
 
         if current_user and current_user.role == "TEACHER":
             self.fields.pop("teacher", None)
+
 
 class EnrollmentForm(forms.ModelForm):
     class Meta:
@@ -121,7 +123,7 @@ class ExamForm(forms.ModelForm):
             }),
         }
 
-# lessons/forms.py
+
 class MarkForm(forms.ModelForm):
     class Meta:
         model = Mark
